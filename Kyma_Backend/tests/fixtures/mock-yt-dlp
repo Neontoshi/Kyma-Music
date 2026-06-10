@@ -1,0 +1,19 @@
+#!/bin/bash
+if [[ "$*" == *"--version"* ]]; then
+  echo "2024.12.01"
+  exit 0
+fi
+
+if [[ "$*" == *"ytsearch"* ]]; then
+  echo '{"id":"dQw4w9WgXcQ","title":"Rick Astley - Never Gonna Give You Up","uploader":"RickAstleyVEVO","channel":"RickAstleyVEVO","duration":212,"thumbnail":"https://i.ytimg.com/vi/dQw4w9WgXcQ/default.jpg","view_count":1500000000,"upload_date":"20091025"}'
+  echo '{"id":"9bZkp7q19f0","title":"PSY - GANGNAM STYLE","uploader":"officialpsy","channel":"officialpsy","duration":253,"thumbnail":"https://i.ytimg.com/vi/9bZkp7q19f0/default.jpg","view_count":5000000000,"upload_date":"20120715"}'
+  echo '{"id":"kJQP7kiw5Fk","title":"Luis Fonsi - Despacito ft. Daddy Yankee","uploader":"LuisFonsiVEVO","channel":"LuisFonsiVEVO","duration":282,"thumbnail":"https://i.ytimg.com/vi/kJQP7kiw5Fk/default.jpg","view_count":8000000000,"upload_date":"20170113"}'
+  exit 0
+fi
+
+if [[ "$*" == *"scsearch"* ]]; then
+  echo '{"id":"sc-123","title":"Test SoundCloud Track","uploader":"TestArtist","duration":180,"view_count":50000,"webpage_url":"https://soundcloud.com/artist/track1"}'
+  exit 0
+fi
+
+exit 0

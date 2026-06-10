@@ -1,0 +1,290 @@
+<!-- Lauv_Frontend/remote/index.html -->
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="theme-color" content="#0a0a0f" />
+        <title>Lauv Cast</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700&family=DM+Mono&display=swap" rel="stylesheet" />
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+
+            body {
+                background: #0a0a0f;
+                color: #f0f0f8;
+                font-family: "Syne", sans-serif;
+                height: 100dvh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                overflow: hidden;
+                padding: 20px;
+            }
+
+            .wave-canvas {
+                position: fixed;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+            }
+
+            .content {
+                position: relative;
+                z-index: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 14px;
+                width: 100%;
+                max-width: 340px;
+            }
+
+            .art {
+                width: 180px;
+                height: 180px;
+                border-radius: 20px;
+                background: linear-gradient(135deg, #1a2a4a, #2a3a6a);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 56px;
+                border: 1px solid rgba(124, 106, 245, 0.3);
+            }
+
+            .track-info { text-align: center; }
+            .title {
+                font-size: 17px;
+                font-weight: 700;
+                max-width: 280px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .artist { font-size: 12px; color: #aaaacc; margin-top: 3px; }
+            .album { font-size: 11px; color: #7777aa; margin-top: 2px; }
+
+            .time-row {
+                display: flex;
+                justify-content: space-between;
+                width: 260px;
+                font-family: "DM Mono", monospace;
+                font-size: 10px;
+                color: #7777aa;
+            }
+
+            .seek-wrap { width: 260px; margin-top: -6px; }
+            .seek-wrap input[type="range"] {
+                width: 100%; height: 3px;
+                -webkit-appearance: none; appearance: none;
+                background: rgba(255,255,255,0.12);
+                border-radius: 2px; outline: none;
+            }
+            .seek-wrap input[type="range"]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                width: 14px; height: 14px;
+                border-radius: 50%;
+                background: #7c6af5;
+                cursor: pointer;
+            }
+
+            .controls { display: flex; align-items: center; gap: 20px; }
+
+            .btn {
+                border: none; cursor: pointer;
+                display: flex; align-items: center; justify-content: center;
+                transition: transform 0.15s;
+            }
+            .btn:active { transform: scale(0.92); }
+
+            .btn-play {
+                width: 64px; height: 64px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #7c6af5, #c084fc);
+            }
+            .btn-play svg { width: 28px; height: 28px; fill: white; }
+
+            .btn-small {
+                width: 44px; height: 44px;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.07);
+                border: 1px solid rgba(255,255,255,0.1);
+                color: #aaaacc;
+            }
+            .btn-small svg { width: 20px; height: 20px; }
+
+            .vol-wrap { display: flex; align-items: center; gap: 10px; width: 240px; }
+            .vol-icon { font-size: 15px; color: #7777aa; }
+            .vol-wrap input[type="range"] {
+                flex: 1; height: 3px;
+                -webkit-appearance: none; appearance: none;
+                background: rgba(255,255,255,0.12);
+                border-radius: 2px; outline: none;
+            }
+            .vol-wrap input[type="range"]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                width: 12px; height: 12px;
+                border-radius: 50%;
+                background: #7777aa;
+                cursor: pointer;
+            }
+
+            .status {
+                font-family: "DM Mono", monospace;
+                font-size: 10px; color: #7777aa;
+                letter-spacing: 0.04em;
+            }
+            .status.connected { color: #7c6af5; }
+        </style>
+    </head>
+    <body>
+        <canvas class="wave-canvas" id="waveCanvas"></canvas>
+
+        <div class="content">
+            <div class="art" id="art">🎵</div>
+
+            <div class="track-info">
+                <div class="title" id="title">Not Playing</div>
+                <div class="artist" id="artist">Open LauvPlayer on desktop</div>
+                <div class="album" id="album"></div>
+            </div>
+
+            <div class="time-row">
+                <span id="timeCurrent">0:00</span>
+                <span id="timeTotal">0:00</span>
+            </div>
+            <div class="seek-wrap">
+                <input type="range" min="0" max="100" value="0" id="seekBar" oninput="send('seek', this.value)" />
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-small" onclick="send('prev')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="19,20 9,12 19,4"/>
+                        <line x1="5" y1="19" x2="5" y2="5"/>
+                    </svg>
+                </button>
+                <button class="btn btn-play" id="playBtn" onclick="send('toggle')">
+                    <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+                </button>
+                <button class="btn btn-small" onclick="send('next')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5,4 15,12 5,20"/>
+                        <line x1="19" y1="5" x2="19" y2="19"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="vol-wrap">
+                <span class="vol-icon">🔉</span>
+                <input type="range" min="0" max="100" value="70" id="volumeSlider" oninput="send('volume', this.value)" />
+                <span class="vol-icon">🔊</span>
+            </div>
+
+            <div class="status" id="status">Disconnected</div>
+        </div>
+
+        <script>
+            // --- Animated wave canvas ---
+            const canvas = document.getElementById("waveCanvas");
+            const ctx = canvas.getContext("2d");
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener("resize", resize);
+
+            const waves = [
+                { y: 0.62, amp: 38, freq: 0.012, speed: 0.012, phase: 0.0, color: "rgba(124,106,245,0.18)" },
+                { y: 0.70, amp: 30, freq: 0.015, speed: 0.018, phase: 1.5, color: "rgba(192,132,252,0.13)" },
+                { y: 0.77, amp: 22, freq: 0.018, speed: 0.010, phase: 3.0, color: "rgba(124,106,245,0.10)" },
+                { y: 0.83, amp: 16, freq: 0.022, speed: 0.022, phase: 0.8, color: "rgba(192,132,252,0.08)" },
+                { y: 0.90, amp: 10, freq: 0.028, speed: 0.014, phase: 2.2, color: "rgba(124,106,245,0.06)" },
+            ];
+
+            function drawWave(wave, t) {
+                const W = canvas.width;
+                const H = canvas.height;
+                const baseY = wave.y * H;
+                ctx.beginPath();
+                ctx.moveTo(0, H);
+                for (let x = 0; x <= W; x += 2) {
+                    const y = baseY
+                        + Math.sin(x * wave.freq + wave.phase + t * wave.speed * 60) * wave.amp
+                        + Math.sin(x * wave.freq * 0.5 + t * wave.speed * 40) * (wave.amp * 0.4);
+                    ctx.lineTo(x, y);
+                }
+                ctx.lineTo(W, H);
+                ctx.closePath();
+                ctx.fillStyle = wave.color;
+                ctx.fill();
+            }
+
+            function animate(ts) {
+                const t = ts / 1000;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                waves.forEach(w => drawWave(w, t));
+                requestAnimationFrame(animate);
+            }
+            requestAnimationFrame(animate);
+
+            // --- WebSocket ---
+            const ws = new WebSocket(`ws://${location.host}/ws`);
+
+            ws.onopen = () => {
+                const s = document.getElementById("status");
+                s.textContent = "Connected";
+                s.classList.add("connected");
+            };
+            ws.onclose = () => {
+                const s = document.getElementById("status");
+                s.textContent = "Disconnected";
+                s.classList.remove("connected");
+            };
+            ws.onmessage = (e) => {
+                try {
+                    const data = JSON.parse(e.data);
+                    if (data.type === "state") {
+                        document.getElementById("title").textContent = data.title || "Not Playing";
+                        document.getElementById("artist").textContent = data.artist || "";
+                        document.getElementById("album").textContent = data.album || "";
+                        updatePlayButton(data.is_playing);
+                        if (data.duration > 0) {
+                            const pct = (data.position / data.duration) * 100;
+                            document.getElementById("seekBar").value = pct;
+                            document.getElementById("timeCurrent").textContent = formatTime(data.position);
+                            document.getElementById("timeTotal").textContent = formatTime(data.duration);
+                        }
+                        if (data.volume !== undefined) {
+                            document.getElementById("volumeSlider").value = data.volume;
+                        }
+                    }
+                } catch {}
+            };
+
+            function updatePlayButton(p) {
+                document.getElementById("playBtn").innerHTML = p
+                    ? '<svg viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>'
+                    : '<svg viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>';
+            }
+
+            function formatTime(s) {
+                const m = Math.floor(s / 60);
+                const sec = Math.floor(s % 60);
+                return m + ":" + sec.toString().padStart(2, "0");
+            }
+
+            function send(cmd, value) {
+                ws.send(JSON.stringify({ command: cmd, value: value }));
+            }
+        </script>
+    </body>
+</html>
