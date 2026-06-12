@@ -29,7 +29,7 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": ["deb", "rpm", "nsis", "msi", "dmg", "app"],
     "icon": [
       "icons/32x32.png",
       "icons/64x64.png",
@@ -83,7 +83,7 @@
         "files": {}
       },
       "appimage": {
-        "bundleMediaFramework": true
+        "bundleMediaFramework": false
       },
       "rpm": {
         "depends": ["yt-dlp", "alsa-lib", "webkit2gtk4.1", "openssl", "gtk3"]

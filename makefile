@@ -6,7 +6,8 @@ dev:
 
 # Build for production
 build:
-	cd Kyma_Backend && cargo tauri build
+	cd Kyma_Backend && cargo install tauri-cli && cargo tauri build
+
 
 # Check Rust code for errors
 check:
