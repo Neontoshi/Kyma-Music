@@ -36,6 +36,9 @@ jobs:
           toolchain: stable
           override: true
 
+      - name: Install Tauri CLI
+        run: cargo install tauri-cli --version 2.8.0
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -56,7 +59,7 @@ jobs:
       - name: Build Tauri app (Linux)
         run: |
           cd Kyma_Backend
-          npx tauri build --bundle deb,rpm
+          cargo tauri build --bundle deb,rpm
 
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
@@ -79,6 +82,9 @@ jobs:
           toolchain: stable
           override: true
 
+      - name: Install Tauri CLI
+        run: cargo install tauri-cli --version 2.8.0
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -99,7 +105,7 @@ jobs:
       - name: Build Tauri app (Windows)
         run: |
           cd Kyma_Backend
-          npx tauri build --bundle nsis,msi
+          cargo tauri build --bundle nsis,msi
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
@@ -122,6 +128,9 @@ jobs:
           toolchain: stable
           override: true
           target: aarch64-apple-darwin
+
+      - name: Install Tauri CLI
+        run: cargo install tauri-cli --version 2.8.0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -147,12 +156,12 @@ jobs:
       - name: Build Tauri app (macOS Intel)
         run: |
           cd Kyma_Backend
-          npx tauri build --target x86_64-apple-darwin --bundle dmg,app
+          cargo tauri build --target x86_64-apple-darwin --bundle dmg,app
 
       - name: Build Tauri app (macOS Apple Silicon)
         run: |
           cd Kyma_Backend
-          npx tauri build --target aarch64-apple-darwin --bundle dmg,app
+          cargo tauri build --target aarch64-apple-darwin --bundle dmg,app
 
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
