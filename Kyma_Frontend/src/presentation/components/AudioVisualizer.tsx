@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import butterchurn from "butterchurn";
+import butterchurnPresets from "butterchurn-presets";
 import { listen } from "@tauri-apps/api/event";
 
 interface AudioVisualizerProps {
@@ -19,31 +20,19 @@ function useVisualizer(
   const waveDataRef = useRef<Uint8Array>(new Uint8Array(1024).fill(128));
   const animIdRef = useRef<number>(0);
   const [presetName, setPresetName] = useState("");
-  const [presets, setPresets] = useState<Record<string, any>>({});
-  const [presetNames, setPresetNames] = useState<string[]>([]);
-
-  // Load presets from public folder
-  useEffect(() => {
-    fetch("/presets/presets.json")
-      .then((res) => res.json())
-      .then((data) => {
-        setPresets(data);
-        setPresetNames(Object.keys(data));
-        console.log(`Loaded ${Object.keys(data).length} presets`);
-      })
-      .catch((err) => console.error("Failed to load presets:", err));
-  }, []);
+  const presets = butterchurnPresets.getPresets();
+  const presetNames = Object.keys(presets);
 
   useEffect(() => {
     isPlayingRef.current = isPlaying;
   }, [isPlaying]);
 
   const loadRandomPreset = useCallback(() => {
-    if (!visualizerRef.current || presetNames.length === 0) return;
+    if (!visualizerRef.current) return;
     const name = presetNames[Math.floor(Math.random() * presetNames.length)];
     visualizerRef.current.loadPreset(presets[name], 2.0);
     setPresetName(name);
-  }, [presets, presetNames]);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -54,6 +43,7 @@ function useVisualizer(
     analyser.fftSize = 2048;
     analyser.smoothingTimeConstant = 0.8;
 
+    // Patch analyser up front — ready whenever viz.connectAudio is called
     analyser.getByteFrequencyData = (arr: Uint8Array) => {
       if (isPlayingRef.current && freqDataRef.current.some((v) => v > 0)) {
         arr.set(freqDataRef.current.subarray(0, arr.length));
@@ -69,6 +59,7 @@ function useVisualizer(
       }
     };
 
+    // Tauri event listener — write Rust FFT bins into the arrays
     let unlisten: (() => void) | null = null;
     listen<{ bins: number[] }>("visualizer-data", (event) => {
       const bins = event.payload.bins;
@@ -96,6 +87,8 @@ function useVisualizer(
       unlisten = fn;
     });
 
+    // Defer butterchurn creation until ResizeObserver gives us real dimensions.
+    // This fixes portaled (fullscreen) canvases where offsetWidth is 0 at effect time.
     let initialized = false;
 
     const initViz = (w: number, h: number) => {
@@ -109,18 +102,12 @@ function useVisualizer(
         pixelRatio: window.devicePixelRatio || 1,
       });
       visualizerRef.current = viz;
-
-      // Wait for presets to load before setting initial preset
-      if (presetNames.length > 0) {
-        const name =
-          initialPreset && presets[initialPreset]
-            ? initialPreset
-            : presetNames[Math.floor(Math.random() * presetNames.length)];
-        if (presets[name]) {
-          viz.loadPreset(presets[name], 0);
-          setPresetName(name);
-        }
-      }
+      const name =
+        initialPreset && presets[initialPreset]
+          ? initialPreset
+          : presetNames[Math.floor(Math.random() * presetNames.length)];
+      viz.loadPreset(presets[name], 0);
+      setPresetName(name);
       viz.connectAudio(analyser);
     };
 
@@ -152,12 +139,11 @@ function useVisualizer(
       audioCtx.close().catch(() => {});
       visualizerRef.current = null;
     };
-  }, [presets, presetNames, initialPreset]);
+  }, []);
 
   return { presetName, loadRandomPreset };
 }
-
-// OverlayControls
+//  OverlayControls (unchanged)
 const OverlayControls: React.FC<{
   presetName: string;
   isFullscreen: boolean;
@@ -221,7 +207,7 @@ const OverlayControls: React.FC<{
   );
 };
 
-// FullscreenVisualizer
+//  FullscreenVisualizer (unchanged)
 const FullscreenVisualizer: React.FC<{
   isPlaying: boolean;
   currentPreset: string;
@@ -235,9 +221,10 @@ const FullscreenVisualizer: React.FC<{
     currentPreset,
   );
 
+  // Sync preset changes back to parent
   useEffect(() => {
     if (presetName) onPresetChange(presetName);
-  }, [presetName, onPresetChange]);
+  }, [presetName]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -271,7 +258,7 @@ const FullscreenVisualizer: React.FC<{
   );
 };
 
-// Main component
+//  Main component
 const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
   isPlaying,
   className = "",
@@ -281,6 +268,7 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
   const { presetName, loadRandomPreset } = useVisualizer(canvasRef, isPlaying);
   const [sharedPreset, setSharedPreset] = useState("");
 
+  // Keep sharedPreset in sync with the inline visualizer's current preset
   useEffect(() => {
     if (presetName) setSharedPreset(presetName);
   }, [presetName]);
