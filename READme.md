@@ -152,13 +152,13 @@ Kyma ships with multiple built-in themes. Switch between them anytime from Setti
 | Theme | Preview |
 |-------|---------|
 | 🟣 **Midnight Purple** | <img src="screenshots/themes/theme-midnight-purple.png" width="600" alt="Midnight Purple" /> |
-| 🌊 **Deep Ocean** | <img src="screenshots/themes/theme-spotlight.png" width="600" alt="Spotlight" /> |
-| 🥀 **Rose Noir** | <img src="screenshots/themes/theme-neon-noir.png" width="600" alt="Neon Noir" /> |
+| 🌊 **Spotlight** | <img src="screenshots/themes/theme-spotlight.png" width="600" alt="Spotlight" /> |
+| 🥀 **Neon Noir** | <img src="screenshots/themes/theme-neon-noir.png" width="600" alt="Neon Noir" /> |
 | 🌲 **Forest Dark** | <img src="screenshots/themes/theme-forest-dark.png" width="600" alt="Forest Dark" /> |
-| ☀️ **Solar Flare** | <img src="screenshots/themes/theme-synthwave.png" width="600" alt="Synthwave" /> |
+| ☀️ **Synthwave** | <img src="screenshots/themes/theme-synthwave.png" width="600" alt="Synthwave" /> |
 | 🧊 **Arctic** | <img src="screenshots/themes/theme-arctic.png" width="600" alt="Arctic" /> |
-| 🟡 **Amber Dark** | <img src="screenshots/themes/theme-sakura.png" width="600" alt="Sakura" /> |
-| ⬛ **Monochrome** | <img src="screenshots/themes/theme-metal.png" width="600" alt="Metal" /> |
+| 🟡 **Sakura** | <img src="screenshots/themes/theme-sakura.png" width="600" alt="Sakura" /> |
+| ⬛ **Metal** | <img src="screenshots/themes/theme-metal.png" width="600" alt="Metal" /> |
 
 </div>
 
