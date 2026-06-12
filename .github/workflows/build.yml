@@ -3,6 +3,8 @@ name: Build
 on:
   push:
     branches: [main]
+    tags:
+      - "v*"
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -15,11 +17,11 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install Tauri dependencies
+      - name: Install Tauri system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            libwebkit2gtk-4.0-dev \
+            libwebkit2gtk-4.1-dev \
             build-essential \
             curl \
             wget \
@@ -31,13 +33,12 @@ jobs:
             libxdo-dev
 
       - name: Setup Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
+        uses: dtolnay/rust-toolchain@stable
 
-      - name: Install Tauri CLI
-        run: cargo install tauri-cli --version 2.8.0
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: Kyma_Backend -> target
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -47,19 +48,13 @@ jobs:
           cache-dependency-path: Kyma_Frontend/package-lock.json
 
       - name: Install frontend dependencies
-        run: |
-          cd Kyma_Frontend
-          npm ci
-
-      - name: Build frontend
-        run: |
-          cd Kyma_Frontend
-          npm run build
+        run: npm ci --prefix Kyma_Frontend
 
       - name: Build Tauri app (Linux)
-        run: |
-          cd Kyma_Backend
-          cargo tauri build --bundle deb,rpm
+        uses: tauri-apps/tauri-action@v0
+        with:
+          projectPath: Kyma_Backend
+          args: --bundle deb,rpm
 
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
@@ -77,13 +72,12 @@ jobs:
           submodules: recursive
 
       - name: Setup Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
+        uses: dtolnay/rust-toolchain@stable
 
-      - name: Install Tauri CLI
-        run: cargo install tauri-cli --version 2.8.0
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: Kyma_Backend -> target
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -93,19 +87,13 @@ jobs:
           cache-dependency-path: Kyma_Frontend/package-lock.json
 
       - name: Install frontend dependencies
-        run: |
-          cd Kyma_Frontend
-          npm ci
-
-      - name: Build frontend
-        run: |
-          cd Kyma_Frontend
-          npm run build
+        run: npm ci --prefix Kyma_Frontend
 
       - name: Build Tauri app (Windows)
-        run: |
-          cd Kyma_Backend
-          cargo tauri build --bundle nsis,msi
+        uses: tauri-apps/tauri-action@v0
+        with:
+          projectPath: Kyma_Backend
+          args: --bundle nsis,msi
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
@@ -122,15 +110,15 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Rust
-        uses: actions-rs/toolchain@v1
+      - name: Setup Rust (with Apple Silicon target)
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          override: true
-          target: aarch64-apple-darwin
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
 
-      - name: Install Tauri CLI
-        run: cargo install tauri-cli --version 2.8.0
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: Kyma_Backend -> target
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -140,28 +128,19 @@ jobs:
           cache-dependency-path: Kyma_Frontend/package-lock.json
 
       - name: Install frontend dependencies
-        run: |
-          cd Kyma_Frontend
-          npm ci
-
-      - name: Build frontend
-        run: |
-          cd Kyma_Frontend
-          npm run build
-
-      - name: Install macOS dependencies
-        run: |
-          brew install cmake
+        run: npm ci --prefix Kyma_Frontend
 
       - name: Build Tauri app (macOS Intel)
-        run: |
-          cd Kyma_Backend
-          cargo tauri build --target x86_64-apple-darwin --bundle dmg,app
+        uses: tauri-apps/tauri-action@v0
+        with:
+          projectPath: Kyma_Backend
+          args: --target x86_64-apple-darwin --bundle dmg,app
 
       - name: Build Tauri app (macOS Apple Silicon)
-        run: |
-          cd Kyma_Backend
-          cargo tauri build --target aarch64-apple-darwin --bundle dmg,app
+        uses: tauri-apps/tauri-action@v0
+        with:
+          projectPath: Kyma_Backend
+          args: --target aarch64-apple-darwin --bundle dmg,app
 
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
@@ -176,7 +155,7 @@ jobs:
   create-release:
     needs: [build-linux, build-windows, build-macos]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
 
@@ -187,7 +166,7 @@ jobs:
           path: artifacts
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: |
             artifacts/kyma-linux/*.deb
