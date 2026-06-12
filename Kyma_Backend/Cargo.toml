@@ -2,6 +2,13 @@
 name = "kyma"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+authors = ["Neontoshi"]
+description = "Music flows freely."
+repository = "https://github.com/Neontoshi/Kyma-Music"
+homepage = "https://github.com/Neontoshi/Kyma-Music"
+keywords = ["music", "player", "tauri", "streaming", "audio"]
+categories = ["multimedia", "audio"]
 
 [lib]
 name = "kyma_lib"
