@@ -36,7 +36,7 @@
 
 ## ✨ Features
 
-Kyma brings together everything you want from a music player local files, online streaming, live radio, and podcasts in one clean, privacy-first desktop app.
+Kyma brings together everything you want from a music player — local files, online streaming, live radio, and podcasts — in one clean, privacy-first desktop app.
 
 <br />
 
@@ -50,7 +50,7 @@ Kyma brings together everything you want from a music player local files, online
 | 📋 | **Playlists** | Create, edit, and reorder custom playlists with drag-and-drop |
 | 🔍 | **Universal Search** | Search your local library and online sources simultaneously |
 | 🖥️ | **Cross-platform** | Native builds for Windows, Linux, and macOS |
-| 🔒 | **Privacy First** | Zero telemetry, zero tracking all your data lives on your machine |
+| 🔒 | **Privacy First** | Zero telemetry, zero tracking — all your data lives on your machine |
 
 <br />
 
@@ -64,7 +64,7 @@ Kyma brings together everything you want from a music player local files, online
 
 ### Home
 
-> Your personalised landing page recent plays, recommendations, and quick access to everything.
+> Your personalised landing page — recent plays, recommendations, and quick access to everything.
 
 <div align="center">
   <img src="screenshots/home.png" width="780" alt="Kyma Home Screen" />
@@ -103,7 +103,7 @@ Kyma brings together everything you want from a music player local files, online
 
 ### Search
 
-> Search across local files, YouTube, and SoundCloud all from one place.
+> Search across local files, YouTube, and SoundCloud — all from one place.
 
 <div align="center">
   <img src="screenshots/search.png" width="780" alt="Kyma Search" />
@@ -129,11 +129,76 @@ Kyma brings together everything you want from a music player local files, online
 
 ### Settings
 
-> Tune Kyma to your preferences audio output, streaming quality, library paths, and more.
+> Tune Kyma to your preferences — audio output, streaming quality, library paths, and more.
 
 <div align="center">
   <img src="screenshots/settings.png" width="780" alt="Kyma Settings" />
 </div>
+
+<br />
+
+---
+
+<br />
+
+## 🎨 Color Schemes
+
+Kyma ships with multiple built-in themes. Switch between them anytime from Settings.
+
+<br />
+
+<div align="center">
+
+<!-- Horizontal scrollable theme gallery -->
+<div style="display: flex; overflow-x: auto; gap: 16px; padding: 12px 0; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
+
+<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
+  <img src="screenshots/themes/theme-midnight-purple.png" width="320" alt="Midnight Purple" />
+  <br /><sub><b>Midnight Purple</b></sub>
+</div>
+
+<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
+  <img src="screenshots/themes/theme-Spotlight.png" width="320" alt="Spotlight" />
+  <br /><sub><b>Spotlight</b></sub>
+</div>
+
+<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
+  <img src="screenshots/themes/theme-metal.png" width="320" alt="Metal" />
+  <br /><sub><b>Metal</b></sub>
+</div>
+
+<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
+  <img src="screenshots/themes/theme-rose-noir.png" width="320" alt="Rose Noir" />
+  <br /><sub><b>Neon Noir</b></sub>
+</div>
+
+<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
+  <img src="screenshots/themes/theme-forest-dark.png" width="320" alt="Forest Dark" />
+  <br /><sub><b>Forest Dark</b></sub>
+</div>
+
+<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
+  <img src="screenshots/themes/theme-sakura.png" width="320" alt="Sakura" />
+  <br /><sub><b>Sakura</b></sub>
+</div>
+
+<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
+  <img src="screenshots/themes/theme-arctic.png" width="320" alt="Arctic" />
+  <br /><sub><b>Arctic</b></sub>
+</div>
+
+<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
+  <img src="screenshots/themes/theme-synthwave.png" width="320" alt="Synthwave" />
+  <br /><sub><b>Synthwave</b></sub>
+</div>
+
+</div>
+
+</div>
+
+<br />
+
+> 💡 All themes are switchable from **Settings → Appearance**. No restart needed.
 
 <br />
 
@@ -169,13 +234,13 @@ Pick your platform and get started in seconds.
 
 Make sure you have the following installed before building:
 
-- **Rust** [rustup.rs](https://rustup.rs) (latest stable)
-- **Node.js** v18 or higher
-- **yt-dlp** required for YouTube & SoundCloud streaming
+- **Rust** — [rustup.rs](https://rustup.rs) (latest stable)
+- **Node.js** — v18 or higher
+- **yt-dlp** — required for YouTube & SoundCloud streaming
 
 <br />
 
-### 1 Install Rust
+### 1 — Install Rust
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -183,7 +248,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 <br />
 
-### 2 Install yt-dlp
+### 2 — Install yt-dlp
 
 ```bash
 # Using pip
@@ -201,7 +266,7 @@ winget install yt-dlp
 
 <br />
 
-### 3 Clone & Install Dependencies
+### 3 — Clone & Install Dependencies
 
 ```bash
 git clone https://github.com/Neontoshi/Kyma.git
@@ -211,7 +276,7 @@ npm install
 
 <br />
 
-### 4 Run in Development
+### 4 — Run in Development
 
 ```bash
 npm run tauri dev
@@ -219,7 +284,7 @@ npm run tauri dev
 
 <br />
 
-### 5 Build for Production
+### 5 — Build for Production
 
 ```bash
 npm run tauri build
