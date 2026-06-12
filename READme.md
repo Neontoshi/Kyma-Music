@@ -9,7 +9,7 @@
 
 # Kyma
 
-**Experience music waves at premium — for free.**
+**Music flows freely.**
 
 *Local library · YouTube & SoundCloud · Radio · Podcasts*  
 *No subscriptions. No telemetry. Your data stays local.*
@@ -36,7 +36,7 @@
 
 ## ✨ Features
 
-Kyma brings together everything you want from a music player — local files, online streaming, live radio, and podcasts — in one clean, privacy-first desktop app.
+Kyma brings together everything you want from a music player local files, online streaming, live radio, and podcasts in one clean, privacy-first desktop app.
 
 <br />
 
@@ -50,7 +50,7 @@ Kyma brings together everything you want from a music player — local files, on
 | 📋 | **Playlists** | Create, edit, and reorder custom playlists with drag-and-drop |
 | 🔍 | **Universal Search** | Search your local library and online sources simultaneously |
 | 🖥️ | **Cross-platform** | Native builds for Windows, Linux, and macOS |
-| 🔒 | **Privacy First** | Zero telemetry, zero tracking — all your data lives on your machine |
+| 🔒 | **Privacy First** | Zero telemetry, zero tracking all your data lives on your machine |
 
 <br />
 
@@ -64,7 +64,7 @@ Kyma brings together everything you want from a music player — local files, on
 
 ### Home
 
-> Your personalised landing page — recent plays, recommendations, and quick access to everything.
+> Your personalised landing page recent plays, recommendations, and quick access to everything.
 
 <div align="center">
   <img src="screenshots/home.png" width="780" alt="Kyma Home Screen" />
@@ -103,7 +103,7 @@ Kyma brings together everything you want from a music player — local files, on
 
 ### Search
 
-> Search across local files, YouTube, and SoundCloud — all from one place.
+> Search across local files, YouTube, and SoundCloud all from one place.
 
 <div align="center">
   <img src="screenshots/search.png" width="780" alt="Kyma Search" />
@@ -129,7 +129,7 @@ Kyma brings together everything you want from a music player — local files, on
 
 ### Settings
 
-> Tune Kyma to your preferences — audio output, streaming quality, library paths, and more.
+> Tune Kyma to your preferences audio output, streaming quality, library paths, and more.
 
 <div align="center">
   <img src="screenshots/settings.png" width="780" alt="Kyma Settings" />
@@ -151,14 +151,14 @@ Kyma ships with multiple built-in themes. Switch between them anytime from Setti
 
 | Theme | Preview |
 |-------|---------|
-| 🟣 **Midnight Purple** | <img src="screenshots/themes/theme-midnight-purple.png" width="600" alt="Midnight Purple" /> |
-| 🌊 **Spotlight** | <img src="screenshots/themes/theme-spotlight.png" width="600" alt="Spotlight" /> |
-| 🥀 **Neon Noir** | <img src="screenshots/themes/theme-neon-noir.png" width="600" alt="Neon Noir" /> |
-| 🌲 **Forest Dark** | <img src="screenshots/themes/theme-forest-dark.png" width="600" alt="Forest Dark" /> |
-| ☀️ **Synthwave** | <img src="screenshots/themes/theme-synthwave.png" width="600" alt="Synthwave" /> |
-| 🧊 **Arctic** | <img src="screenshots/themes/theme-arctic.png" width="600" alt="Arctic" /> |
-| 🟡 **Sakura** | <img src="screenshots/themes/theme-sakura.png" width="600" alt="Sakura" /> |
-| ⬛ **Metal** | <img src="screenshots/themes/theme-metal.png" width="600" alt="Metal" /> |
+| **Midnight Purple** | <img src="screenshots/themes/theme-midnight-purple.png" width="600" alt="Midnight Purple" /> |
+| **Spotlight** | <img src="screenshots/themes/theme-spotlight.png" width="600" alt="Spotlight" /> |
+| **Neon Noir** | <img src="screenshots/themes/theme-neon-noir.png" width="600" alt="Neon Noir" /> |
+| **Forest Dark** | <img src="screenshots/themes/theme-forest-dark.png" width="600" alt="Forest Dark" /> |
+| **Synthwave** | <img src="screenshots/themes/theme-synthwave.png" width="600" alt="Synthwave" /> |
+| **Arctic** | <img src="screenshots/themes/theme-arctic.png" width="600" alt="Arctic" /> |
+| **Sakura** | <img src="screenshots/themes/theme-sakura.png" width="600" alt="Sakura" /> |
+| **Metal** | <img src="screenshots/themes/theme-metal.png" width="600" alt="Metal" /> |
 
 </div>
 
@@ -200,13 +200,13 @@ Pick your platform and get started in seconds.
 
 Make sure you have the following installed before building:
 
-- **Rust** — [rustup.rs](https://rustup.rs) (latest stable)
-- **Node.js** — v18 or higher
-- **yt-dlp** — required for YouTube & SoundCloud streaming
+- **Rust** [rustup.rs](https://rustup.rs) (latest stable)
+- **Node.js** v18 or higher
+- **yt-dlp** required for YouTube & SoundCloud streaming
 
 <br />
 
-### 1 — Install Rust
+### 1 Install Rust
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -214,7 +214,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 <br />
 
-### 2 — Install yt-dlp
+### 2 Install yt-dlp
 
 ```bash
 # Using pip
@@ -232,7 +232,7 @@ winget install yt-dlp
 
 <br />
 
-### 3 — Clone & Install Dependencies
+### 3 Clone & Install Dependencies
 
 ```bash
 git clone https://github.com/Neontoshi/Kyma.git
@@ -242,7 +242,7 @@ npm install
 
 <br />
 
-### 4 — Run in Development
+### 4 Run in Development
 
 ```bash
 npm run tauri dev
@@ -250,7 +250,7 @@ npm run tauri dev
 
 <br />
 
-### 5 — Build for Production
+### 5 Build for Production
 
 ```bash
 npm run tauri build
