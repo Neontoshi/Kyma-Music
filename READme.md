@@ -184,6 +184,10 @@ Pick your platform and get started in seconds.
 | 🪟 **Windows** | [Download `.exe`](https://github.com/Neontoshi/Kyma/releases) | Windows 10 / 11 |
 | 🍎 **macOS** | [Download `.dmg`](https://github.com/Neontoshi/Kyma/releases) | macOS 11+ |
 
+> **macOS users:** Right-click the `.dmg` and select **Open**, 
+> then click **Open Anyway** when prompted. This is a one-time step 
+> for apps not distributed through the Mac App Store.
+
 <br />
 
 > Prefer to build it yourself? See [Building from Source](#-building-from-source) below.
