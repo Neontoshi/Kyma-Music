@@ -9,7 +9,7 @@
 
 # Kyma
 
-**Experience music waves at premium for free.**
+**Music flows freely.**
 
 *Local library · YouTube & SoundCloud · Radio · Podcasts*  
 *No subscriptions. No telemetry. Your data stays local.*
