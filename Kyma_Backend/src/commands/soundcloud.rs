@@ -139,7 +139,7 @@ fn title_relevance(title: &str, artist: &str, query: &str) -> f32 {
 }
 
 fn sc_command() -> Command {
-    let cmd = Command::new("yt-dlp");
+    let mut cmd = Command::new("yt-dlp");
     #[cfg(windows)]
     cmd.creation_flags(0x08000000); // CREATE_NO_WINDOW
     cmd

@@ -1140,7 +1140,7 @@ pub async fn clear_stream_cache() {
 }
 
 fn ytdlp_command() -> Command {
-    let cmd = if let Ok(mock_path) = std::env::var("Kyma_MOCK_YTDLP") {
+    let mut cmd = if let Ok(mock_path) = std::env::var("Kyma_MOCK_YTDLP") {
         Command::new(mock_path)
     } else {
         Command::new("yt-dlp")
