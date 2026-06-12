@@ -1,25 +1,83 @@
-# LauvPlayer
+<div align="center">
+  
+  <img src="Kyma_Backend/icons/icon.png" width="120" alt="Kyma Logo" />
+  
+  # 🎵 Kyma
+  
+  ### Experience music waves at premium — for free.
+  
+  [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+  [![Rust](https://img.shields.io/badge/Rust-1.80+-orange.svg)](https://www.rust-lang.org)
+  [![Tauri](https://img.shields.io/badge/Tauri-2.0-purple.svg)](https://tauri.app)
+  [![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org)
+  
+  *Local library + online streaming + radio + podcasts.*
+  *No subscriptions. Your data stays local.*
+  
+  [Download](#-download) • [Features](#-features) • [Screenshots](#-screenshots) • [Building](#-building-from-source)
+  
+</div>
 
-A modern desktop music player built with Tauri, React, and Rust.
+---
 
-## Features
+## ✨ Features
 
-- **Local Music Library** — scan folders, browse by artist/album/genre
-- **YouTube & SoundCloud** — search and stream directly
-- **Internet Radio** — browse by genre, save favorites
-- **Podcasts & Audiobooks** — discover and play long-form content
-- **For You** — genre-based discovery with smart queries
-- **Explore Trending** — billboard charts and new releases
-- **Playlists** — create, edit, and manage custom playlists
-- **Liked Songs** — heart any track, persists forever
-- **Downloads** — save YouTube/SoundCloud tracks to your music folder
-- **Audio Visualizer** — butterchurn presets with fullscreen mode
-- **Cross-Platform** — Linux (PipeWire), macOS (CoreAudio), Windows (WASAPI)
+| Feature | Description |
+|---------|-------------|
+| 🎵 **Local Library** | Scan and play your local music files |
+| 🌊 **Streaming** | YouTube & SoundCloud integration |
+| 📻 **Radio** | Thousands of internet radio stations |
+| 🎙️ **Podcasts** | Subscribe and listen to podcasts |
+| ❤️ **Liked Songs** | Save your favorites |
+| 📋 **Playlists** | Create and manage custom playlists |
+| 🔍 **Search** | Search your library and online sources |
+| 🖥️ **Cross-platform** | Windows, Linux, macOS |
+| 🔒 **Privacy First** | No telemetry, no tracking, data stays local |
 
-## Install
+---
 
-### Linux
+## 📸 Screenshots
+
+<div align="center">
+  
+  | Home | Now Playing | Library |
+  |------|-------------|---------|
+  | ![Home](screenshots/home.png) | ![Now Playing](screenshots/nowplaying.png) | ![Library](screenshots/library.png) |
+  
+  | Search | Albums | Settings |
+  |-------|--------|----------|
+  | ![Search](screenshots/search.png) | ![Albums](screenshots/albums.png) | ![Settings](screenshots/settings.png) |
+
+</div>
+
+---
+
+## 🚀 Download
+
+| Platform | Download |
+|----------|----------|
+| 🐧 Linux | [Download .deb](https://github.com/Neontoshi/Kyma/releases) |
+| 🪟 Windows | [Download .exe](https://github.com/Neontoshi/Kyma/releases) |
+| 🍎 macOS | [Download .dmg](https://github.com/Neontoshi/Kyma/releases) |
+
+*Or build from source (see below)*
+
+---
+
+## 🛠️ Building from Source
+
+### Prerequisites
+
+- **Rust** (latest stable)
+- **Node.js** (v18+)
+- **yt-dlp** (for streaming)
+
 ```bash
-# Requires: mpv, yt-dlp
-sudo apt install mpv yt-dlp
-cargo install --path Lauv_Backend
+# Install Rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Install yt-dlp
+pip install yt-dlp
+
+# Or on Linux:
+sudo apt install yt-dlp
