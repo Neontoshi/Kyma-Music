@@ -54,7 +54,7 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         with:
           projectPath: Kyma_Backend
-          args: --bundle deb,rpm
+          args: --bundles deb,rpm
 
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
@@ -93,7 +93,7 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         with:
           projectPath: Kyma_Backend
-          args: --bundle nsis,msi
+          args: --bundles nsis,msi
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
@@ -134,13 +134,13 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         with:
           projectPath: Kyma_Backend
-          args: --target x86_64-apple-darwin --bundle dmg,app
+          args: --target x86_64-apple-darwin --bundles dmg,app
 
       - name: Build Tauri app (macOS Apple Silicon)
         uses: tauri-apps/tauri-action@v0
         with:
           projectPath: Kyma_Backend
-          args: --target aarch64-apple-darwin --bundle dmg,app
+          args: --target aarch64-apple-darwin --bundles dmg,app
 
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
