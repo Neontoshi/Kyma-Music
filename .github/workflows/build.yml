@@ -149,9 +149,7 @@ jobs:
           name: kyma-macos
           path: |
             Kyma_Backend/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg
-            Kyma_Backend/target/x86_64-apple-darwin/release/bundle/macos/*.app
             Kyma_Backend/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg
-            Kyma_Backend/target/aarch64-apple-darwin/release/bundle/macos/*.app
 
   create-release:
     needs: [build-linux, build-windows, build-macos]
@@ -166,14 +164,17 @@ jobs:
         with:
           path: artifacts
 
+      - name: List downloaded artifacts
+        run: find artifacts -type f
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            artifacts/kyma-linux/*.deb
-            artifacts/kyma-linux/*.rpm
-            artifacts/kyma-windows/*.exe
-            artifacts/kyma-windows/*.msi
-            artifacts/kyma-macos/*.dmg
+            artifacts/**/*.deb
+            artifacts/**/*.rpm
+            artifacts/**/*.exe
+            artifacts/**/*.msi
+            artifacts/**/*.dmg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
