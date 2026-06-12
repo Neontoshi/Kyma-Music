@@ -36,9 +36,6 @@ jobs:
           toolchain: stable
           override: true
 
-      - name: Install Tauri CLI
-        run: cargo install tauri-cli
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -51,10 +48,15 @@ jobs:
           cd Kyma_Frontend
           npm ci
 
-      - name: Build Tauri app
+      - name: Build frontend
+        run: |
+          cd Kyma_Frontend
+          npm run build
+
+      - name: Build Tauri app (Linux)
         run: |
           cd Kyma_Backend
-          cargo tauri build
+          npx tauri build --bundle deb,rpm
 
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
@@ -62,7 +64,7 @@ jobs:
           name: kyma-linux
           path: |
             Kyma_Backend/target/release/bundle/deb/*.deb
-            Kyma_Backend/target/release/bundle/appimage/*.AppImage
+            Kyma_Backend/target/release/bundle/rpm/*.rpm
 
   build-windows:
     runs-on: windows-latest
@@ -77,9 +79,6 @@ jobs:
           toolchain: stable
           override: true
 
-      - name: Install Tauri CLI
-        run: cargo install tauri-cli
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -92,10 +91,15 @@ jobs:
           cd Kyma_Frontend
           npm ci
 
-      - name: Build Tauri app
+      - name: Build frontend
+        run: |
+          cd Kyma_Frontend
+          npm run build
+
+      - name: Build Tauri app (Windows)
         run: |
           cd Kyma_Backend
-          cargo tauri build
+          npx tauri build --bundle nsis,msi
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
@@ -119,9 +123,6 @@ jobs:
           override: true
           target: aarch64-apple-darwin
 
-      - name: Install Tauri CLI
-        run: cargo install tauri-cli
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -134,39 +135,34 @@ jobs:
           cd Kyma_Frontend
           npm ci
 
+      - name: Build frontend
+        run: |
+          cd Kyma_Frontend
+          npm run build
+
       - name: Install macOS dependencies
         run: |
           brew install cmake
-          brew install ffmpeg
 
-      - name: Build Tauri app (Intel)
+      - name: Build Tauri app (macOS Intel)
         run: |
           cd Kyma_Backend
-          cargo tauri build --target x86_64-apple-darwin
+          npx tauri build --target x86_64-apple-darwin --bundle dmg,app
 
-      - name: Build Tauri app (Apple Silicon)
+      - name: Build Tauri app (macOS Apple Silicon)
         run: |
           cd Kyma_Backend
-          cargo tauri build --target aarch64-apple-darwin
-
-      - name: Create universal binary (optional)
-        run: |
-          cd Kyma_Backend
-          # Combine Intel and ARM builds into a universal binary
-          lipo -create \
-            target/x86_64-apple-darwin/release/bundle/macos/kyma.app/Contents/MacOS/kyma \
-            target/aarch64-apple-darwin/release/bundle/macos/kyma.app/Contents/MacOS/kyma \
-            -output target/release/bundle/macos/kyma.app/Contents/MacOS/kyma 2>/dev/null || true
+          npx tauri build --target aarch64-apple-darwin --bundle dmg,app
 
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
         with:
           name: kyma-macos
           path: |
-            Kyma_Backend/target/release/bundle/macos/*.app
+            Kyma_Backend/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg
             Kyma_Backend/target/x86_64-apple-darwin/release/bundle/macos/*.app
+            Kyma_Backend/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg
             Kyma_Backend/target/aarch64-apple-darwin/release/bundle/macos/*.app
-            Kyma_Backend/target/release/bundle/dmg/*.dmg
 
   create-release:
     needs: [build-linux, build-windows, build-macos]
@@ -186,10 +182,9 @@ jobs:
         with:
           files: |
             artifacts/kyma-linux/*.deb
-            artifacts/kyma-linux/*.AppImage
+            artifacts/kyma-linux/*.rpm
             artifacts/kyma-windows/*.exe
             artifacts/kyma-windows/*.msi
             artifacts/kyma-macos/*.dmg
-            artifacts/kyma-macos/*.app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
