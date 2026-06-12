@@ -7,7 +7,7 @@ pub struct LrcLine {
     pub text: String,
 }
 
-const GENIUS_TOKEN: &str = "JzOn4sdKk7RBK5gHRqyleFxfX11UVwbci5iG2FSwmz3dFPHqXqO-BxOdwFHoHbum";
+const GENIUS_TOKEN: &str = "";
 
 #[tauri::command]
 pub async fn fetch_genius_lyrics(title: String, artist: String) -> Result<Vec<LrcLine>, String> {
