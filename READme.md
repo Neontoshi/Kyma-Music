@@ -9,7 +9,7 @@
 
 # Kyma
 
-**Music flows freely.**
+**Experience music waves at premium — for free.**
 
 *Local library · YouTube & SoundCloud · Radio · Podcasts*  
 *No subscriptions. No telemetry. Your data stays local.*
@@ -149,50 +149,16 @@ Kyma ships with multiple built-in themes. Switch between them anytime from Setti
 
 <div align="center">
 
-<!-- Horizontal scrollable theme gallery -->
-<div style="display: flex; overflow-x: auto; gap: 16px; padding: 12px 0; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
-
-<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
-  <img src="screenshots/themes/theme-midnight-purple.png" width="320" alt="Midnight Purple" />
-  <br /><sub><b>Midnight Purple</b></sub>
-</div>
-
-<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
-  <img src="screenshots/themes/theme-Spotlight.png" width="320" alt="Spotlight" />
-  <br /><sub><b>Spotlight</b></sub>
-</div>
-
-<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
-  <img src="screenshots/themes/theme-metal.png" width="320" alt="Metal" />
-  <br /><sub><b>Metal</b></sub>
-</div>
-
-<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
-  <img src="screenshots/themes/theme-rose-noir.png" width="320" alt="Rose Noir" />
-  <br /><sub><b>Neon Noir</b></sub>
-</div>
-
-<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
-  <img src="screenshots/themes/theme-forest-dark.png" width="320" alt="Forest Dark" />
-  <br /><sub><b>Forest Dark</b></sub>
-</div>
-
-<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
-  <img src="screenshots/themes/theme-sakura.png" width="320" alt="Sakura" />
-  <br /><sub><b>Sakura</b></sub>
-</div>
-
-<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
-  <img src="screenshots/themes/theme-arctic.png" width="320" alt="Arctic" />
-  <br /><sub><b>Arctic</b></sub>
-</div>
-
-<div style="flex: 0 0 auto; scroll-snap-align: start; text-align: center;">
-  <img src="screenshots/themes/theme-synthwave.png" width="320" alt="Synthwave" />
-  <br /><sub><b>Synthwave</b></sub>
-</div>
-
-</div>
+| Theme | Preview |
+|-------|---------|
+| 🟣 **Midnight Purple** | <img src="screenshots/themes/theme-midnight-purple.png" width="600" alt="Midnight Purple" /> |
+| 🌊 **Deep Ocean** | <img src="screenshots/themes/theme-spotlight.png" width="600" alt="Spotlight" /> |
+| 🥀 **Rose Noir** | <img src="screenshots/themes/theme-neon-noir.png" width="600" alt="Neon Noir" /> |
+| 🌲 **Forest Dark** | <img src="screenshots/themes/theme-forest-dark.png" width="600" alt="Forest Dark" /> |
+| ☀️ **Solar Flare** | <img src="screenshots/themes/theme-synthwave.png" width="600" alt="Synthwave" /> |
+| 🧊 **Arctic** | <img src="screenshots/themes/theme-arctic.png" width="600" alt="Arctic" /> |
+| 🟡 **Amber Dark** | <img src="screenshots/themes/theme-sakura.png" width="600" alt="Sakura" /> |
+| ⬛ **Monochrome** | <img src="screenshots/themes/theme-metal.png" width="600" alt="Metal" /> |
 
 </div>
 
