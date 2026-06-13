@@ -196,6 +196,8 @@ export const tauriCommands = {
   fetchListenbrainzStats: (user: string): Promise<string> =>
     handleInvoke("fetch_listenbrainz_stats", { user }),
 
+  getAppVersion: (): Promise<string> => invoke("get_app_version"),
+
   getLocalIP: (): Promise<string> => handleInvoke("get_local_ip"),
 
   // Play history

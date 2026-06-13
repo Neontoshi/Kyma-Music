@@ -97,6 +97,7 @@ pub fn run() {
             check_ytdlp,
             get_setting,
             set_setting,
+            get_app_version,
             get_local_ip,
             fetch_listenbrainz_stats,
             get_listenbrainz_recent,

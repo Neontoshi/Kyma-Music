@@ -97,15 +97,9 @@
     "longDescription": "Kyma - A feature-rich music player with YouTube and SoundCloud support"
   },
   "plugins": {
-    "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEZFNTg5QkQ2OEY1MDAxOTQKUldTVUFWQ1AxcHRZL2dGOEVvS1NCREk1a25MRktOZTc4aStrdWRUandOUkR0eGNrNXV0SVVEUDMK",
-      "endpoints": [
-        "https://github.com/Neontoshi/Kyma/releases/latest/download/latest.json"
-      ],
-      "windows": {
-        "installMode": "passive"
-      },
-      "dialog": true
+    "dialog": true,
+    "windows": {
+      "installMode": "passive"
     }
   }
 }

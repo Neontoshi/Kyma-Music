@@ -46,7 +46,9 @@ pub use playlist::{
     remove_playlist,
 };
 
-pub use settings::{fetch_listenbrainz_stats, get_local_ip, get_setting, set_setting};
+pub use settings::{
+    fetch_listenbrainz_stats, get_app_version, get_local_ip, get_setting, set_setting,
+};
 
 pub use radio::{
     get_popular_stations, get_recording_name, get_saved_stations, get_stations_by_genre,

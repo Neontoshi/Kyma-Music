@@ -63,8 +63,14 @@ const SettingsPage: React.FC = () => {
   const { selectedFont, setFont, saveToBackend } = useFontStore();
 
   // Updater
-  const { updateAvailable, updateVersion, checking, checkForUpdates } =
-    useUpdater();
+  const {
+    updateAvailable,
+    updateVersion,
+    updateUrl,
+    updateNotes,
+    checking,
+    checkForUpdates,
+  } = useUpdater();
 
   // State for all sections
   const [listenbrainzToken, setListenbrainzToken] = useState("");
@@ -422,6 +428,8 @@ const SettingsPage: React.FC = () => {
           <UpdatesSection
             updateAvailable={updateAvailable}
             updateVersion={updateVersion}
+            updateUrl={updateUrl}
+            updateNotes={updateNotes}
             checking={checking}
             checkForUpdates={checkForUpdates}
           />

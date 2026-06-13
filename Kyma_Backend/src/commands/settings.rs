@@ -98,6 +98,11 @@ pub async fn get_setting(
 }
 
 #[tauri::command]
+pub fn get_app_version() -> String {
+    env!("CARGO_PKG_VERSION").to_string()
+}
+
+#[tauri::command]
 pub async fn set_setting(
     key: String,
     value: String,
