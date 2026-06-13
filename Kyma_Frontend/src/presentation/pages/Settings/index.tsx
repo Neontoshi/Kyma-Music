@@ -344,6 +344,7 @@ const SettingsPage: React.FC = () => {
 
       {/* Scrollable Content */}
       <div
+        key={activeSection}
         style={{
           flex: 1,
           overflowY: "auto",

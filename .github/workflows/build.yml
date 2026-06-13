@@ -57,6 +57,11 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci --prefix Kyma_Frontend
 
+      - name: Write signing key to file
+        run: |
+          mkdir -p ~/.tauri
+          echo "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}" > ~/.tauri/kyma.key
+
       - name: Build Tauri app (Linux)
         uses: tauri-apps/tauri-action@v0
         with:
@@ -69,7 +74,7 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PATH: ~/.tauri/kyma.key
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
       - name: Upload Linux artifacts
@@ -107,6 +112,12 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci --prefix Kyma_Frontend
 
+      - name: Write signing key to file
+        run: |
+          New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.tauri"
+          echo "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}" > "$env:USERPROFILE\.tauri\kyma.key"
+        shell: pwsh
+
       - name: Build Tauri app (Windows)
         uses: tauri-apps/tauri-action@v0
         with:
@@ -119,7 +130,7 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PATH: $env:USERPROFILE\.tauri\kyma.key
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
       - name: Upload Windows artifacts
@@ -159,6 +170,11 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci --prefix Kyma_Frontend
 
+      - name: Write signing key to file
+        run: |
+          mkdir -p ~/.tauri
+          echo "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}" > ~/.tauri/kyma.key
+
       - name: Build Tauri app (macOS Intel)
         uses: tauri-apps/tauri-action@v0
         with:
@@ -171,7 +187,7 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PATH: ~/.tauri/kyma.key
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
       - name: Build Tauri app (macOS Apple Silicon)
@@ -186,7 +202,7 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PATH: ~/.tauri/kyma.key
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
       - name: Upload macOS artifacts
