@@ -98,7 +98,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDM5NTUyRjIzQkMxOUVEMDAKUldRQTdSbThJeTlWT2NybnJQbDJiTGpIRjJMY1ROV0gwdHQ2ZjlNZDhKSHVsNThaaCs1c0F0VTQK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEZFNTg5QkQ2OEY1MDAxOTQKUldTVUFWQ1AxcHRZL2dGOEVvS1NCREk1a25MRktOZTc4aStrdWRUandOUkR0eGNrNXV0SVVEUDMK",
       "endpoints": [
         "https://github.com/Neontoshi/Kyma/releases/latest/download/latest.json"
       ],
