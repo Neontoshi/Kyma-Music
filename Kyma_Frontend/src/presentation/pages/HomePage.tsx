@@ -209,7 +209,7 @@ const SectionHeader: React.FC<{
           fontWeight: 800,
           letterSpacing: "-0.02em",
           color: "var(--text)",
-          fontFamily: "'Syne', sans-serif",
+          fontFamily: "var(--font-family-base)", // Use CSS variable
         }}
       >
         {label}
@@ -217,7 +217,7 @@ const SectionHeader: React.FC<{
       {sub && (
         <span
           style={{
-            fontFamily: "'DM Mono', monospace",
+            fontFamily: "var(--font-family-mono)", // Use CSS variable without fallback
             fontSize: "9px",
             color: "var(--text3)",
             letterSpacing: "0.12em",
@@ -235,7 +235,7 @@ const SectionHeader: React.FC<{
           background: "none",
           border: "none",
           cursor: "pointer",
-          fontFamily: "'DM Mono', monospace",
+          fontFamily: "var(--font-family-mono)", // Use CSS variable without fallback
           fontSize: "9px",
           color: "var(--accent)",
           letterSpacing: "0.1em",
@@ -251,7 +251,6 @@ const SectionHeader: React.FC<{
     )}
   </div>
 );
-
 const CardRow: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div
     style={{
@@ -351,7 +350,7 @@ const MediaCard: React.FC<{
             backdropFilter: "blur(4px)",
             borderRadius: "4px",
             padding: "2px 6px",
-            fontFamily: "'DM Mono', monospace",
+            fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
             fontSize: "9px",
             fontWeight: 700,
             color: "#fff",
@@ -417,7 +416,7 @@ const MediaCard: React.FC<{
       style={{
         fontSize: "10px",
         color: "var(--text3)",
-        fontFamily: "'DM Mono', monospace",
+        fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
         marginTop: "2px",
         whiteSpace: "nowrap",
         overflow: "hidden",
@@ -464,7 +463,7 @@ const TrackRow: React.FC<{
     {index !== undefined && (
       <div
         style={{
-          fontFamily: "'DM Mono', monospace",
+          fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
           fontSize: "10px",
           color: isActive ? "var(--accent)" : "var(--text3)",
           textAlign: "center",
@@ -518,7 +517,7 @@ const TrackRow: React.FC<{
       {showTime && (
         <span
           style={{
-            fontFamily: "'DM Mono', monospace",
+            fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
             fontSize: "10px",
             color: "var(--text3)",
           }}
@@ -529,7 +528,7 @@ const TrackRow: React.FC<{
       {showPlays && (song.plays ?? 0) > 0 && (
         <span
           style={{
-            fontFamily: "'DM Mono', monospace",
+            fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
             fontSize: "9px",
             color: "var(--accent)",
             background: "rgba(124,106,245,0.1)",
@@ -834,7 +833,7 @@ const HomePage: React.FC = () => {
         <div
           style={{
             color: "var(--text2)",
-            fontFamily: "'DM Mono', monospace",
+            fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
             fontSize: 11,
           }}
         >
@@ -882,7 +881,7 @@ const HomePage: React.FC = () => {
         {/* HERO */}
         <div
           style={{
-            padding: "3rem 0 2.5rem",
+            padding: "3rem 1rem 2rem",
             display: "grid",
             gridTemplateColumns: "1fr auto",
             alignItems: "end",
@@ -895,7 +894,7 @@ const HomePage: React.FC = () => {
           <div>
             <div
               style={{
-                fontFamily: "'DM Mono', monospace",
+                fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
                 fontSize: "9px",
                 letterSpacing: "0.22em",
                 color: "var(--accent)",
@@ -919,11 +918,12 @@ const HomePage: React.FC = () => {
               style={{
                 fontSize: "clamp(2.4rem, 6vw, 4.5rem)",
                 fontWeight: 900,
-                lineHeight: 0.92,
+                lineHeight: 1.1, // Increased from 0.92 to prevent clipping
                 letterSpacing: "-0.03em",
                 color: "var(--text)",
-                fontFamily: "'Syne', sans-serif",
+                fontFamily: "var(--font-family-base, 'Syne', sans-serif)",
                 margin: 0,
+                overflow: "visible", // Add this
               }}
             >
               What are
@@ -934,14 +934,18 @@ const HomePage: React.FC = () => {
                     "linear-gradient(90deg, var(--accent), var(--accent2))",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
+                  display: "inline-block",
+                  padding: "0.1em 0 0.15em 0", // More padding on bottom for question mark
+                  margin: "-0.05em 0", // Negative margin to compensate visually
+                  lineHeight: 1.2,
                 }}
               >
-                we playing?
+                we playing
               </span>
             </h1>
             <div
               style={{
-                fontFamily: "'DM Mono', monospace",
+                fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
                 fontSize: "10px",
                 color: "var(--text3)",
                 marginTop: "1rem",
@@ -982,14 +986,14 @@ const HomePage: React.FC = () => {
                     fontWeight: 900,
                     color,
                     lineHeight: 1,
-                    fontFamily: "'Syne', sans-serif",
+                    fontFamily: "var(--font-family-base, 'Syne', sans-serif)",
                   }}
                 >
                   {val}
                 </div>
                 <div
                   style={{
-                    fontFamily: "'DM Mono', monospace",
+                    fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
                     fontSize: "8px",
                     letterSpacing: "0.15em",
                     textTransform: "uppercase",
@@ -1098,7 +1102,8 @@ const HomePage: React.FC = () => {
                   <span>{a.name}</span>
                   <span
                     style={{
-                      fontFamily: "'DM Mono', monospace",
+                      fontFamily:
+                        "var(--font-family-mono, 'DM Mono', monospace)",
                       fontSize: "9px",
                       color: "var(--text3)",
                     }}
@@ -1224,7 +1229,7 @@ const HomePage: React.FC = () => {
                 />
                 <div
                   style={{
-                    fontFamily: "'DM Mono', monospace",
+                    fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
                     fontSize: "10px",
                     color: "var(--text3)",
                   }}
@@ -1324,7 +1329,8 @@ const HomePage: React.FC = () => {
                       </div>
                       <div
                         style={{
-                          fontFamily: "'DM Mono', monospace",
+                          fontFamily:
+                            "var(--font-family-mono, 'DM Mono', monospace)",
                           fontSize: "9px",
                           color: "var(--text3)",
                           flexShrink: 0,
@@ -1598,7 +1604,8 @@ const HomePage: React.FC = () => {
                   <span>{a.name}</span>
                   <span
                     style={{
-                      fontFamily: "'DM Mono', monospace",
+                      fontFamily:
+                        "var(--font-family-mono, 'DM Mono', monospace)",
                       fontSize: "9px",
                       color: "var(--text3)",
                     }}

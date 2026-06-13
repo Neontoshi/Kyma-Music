@@ -11,6 +11,8 @@
     --surface: #0a0f1e;
     --surface2: #111827;
     --surface3: #1a2332;
+    --font-family-base: "Syne", sans-serif; /* ← ADD THIS */
+    --font-family-mono: "DM Mono", monospace; /* ADD THIS */
     --border: rgba(255, 255, 255, 0.04);
     --border2: rgba(255, 255, 255, 0.08);
     --text: #e2e8f0;
@@ -68,7 +70,7 @@
 body {
     background: var(--bg);
     color: var(--text);
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     height: 100vh;
     height: 100dvh; /* dynamic viewport for mobile browsers */
     overflow: hidden;
@@ -113,7 +115,7 @@ body {
 .nav-label {
     font-size: 10px;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     letter-spacing: 2px;
     text-transform: uppercase;
     padding: 0 8px;
@@ -158,7 +160,7 @@ body {
     background: var(--surface3);
     color: var(--text3);
     font-size: 10px;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     padding: 2px 6px;
     border-radius: 99px;
 }
@@ -198,7 +200,7 @@ body {
 .playlist-count {
     font-size: 11px;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
 }
 
 .user-profile {
@@ -239,7 +241,7 @@ body {
 .user-plan {
     font-size: 10px;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
 }
 
 .user-settings {
@@ -320,7 +322,8 @@ body {
     border-radius: var(--radius-sm);
     padding: 10px 12px 10px 36px;
     color: var(--text);
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 13px;
     outline: none;
     transition: border-color 0.15s;
@@ -422,7 +425,7 @@ body {
 .section-sub {
     font-size: 12px;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     margin-top: 4px;
 }
 
@@ -442,7 +445,7 @@ body {
 .genre-chip {
     white-space: nowrap;
     font-size: 12px;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     padding: 6px 16px;
     border-radius: 99px;
     border: 1px solid var(--border2);
@@ -475,7 +478,7 @@ body {
 
 .sort-chip {
     font-size: 11px;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     color: var(--text3);
     padding: 4px 12px;
     border-radius: 99px;
@@ -518,7 +521,7 @@ body {
 
 .song-num {
     font-size: 12px;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     color: var(--text3);
     text-align: center;
 }
@@ -585,7 +588,7 @@ body {
 
 .song-dur {
     font-size: 12px;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     color: var(--text3);
 }
 
@@ -822,7 +825,7 @@ body {
 .np-lyrics-label {
     font-size: 10px;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     text-transform: uppercase;
     letter-spacing: 2px;
 }
@@ -830,7 +833,7 @@ body {
 .np-lyrics-badge {
     font-size: 10px;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     background: var(--surface2);
     padding: 2px 10px;
     border-radius: 99px;
@@ -1099,7 +1102,7 @@ body {
     display: flex;
     justify-content: space-between;
     font-size: 11px;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     color: var(--text3);
 }
 
@@ -1149,7 +1152,7 @@ body {
 
 .vol-label {
     font-size: 11px;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     color: var(--text3);
     min-width: 24px;
 }
@@ -1196,7 +1199,7 @@ body {
 .queue-label {
     font-size: 11px;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 4px;
@@ -1283,7 +1286,7 @@ body {
 .stat-lbl {
     font-size: 10px;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-top: 4px;
@@ -1295,7 +1298,7 @@ body {
 
 .tag {
     font-size: 11px;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     background: var(--surface2);
     color: var(--text2);
     padding: 4px 10px;
@@ -1325,7 +1328,7 @@ body {
 .logo-sub {
     font-size: 9px;
     color: var(--accent2);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     letter-spacing: 2px;
     margin-top: 4px;
     text-shadow: 0 0 20px rgba(192, 132, 252, 0.3);
@@ -1412,7 +1415,7 @@ body {
 .home-greeting-sub {
     font-size: 13px;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
 }
 
 .home-stats-strip {
@@ -1436,7 +1439,7 @@ body {
 .home-stat-lbl {
     font-size: 9px;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -1558,7 +1561,7 @@ body {
 .home-row-rank {
     width: 32px;
     font-size: 13px;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     color: var(--text3);
     text-align: center;
 }
@@ -1594,7 +1597,7 @@ body {
 .home-row-plays {
     font-size: 10px;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
 }
 
 .yt-badge {
@@ -1607,7 +1610,7 @@ body {
     border-radius: 3px;
     margin-left: 6px;
     vertical-align: middle;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
 }
 
 /* ═══════════════════════════════════════════════════
@@ -2344,7 +2347,7 @@ body {
 }
 
 .artists-eyebrow {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     letter-spacing: 0.2em;
     color: var(--accent);
@@ -2366,7 +2369,7 @@ body {
     line-height: 0.9;
     letter-spacing: -0.02em;
     margin: 0;
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
 }
 
 .artists-title span {
@@ -2389,7 +2392,7 @@ body {
     background: none;
     border: none;
     color: var(--text);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 12px;
     outline: none;
     width: 180px;
@@ -2436,7 +2439,7 @@ body {
 }
 
 .artist-sub {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     color: var(--text3);
     margin-top: 4px;
@@ -2461,7 +2464,8 @@ body {
     border-radius: 100px;
     color: var(--text2);
     cursor: pointer;
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 12px;
     font-weight: 600;
     margin-top: 2rem;
@@ -2495,7 +2499,7 @@ body {
 }
 
 .artist-label {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     letter-spacing: 0.2em;
     color: var(--accent);
@@ -2515,7 +2519,7 @@ body {
     line-height: 1;
     letter-spacing: -0.02em;
     margin: 0;
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
 }
 
 .artist-stats {
@@ -2531,7 +2535,7 @@ body {
 }
 
 .artist-stat-lbl {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 9px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -2544,7 +2548,8 @@ body {
     border-radius: 100px;
     color: #fff;
     cursor: pointer;
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 14px;
     font-weight: 700;
     display: flex;
@@ -2607,7 +2612,7 @@ body {
 }
 
 .artist-song-dur {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 12px;
     color: var(--text3);
     text-align: right;
@@ -2618,7 +2623,7 @@ body {
 }
 
 .artist-song-badge {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 8px;
     letter-spacing: 0.05em;
     padding: 2px 6px;
@@ -2644,7 +2649,7 @@ body {
     text-align: center;
     padding: 3rem;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
 }
 
 .artist-loading-more {
@@ -2656,7 +2661,7 @@ body {
     text-align: center;
     padding: 1.5rem;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
 }
 
@@ -2664,7 +2669,7 @@ body {
     padding: 60px;
     text-align: center;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
 }
 
 .artist-unfollow-btn {
@@ -2674,7 +2679,8 @@ body {
     border: 1px solid var(--border);
     color: var(--text3);
     cursor: pointer;
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 11px;
     font-weight: 600;
 }
@@ -2700,7 +2706,8 @@ body {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
 }
 
@@ -2741,7 +2748,8 @@ body {
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     color: var(--text);
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 14px;
     outline: none;
     margin-bottom: 12px;
@@ -2787,7 +2795,7 @@ body {
 }
 
 .modal-artist-source {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 9px;
     color: var(--text3);
 }
@@ -2799,7 +2807,8 @@ body {
     border: none;
     color: #fff;
     cursor: pointer;
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 11px;
     font-weight: 600;
 }
@@ -2863,7 +2872,7 @@ body {
 }
 
 .ap-page-eyebrow {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -2885,7 +2894,7 @@ body {
     font-size: 1rem;
     font-weight: 500;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: 99px;
@@ -2919,7 +2928,7 @@ body {
     border: none;
     outline: none;
     color: var(--text);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 12px;
     width: 160px;
 }
@@ -2937,7 +2946,8 @@ body {
     border: none;
     border-radius: var(--radius-sm);
     color: #fff;
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
@@ -3026,7 +3036,7 @@ body {
 }
 
 .ap-card-meta {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 9px;
     color: var(--text3);
     margin-top: 3px;
@@ -3060,7 +3070,7 @@ body {
 .ap-empty-sub {
     font-size: 12px;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
 }
 
 /* ── Detail View ── */
@@ -3088,7 +3098,8 @@ body {
     border: 1px solid var(--border);
     border-radius: 99px;
     color: var(--text2);
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -3149,7 +3160,7 @@ body {
 }
 
 .ap-hero-eyebrow {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     letter-spacing: 0.25em;
     text-transform: uppercase;
@@ -3191,7 +3202,7 @@ body {
 }
 
 .ap-stat-lbl {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 9px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -3217,7 +3228,8 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 99px;
     color: #fff;
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 13px;
     font-weight: 700;
     cursor: pointer;
@@ -3232,7 +3244,7 @@ body {
 }
 
 .ap-play-count {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     background: rgba(255, 255, 255, 0.15);
     border-radius: 99px;
@@ -3245,7 +3257,8 @@ body {
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: rgba(255, 255, 255, 0.6);
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -3271,7 +3284,7 @@ body {
     padding: 0 12px 8px;
     border-bottom: 1px solid var(--border);
     margin-bottom: 4px;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -3300,7 +3313,7 @@ body {
 }
 
 .ap-track-num {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 12px;
     color: var(--text3);
     text-align: center;
@@ -3350,7 +3363,7 @@ body {
 }
 
 .ap-track-dur {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 12px;
     color: var(--text3);
     text-align: right;
@@ -3361,7 +3374,7 @@ body {
 }
 
 .ap-badge {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 8px;
     letter-spacing: 0.05em;
     padding: 2px 6px;
@@ -3394,7 +3407,7 @@ body {
     gap: 16px;
     padding: 4rem 2rem;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 12px;
 }
 
@@ -3503,7 +3516,7 @@ body {
     gap: 12px;
     padding: 1.5rem 12px;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     letter-spacing: 0.1em;
 }
@@ -3535,7 +3548,8 @@ body {
     border: 1px solid var(--border2);
     border-radius: var(--radius);
     overflow: hidden;
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     box-shadow:
         0 32px 80px rgba(0, 0, 0, 0.7),
         0 0 0 1px var(--border);
@@ -3602,7 +3616,8 @@ body {
     border: none;
     outline: none;
     color: var(--text);
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 14px;
 }
 
@@ -3652,7 +3667,7 @@ body {
 }
 
 .ap-modal-artist-src {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 9px;
     color: var(--text3);
     margin-top: 2px;
@@ -3664,7 +3679,8 @@ body {
     background: var(--accent);
     border: none;
     color: #fff;
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 11px;
     font-weight: 700;
     cursor: pointer;
@@ -3693,7 +3709,7 @@ body {
     padding: 28px;
     color: var(--text3);
     font-size: 12px;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
 }
 
 /* ── Keyframes ── */
@@ -3851,7 +3867,7 @@ select:focus {
     flex-direction: column;
 }
 .ex-eyebrow {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     letter-spacing: 0.25em;
     text-transform: uppercase;
@@ -3859,7 +3875,8 @@ select:focus {
     margin-bottom: 4px;
 }
 .ex-title {
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 2rem;
     font-weight: 800;
     letter-spacing: -0.03em;
@@ -3919,7 +3936,8 @@ select:focus {
     border-bottom: 2px solid transparent;
     margin-bottom: -1px;
     color: var(--text3);
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -3948,7 +3966,8 @@ select:focus {
     border-bottom: 2px solid transparent;
     color: var(--text3);
     cursor: pointer;
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 13px;
     font-weight: 600;
     transition: all 0.15s;
@@ -3987,7 +4006,7 @@ select:focus {
     font-weight: 700;
 }
 .ex-strip-count {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     color: var(--text3);
     margin-top: 2px;
@@ -4111,7 +4130,7 @@ select:focus {
     position: absolute;
     top: 8px;
     right: 8px;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 8px;
     letter-spacing: 0.05em;
     padding: 2px 7px;
@@ -4147,7 +4166,7 @@ select:focus {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
 }
 .ex-skeleton {
     border-radius: var(--radius);
@@ -4207,7 +4226,7 @@ select:focus {
     background: var(--bg);
 }
 .ab-eyebrow {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     letter-spacing: 0.25em;
     text-transform: uppercase;
@@ -4215,7 +4234,8 @@ select:focus {
     margin-bottom: 4px;
 }
 .ab-title {
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 2rem;
     font-weight: 800;
     letter-spacing: -0.03em;
@@ -4241,7 +4261,8 @@ select:focus {
     border-bottom: 2px solid transparent;
     margin-bottom: -1px;
     color: var(--text3);
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -4274,7 +4295,7 @@ select:focus {
     background: none;
     border: none;
     color: var(--text);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 12px;
     outline: none;
     width: 100%;
@@ -4294,7 +4315,7 @@ select:focus {
     padding: 0 12px 8px;
     border-bottom: 1px solid var(--border);
     margin-bottom: 4px;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -4316,13 +4337,13 @@ select:focus {
     border-color: rgba(124, 106, 245, 0.18);
 }
 .ab-track-num {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 12px;
     color: var(--text3);
     text-align: center;
 }
 .ab-track-dur {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 11px;
     color: var(--text3);
     text-align: right;
@@ -4371,7 +4392,7 @@ select:focus {
     background: var(--bg);
 }
 .pod-eyebrow {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     letter-spacing: 0.25em;
     text-transform: uppercase;
@@ -4379,7 +4400,8 @@ select:focus {
     margin-bottom: 4px;
 }
 .pod-title {
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 2rem;
     font-weight: 800;
     letter-spacing: -0.03em;
@@ -4405,7 +4427,8 @@ select:focus {
     border-bottom: 2px solid transparent;
     margin-bottom: -1px;
     color: var(--text3);
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -4438,7 +4461,7 @@ select:focus {
     background: none;
     border: none;
     color: var(--text);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 12px;
     outline: none;
     width: 100%;
@@ -4458,7 +4481,7 @@ select:focus {
     padding: 0 12px 8px;
     border-bottom: 1px solid var(--border);
     margin-bottom: 4px;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -4480,13 +4503,13 @@ select:focus {
     border-color: rgba(124, 106, 245, 0.18);
 }
 .pod-track-num {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 12px;
     color: var(--text3);
     text-align: center;
 }
 .pod-track-dur {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 11px;
     color: var(--text3);
     text-align: right;
@@ -4535,7 +4558,8 @@ select:focus {
     align-items: center;
     justify-content: center;
     background: var(--bg);
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     padding: 40px;
     overflow: hidden;
     position: relative;
@@ -4653,7 +4677,7 @@ select:focus {
 }
 .onb-form-sub {
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 11px;
     letter-spacing: 0.08em;
     margin: 0;
@@ -4674,7 +4698,7 @@ select:focus {
     gap: 6px;
 }
 .onb-label {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -4687,7 +4711,8 @@ select:focus {
     border: 1.5px solid var(--border);
     border-radius: 10px;
     color: var(--text);
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 14px;
     outline: none;
     transition:
@@ -4701,7 +4726,7 @@ select:focus {
     background: var(--surface3);
 }
 .onb-input-mono {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 13px;
 }
 
@@ -4723,14 +4748,14 @@ select:focus {
     gap: 10px;
 }
 .onb-ytdlp-title {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 14px;
     font-weight: 600;
     color: var(--text);
     flex: 1;
 }
 .onb-ytdlp-status {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     letter-spacing: 0.05em;
     padding: 4px 10px;
@@ -4761,7 +4786,7 @@ select:focus {
 }
 .onb-ytdlp-cmd {
     flex: 1;
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 12px;
     color: var(--accent2);
     user-select: all;
@@ -4793,7 +4818,7 @@ select:focus {
     background: var(--surface2);
     border: 1px solid var(--border);
     color: var(--text2);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 11px;
     cursor: pointer;
     transition: all 0.15s;
@@ -4819,7 +4844,8 @@ select:focus {
     border: none;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
     color: #fff;
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
@@ -4871,7 +4897,7 @@ select:focus {
     background: none;
     border: none;
     color: var(--text3);
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 11px;
     cursor: pointer;
     letter-spacing: 0.05em;
@@ -5017,7 +5043,7 @@ select:focus {
 }
 
 .vol-popover-label {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     color: var(--accent);
     letter-spacing: 0.05em;
@@ -5057,7 +5083,7 @@ select:focus {
 }
 
 .vol-mute-label {
-    font-family: "DM Mono", monospace;
+    font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 9px;
     color: var(--text3);
     letter-spacing: 0.05em;
