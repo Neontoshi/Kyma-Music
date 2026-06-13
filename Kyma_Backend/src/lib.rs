@@ -15,10 +15,16 @@ use crate::error::KymaError;
 use commands::*;
 use state::app_state::AppState;
 use tauri::Manager;
-use tauri_plugin_window_state;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    if cfg!(target_os = "linux") {
+        std::env::set_var("NO_AT_BRIDGE", "1");
+        std::env::set_var("WEBKIT_DISABLE_COMPOSITING_MODE", "1");
+        std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+        std::env::set_var("WEBKIT_DISABLE_THREADED_RENDERING", "1");
+    }
+
     logging::init();
     logging::log_event("INFO", "APP", "Kyma started");
 
@@ -35,6 +41,7 @@ pub fn run() {
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .setup(|app| {
             let app_handle = app.handle().clone();
             let app_state = tauri::async_runtime::block_on(AppState::new(app_handle.clone()));

@@ -23,6 +23,7 @@
     "core:tray:default",
     "core:menu:default",
     "notification:default",
-    "dialog:default"
+    "dialog:default",
+    "updater:default"
   ]
 }

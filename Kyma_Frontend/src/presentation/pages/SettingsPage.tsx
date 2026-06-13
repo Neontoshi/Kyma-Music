@@ -5,6 +5,9 @@ import { usePlayerStore } from "../stores/playerStore";
 import { themes } from "../stores/themeDefs";
 import QRCode from "qrcode";
 import { invoke } from "@tauri-apps/api/core";
+import { logger } from "../../services/logger";
+import { useFontStore, FONT_OPTIONS } from "../stores/fontStore";
+import { useUpdater } from "../hooks/useUpdater";
 
 //  Types
 type NavSection =
@@ -14,7 +17,8 @@ type NavSection =
   | "appearance"
   | "cast"
   | "integrations"
-  | "logs";
+  | "logs"
+  | "updates";
 
 //  Custom Toggle Component
 const Toggle: React.FC<{
@@ -24,7 +28,13 @@ const Toggle: React.FC<{
   <button
     role="switch"
     aria-checked={checked}
-    onClick={() => onChange(!checked)}
+    onClick={() => {
+      logger.logUI("SettingsPage", "toggle_click", {
+        setting: "toggle",
+        newState: !checked,
+      });
+      onChange(!checked);
+    }}
     style={{
       position: "relative",
       width: "44px",
@@ -171,7 +181,14 @@ const StyledSelect: React.FC<{
   <div style={{ position: "relative" }}>
     <select
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={(e) => {
+        logger.logUI("SettingsPage", "select_change", {
+          setting: "select",
+          from: value,
+          to: e.target.value,
+        });
+        onChange(e.target.value);
+      }}
       style={{
         appearance: "none",
         WebkitAppearance: "none",
@@ -389,6 +406,7 @@ const navItems: {
     sub: "Last.fm · ListenBrainz",
   },
   { id: "logs", icon: "📋", label: "Logs", sub: "Debug & export" },
+  { id: "updates", icon: "🔄", label: "Updates", sub: "Check for new version" },
 ];
 
 //  Main Component
@@ -399,6 +417,13 @@ const SettingsPage: React.FC = () => {
   const playerVolume = usePlayerStore((s) => s.volume);
   const setPlayerVolume = usePlayerStore((s) => s.setVolume);
   const [defaultVolume, setDefaultVolume] = useState(playerVolume);
+
+  // Font store
+  const { selectedFont, setFont, saveToBackend } = useFontStore();
+
+  // Updater
+  const { updateAvailable, updateVersion, checking, checkForUpdates } =
+    useUpdater();
 
   // API Settings
   const [listenbrainzToken, setListenbrainzToken] = useState("");
@@ -520,6 +545,15 @@ const SettingsPage: React.FC = () => {
   };
 
   const handleSave = async () => {
+    logger.logUI("SettingsPage", "save_settings", {
+      defaultVolume,
+      audioQuality,
+      autoScan,
+      theme: localTheme,
+      fontSize,
+      selectedFont,
+    });
+
     await tauriCommands.setSetting("default_volume", defaultVolume.toString());
     await tauriCommands.setSetting("listenbrainz_token", listenbrainzToken);
     await tauriCommands.setSetting("listenbrainz_user", listenbrainzUser);
@@ -542,10 +576,36 @@ const SettingsPage: React.FC = () => {
     setThemeStore(localTheme);
     await tauriCommands.setSetting("font_size", fontSize);
 
+    // Save font preference to backend via store
+    await saveToBackend();
+
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   };
+
+  const handleSectionChange = (section: NavSection) => {
+    logger.logUI("SettingsPage", "tab_change", {
+      from: activeSection,
+      to: section,
+    });
+    setActiveSection(section);
+  };
+
+  const handleFontChange = (fontValue: string) => {
+    logger.logUI("SettingsPage", "font_change", {
+      from: selectedFont,
+      to: fontValue,
+    });
+    setFont(fontValue);
+  };
+
+  const handleManualUpdateCheck = async () => {
+    logger.logUI("SettingsPage", "manual_update_check", {});
+    await checkForUpdates();
+  };
+
   const exportLogs = async () => {
+    logger.logUI("SettingsPage", "export_logs", {});
     setIsExportingLogs(true);
     try {
       const logs = await tauriCommands.readLogs(5000);
@@ -569,7 +629,9 @@ const SettingsPage: React.FC = () => {
       setIsExportingLogs(false);
     }
   };
+
   const copyLogsToClipboard = async () => {
+    logger.logUI("SettingsPage", "copy_logs", {});
     setIsExportingLogs(true);
     try {
       const logs = await tauriCommands.readLogs(1000);
@@ -584,6 +646,7 @@ const SettingsPage: React.FC = () => {
   };
 
   const viewLogs = async () => {
+    logger.logUI("SettingsPage", "view_logs", {});
     setIsExportingLogs(true);
     try {
       const logs = await tauriCommands.readLogs(200);
@@ -600,6 +663,7 @@ const SettingsPage: React.FC = () => {
   };
 
   const addScanFolder = async () => {
+    logger.logUI("SettingsPage", "add_scan_folder", {});
     try {
       const { open } = await import("@tauri-apps/plugin-dialog");
       const selected = await open({
@@ -620,6 +684,7 @@ const SettingsPage: React.FC = () => {
   };
 
   const selectDownloadFolder = async () => {
+    logger.logUI("SettingsPage", "select_download_folder", {});
     try {
       const { open } = await import("@tauri-apps/plugin-dialog");
       const selected = await open({
@@ -636,6 +701,7 @@ const SettingsPage: React.FC = () => {
   };
 
   const removeScanFolder = (folder: string) => {
+    logger.logUI("SettingsPage", "remove_scan_folder", { folder });
     setScanFolders(scanFolders.filter((f) => f !== folder));
   };
 
@@ -1051,6 +1117,66 @@ const SettingsPage: React.FC = () => {
             accent="rgba(192,132,252,0.1)"
           />
           <div style={{ padding: "12px 24px 20px" }}>
+            {/* Font Selection */}
+            <div style={{ marginBottom: "24px" }}>
+              <div
+                style={{
+                  fontSize: "10px",
+                  fontFamily: "'DM Mono', monospace",
+                  color: "var(--text3)",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  marginBottom: "10px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
+              >
+                <span>🔤</span> Font Family
+              </div>
+              <StyledSelect
+                value={selectedFont}
+                onChange={handleFontChange}
+                options={FONT_OPTIONS}
+              />
+              <div
+                className="font-preview-text"
+                style={{
+                  marginTop: "8px",
+                  padding: "8px 12px",
+                  background: "var(--surface2)",
+                  borderRadius: "8px",
+                  fontSize: "12px",
+                  color: "var(--text2)",
+                  transition: "font-family 0.2s ease",
+                  fontFamily: FONT_OPTIONS.find((f) => f.value === selectedFont)
+                    ?.fontFamily,
+                }}
+              >
+                The quick brown fox jumps over the lazy dog — 1234567890
+              </div>
+              <div
+                style={{
+                  marginTop: "6px",
+                  fontSize: "9px",
+                  color: "var(--text3)",
+                  fontFamily: "'DM Mono', monospace",
+                  letterSpacing: "0.03em",
+                }}
+              >
+                Preview:{" "}
+                <span
+                  style={{
+                    fontFamily: FONT_OPTIONS.find(
+                      (f) => f.value === selectedFont,
+                    )?.fontFamily,
+                  }}
+                >
+                  Aa Bb Cc
+                </span>
+              </div>
+            </div>
+
             <div style={{ marginBottom: "20px" }}>
               {/*  Dark Themes  */}
               <div
@@ -1084,6 +1210,10 @@ const SettingsPage: React.FC = () => {
                       <button
                         key={t.id}
                         onClick={() => {
+                          logger.logUI("SettingsPage", "theme_change", {
+                            from: localTheme,
+                            to: t.id,
+                          });
                           setLocalTheme(t.id);
                           setThemeStore(t.id);
                         }}
@@ -1165,6 +1295,10 @@ const SettingsPage: React.FC = () => {
                       <button
                         key={t.id}
                         onClick={() => {
+                          logger.logUI("SettingsPage", "theme_change", {
+                            from: localTheme,
+                            to: t.id,
+                          });
                           setLocalTheme(t.id);
                           setThemeStore(t.id);
                         }}
@@ -1218,11 +1352,16 @@ const SettingsPage: React.FC = () => {
             <SettingRow
               label="Font Size"
               desc="Interface text scale"
-              last
               control={
                 <StyledSelect
                   value={fontSize}
-                  onChange={setFontSize}
+                  onChange={(v) => {
+                    logger.logUI("SettingsPage", "font_size_change", {
+                      from: fontSize,
+                      to: v,
+                    });
+                    setFontSize(v);
+                  }}
                   options={[
                     { value: "small", label: "Small" },
                     { value: "medium", label: "Medium" },
@@ -1342,6 +1481,9 @@ const SettingsPage: React.FC = () => {
                   </span>
                   <button
                     onClick={() => {
+                      logger.logUI("SettingsPage", "copy_cast_url", {
+                        ip: localIP,
+                      });
                       navigator.clipboard.writeText(`http://${localIP}:1421`);
                       setCopyLabel("✓ Copied");
                       setTimeout(() => setCopyLabel("Copy"), 1500);
@@ -1732,6 +1874,182 @@ const SettingsPage: React.FC = () => {
         </SectionCard>
       </div>
     ),
+
+    updates: (
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <SectionCard>
+          <SectionHead
+            icon="🔄"
+            title="Software Updates"
+            desc="Check for new versions"
+            accent="rgba(74,222,128,0.1)"
+            badge={updateAvailable ? "Update Available" : "Up to Date"}
+          />
+          <div style={{ padding: "20px 24px" }}>
+            <div
+              style={{
+                marginBottom: "20px",
+                padding: "12px 16px",
+                background: updateAvailable
+                  ? "rgba(74,222,128,0.08)"
+                  : "rgba(124,106,245,0.05)",
+                border: updateAvailable
+                  ? "1px solid rgba(74,222,128,0.25)"
+                  : "1px solid rgba(124,106,245,0.12)",
+                borderRadius: "12px",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "11px",
+                  fontFamily: "'DM Mono', monospace",
+                  color: "var(--text3)",
+                  marginBottom: "8px",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                Current Version
+              </div>
+              <div
+                style={{
+                  fontSize: "14px",
+                  fontFamily: "'Syne', sans-serif",
+                  fontWeight: 600,
+                  color: "var(--text)",
+                }}
+              >
+                Kyma v1.0.0
+              </div>
+              {updateAvailable && (
+                <div
+                  style={{
+                    marginTop: "12px",
+                    padding: "8px 12px",
+                    background: "rgba(74,222,128,0.12)",
+                    borderRadius: "8px",
+                    fontSize: "12px",
+                    color: "#4ade80",
+                    fontFamily: "'DM Mono', monospace",
+                  }}
+                >
+                  ✨ Version {updateVersion} is ready to install!
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={handleManualUpdateCheck}
+              disabled={checking}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "12px",
+                width: "100%",
+                padding: "14px 18px",
+                background: updateAvailable
+                  ? "linear-gradient(135deg, #4ade80, #22c55e)"
+                  : "linear-gradient(135deg, var(--accent), var(--accent2))",
+                border: "none",
+                borderRadius: "12px",
+                cursor: checking ? "wait" : "pointer",
+                transition: "all 0.2s",
+                color: "#fff",
+                fontFamily: "'Syne', sans-serif",
+                fontSize: "14px",
+                fontWeight: 600,
+                opacity: checking ? 0.6 : 1,
+              }}
+              onMouseEnter={(e) => {
+                if (!checking && !updateAvailable) {
+                  e.currentTarget.style.opacity = "0.9";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!checking) {
+                  e.currentTarget.style.opacity = "1";
+                }
+              }}
+            >
+              {checking ? (
+                <>
+                  <div
+                    className="ap-spinner ap-spinner--sm"
+                    style={{
+                      width: "16px",
+                      height: "16px",
+                      border: "2px solid rgba(255,255,255,0.3)",
+                      borderTopColor: "#fff",
+                    }}
+                  />
+                  <span>Checking for updates...</span>
+                </>
+              ) : updateAvailable ? (
+                <>
+                  <span>⬇️</span>
+                  <span>Download & Install Update</span>
+                </>
+              ) : (
+                <>
+                  <span>✅</span>
+                  <span>Check for Updates</span>
+                </>
+              )}
+            </button>
+
+            {!updateAvailable && (
+              <div
+                style={{
+                  marginTop: "16px",
+                  padding: "8px 12px",
+                  textAlign: "center",
+                  fontSize: "10px",
+                  color: "var(--text3)",
+                  fontFamily: "'DM Mono', monospace",
+                }}
+              >
+                You're running the latest version of Kyma.
+              </div>
+            )}
+
+            <div
+              style={{
+                marginTop: "20px",
+                padding: "12px 16px",
+                background: "rgba(255,107,53,0.05)",
+                border: "1px solid rgba(255,107,53,0.15)",
+                borderRadius: "10px",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "10px",
+                  fontFamily: "'DM Mono', monospace",
+                  color: "#ff6b35",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  marginBottom: "6px",
+                }}
+              >
+                📌 About Updates
+              </div>
+              <div
+                style={{
+                  fontSize: "11px",
+                  color: "var(--text2)",
+                  fontFamily: "'DM Mono', monospace",
+                  lineHeight: 1.5,
+                }}
+              >
+                Updates are checked automatically when you launch Kyma. You can
+                also manually check here. Updates will be downloaded and
+                installed automatically.
+              </div>
+            </div>
+          </div>
+        </SectionCard>
+      </div>
+    ),
   };
 
   return (
@@ -1806,7 +2124,7 @@ const SettingsPage: React.FC = () => {
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveSection(item.id)}
+                onClick={() => handleSectionChange(item.id)}
                 style={{
                   display: "flex",
                   flexDirection: "column",
@@ -1878,7 +2196,7 @@ const SettingsPage: React.FC = () => {
         {panels[activeSection]}
 
         {/*  Save Row - Only show for non-logs sections */}
-        {activeSection !== "logs" && (
+        {activeSection !== "logs" && activeSection !== "updates" && (
           <div
             style={{
               display: "flex",

@@ -16,6 +16,7 @@
         "width": 1200,
         "height": 800,
         "resizable": true,
+        "devtools": true,
         "fullscreen": false,
         "center": true,
         "minWidth": 800,
@@ -23,7 +24,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' http: https: blob:; connect-src 'self' http: https:; script-src 'self'; worker-src 'self' blob:",
+      "csp": "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' http: https: blob:; connect-src 'self' http: https:; script-src 'self' 'unsafe-eval' 'sha256-g9NhBbsrSYUfYsmcZ7aH2WmCSiRffa1mm3JNcUyv/D8=' 'sha256-seOLJKfd2eqykoD35idXh9pr601tJUt7vBZjEBJ02LE=' 'sha256-I0y9HqrFVSnioccGMnKLTC2SFnDQicjMKSqdMzhxLgU=' 'sha256-bodiZ7fSWhrJIKsCy67FC8fggkUa8dYPfk+qGSh3A8E='; worker-src 'self' blob:",
       "dangerousDisableAssetCspModification": false
     }
   },
@@ -94,5 +95,17 @@
     "category": "Music",
     "shortDescription": "A modern cross-platform music player",
     "longDescription": "Kyma - A feature-rich music player with YouTube and SoundCloud support"
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDM5NTUyRjIzQkMxOUVEMDAKUldRQTdSbThJeTlWT2NybnJQbDJiTGpIRjJMY1ROV0gwdHQ2ZjlNZDhKSHVsNThaaCs1c0F0VTQK",
+      "endpoints": [
+        "https://github.com/Neontoshi/Kyma/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      },
+      "dialog": true
+    }
   }
 }

@@ -1,8 +1,68 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import butterchurn from "butterchurn";
-import butterchurnPresets from "butterchurn-presets";
 import { listen } from "@tauri-apps/api/event";
+
+// Dynamically import presets to ensure they're included in production build
+let presetsCache: Record<string, unknown> | null = null;
+let presetNamesCache: string[] = [];
+
+// Helper to load presets (handles different module formats)
+async function loadPresets(): Promise<{
+  presets: Record<string, unknown>;
+  names: string[];
+}> {
+  console.log("[Butterchurn] Loading presets...");
+
+  if (presetsCache && presetNamesCache.length > 0) {
+    console.log(
+      `[Butterchurn] Using cached presets: ${presetNamesCache.length}`,
+    );
+    return { presets: presetsCache, names: presetNamesCache };
+  }
+
+  try {
+    const module = await import("butterchurn-presets");
+    console.log("[Butterchurn] Module keys:", Object.keys(module));
+
+    let presetsData = null;
+    if (typeof module.getPresets === "function") {
+      console.log("[Butterchurn] Found module.getPresets");
+      presetsData = module.getPresets();
+    } else if (
+      module.default &&
+      typeof module.default.getPresets === "function"
+    ) {
+      console.log("[Butterchurn] Found module.default.getPresets");
+      presetsData = module.default.getPresets();
+    } else if (
+      module.butterchurnPresets &&
+      typeof module.butterchurnPresets.getPresets === "function"
+    ) {
+      console.log("[Butterchurn] Found module.butterchurnPresets.getPresets");
+      presetsData = module.butterchurnPresets.getPresets();
+    }
+
+    if (presetsData && typeof presetsData === "object") {
+      presetsCache = presetsData;
+      presetNamesCache = Object.keys(presetsData);
+      console.log(`[Butterchurn] ✅ Loaded ${presetNamesCache.length} presets`);
+
+      if (presetNamesCache.length === 0) {
+        console.warn("[Butterchurn] ⚠️ No presets found");
+      }
+    } else {
+      console.error(
+        "[Butterchurn] ❌ Failed to load presets: invalid data shape",
+        module,
+      );
+    }
+  } catch (err) {
+    console.error("[Butterchurn] ❌ Failed to load presets module:", err);
+  }
+
+  return { presets: presetsCache || {}, names: presetNamesCache };
+}
 
 interface AudioVisualizerProps {
   isPlaying: boolean;
@@ -19,31 +79,89 @@ function useVisualizer(
   const freqDataRef = useRef<Uint8Array>(new Uint8Array(1024).fill(0));
   const waveDataRef = useRef<Uint8Array>(new Uint8Array(1024).fill(128));
   const animIdRef = useRef<number>(0);
+  const audioCtxRef = useRef<AudioContext | null>(null);
   const [presetName, setPresetName] = useState("");
-  const presets = butterchurnPresets.getPresets();
-  const presetNames = Object.keys(presets);
+  const [presets, setPresets] = useState<Record<string, unknown>>({});
+  const [presetNames, setPresetNames] = useState<string[]>([]);
+  const [presetsLoaded, setPresetsLoaded] = useState(false);
+
+  // Load presets on mount
+  useEffect(() => {
+    loadPresets()
+      .then(({ presets: loadedPresets, names }) => {
+        setPresets(loadedPresets);
+        setPresetNames(names);
+        setPresetsLoaded(true);
+        console.log(`[Butterchurn] Loaded ${names.length} presets`);
+      })
+      .catch((err) => {
+        console.error("[Butterchurn] Load error:", err);
+      });
+  }, []);
 
   useEffect(() => {
     isPlayingRef.current = isPlaying;
   }, [isPlaying]);
 
-  const loadRandomPreset = useCallback(() => {
-    if (!visualizerRef.current) return;
-    const name = presetNames[Math.floor(Math.random() * presetNames.length)];
-    visualizerRef.current.loadPreset(presets[name], 2.0);
-    setPresetName(name);
+  // Resume AudioContext on first user interaction
+  useEffect(() => {
+    const resume = () => {
+      if (audioCtxRef.current?.state === "suspended") {
+        audioCtxRef.current.resume();
+      }
+    };
+    document.addEventListener("click", resume);
+    return () => document.removeEventListener("click", resume);
   }, []);
+
+  const loadRandomPreset = useCallback(() => {
+    if (!visualizerRef.current || presetNames.length === 0) {
+      return;
+    }
+
+    const name = presetNames[Math.floor(Math.random() * presetNames.length)];
+    const presetData = presets[name];
+
+    if (presetData) {
+      try {
+        // If preset data is a string (URL/path), fetch the actual JSON
+        if (
+          typeof presetData === "string" &&
+          (presetData.endsWith(".json") ||
+            presetData.startsWith("http") ||
+            presetData.startsWith("/"))
+        ) {
+          fetch(presetData)
+            .then((res) => res.json())
+            .then((data) => {
+              visualizerRef.current.loadPreset(data, 2.0);
+              setPresetName(name);
+            })
+            .catch((err) => {
+              console.error("[Butterchurn] Failed to fetch preset JSON:", err);
+            });
+        } else {
+          // Direct preset object
+          visualizerRef.current.loadPreset(presetData, 2.0);
+          setPresetName(name);
+        }
+      } catch (err) {
+        console.error("[Butterchurn] Failed to load preset:", err);
+      }
+    }
+  }, [presets, presetNames]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const audioCtx = new AudioContext();
+    audioCtxRef.current = audioCtx;
+
     const analyser = audioCtx.createAnalyser();
     analyser.fftSize = 2048;
     analyser.smoothingTimeConstant = 0.8;
 
-    // Patch analyser up front — ready whenever viz.connectAudio is called
     analyser.getByteFrequencyData = (arr: Uint8Array) => {
       if (isPlayingRef.current && freqDataRef.current.some((v) => v > 0)) {
         arr.set(freqDataRef.current.subarray(0, arr.length));
@@ -59,7 +177,6 @@ function useVisualizer(
       }
     };
 
-    // Tauri event listener — write Rust FFT bins into the arrays
     let unlisten: (() => void) | null = null;
     listen<{ bins: number[] }>("visualizer-data", (event) => {
       const bins = event.payload.bins;
@@ -87,8 +204,6 @@ function useVisualizer(
       unlisten = fn;
     });
 
-    // Defer butterchurn creation until ResizeObserver gives us real dimensions.
-    // This fixes portaled (fullscreen) canvases where offsetWidth is 0 at effect time.
     let initialized = false;
 
     const initViz = (w: number, h: number) => {
@@ -102,13 +217,45 @@ function useVisualizer(
         pixelRatio: window.devicePixelRatio || 1,
       });
       visualizerRef.current = viz;
-      const name =
-        initialPreset && presets[initialPreset]
-          ? initialPreset
-          : presetNames[Math.floor(Math.random() * presetNames.length)];
-      viz.loadPreset(presets[name], 0);
-      setPresetName(name);
+
+      if (presetNames.length > 0) {
+        const name =
+          initialPreset && presets[initialPreset]
+            ? initialPreset
+            : presetNames[Math.floor(Math.random() * presetNames.length)];
+        const presetData = presets[name];
+        if (presetData) {
+          try {
+            if (
+              typeof presetData === "string" &&
+              (presetData.endsWith(".json") ||
+                presetData.startsWith("http") ||
+                presetData.startsWith("/"))
+            ) {
+              fetch(presetData)
+                .then((res) => res.json())
+                .then((data) => {
+                  viz.loadPreset(data, 0);
+                  setPresetName(name);
+                })
+                .catch((err) =>
+                  console.error(
+                    "[Butterchurn] Failed to fetch initial preset:",
+                    err,
+                  ),
+                );
+            } else {
+              viz.loadPreset(presetData, 0);
+              setPresetName(name);
+            }
+          } catch (err) {
+            console.error("[Butterchurn] Failed to load initial preset:", err);
+          }
+        }
+      }
       viz.connectAudio(analyser);
+
+      if (audioCtx.state === "suspended") audioCtx.resume();
     };
 
     const observer = new ResizeObserver((entries) => {
@@ -126,8 +273,9 @@ function useVisualizer(
     observer.observe(canvas);
 
     const render = () => {
-      if (isPlayingRef.current && visualizerRef.current)
+      if (visualizerRef.current && isPlayingRef.current) {
         visualizerRef.current.render();
+      }
       animIdRef.current = requestAnimationFrame(render);
     };
     animIdRef.current = requestAnimationFrame(render);
@@ -137,13 +285,19 @@ function useVisualizer(
       observer.disconnect();
       unlisten?.();
       audioCtx.close().catch(() => {});
+      audioCtxRef.current = null;
       visualizerRef.current = null;
     };
-  }, []);
+  }, [presets, presetNames, initialPreset]);
 
-  return { presetName, loadRandomPreset };
+  return {
+    presetName,
+    loadRandomPreset,
+    presetsLoaded,
+    presetNames,
+  };
 }
-//  OverlayControls (unchanged)
+
 const OverlayControls: React.FC<{
   presetName: string;
   isFullscreen: boolean;
@@ -207,7 +361,6 @@ const OverlayControls: React.FC<{
   );
 };
 
-//  FullscreenVisualizer (unchanged)
 const FullscreenVisualizer: React.FC<{
   isPlaying: boolean;
   currentPreset: string;
@@ -215,16 +368,16 @@ const FullscreenVisualizer: React.FC<{
   onClose: () => void;
 }> = ({ isPlaying, currentPreset, onPresetChange, onClose }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
   const { presetName, loadRandomPreset } = useVisualizer(
     canvasRef,
     isPlaying,
     currentPreset,
   );
 
-  // Sync preset changes back to parent
   useEffect(() => {
     if (presetName) onPresetChange(presetName);
-  }, [presetName]);
+  }, [presetName, onPresetChange]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -258,7 +411,6 @@ const FullscreenVisualizer: React.FC<{
   );
 };
 
-//  Main component
 const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
   isPlaying,
   className = "",
@@ -268,7 +420,6 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
   const { presetName, loadRandomPreset } = useVisualizer(canvasRef, isPlaying);
   const [sharedPreset, setSharedPreset] = useState("");
 
-  // Keep sharedPreset in sync with the inline visualizer's current preset
   useEffect(() => {
     if (presetName) setSharedPreset(presetName);
   }, [presetName]);

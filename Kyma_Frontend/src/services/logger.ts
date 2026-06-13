@@ -8,7 +8,8 @@ class FrontendLogger {
   private isDev: boolean;
   private errorCount = 0;
   private lastErrorTime = 0;
-  private uiLoggingEnabled = true; // Set to false in production if needed
+  private uiLoggingEnabled = true;
+  private originalConsoleError = console.error;
 
   private constructor() {
     this.isDev = import.meta.env.DEV;
@@ -34,7 +35,7 @@ class FrontendLogger {
       this.logError("Unhandled Promise Rejection", {
         message: error?.message || String(error),
         stack: error?.stack,
-        reason: event.reason,
+        reason: String(event.reason),
       });
     });
 
@@ -49,13 +50,12 @@ class FrontendLogger {
       });
     });
 
-    // Log console errors (optional - can be noisy)
-    const originalConsoleError = console.error;
+    // Override console.error — use saved original to avoid infinite recursion
     console.error = (...args) => {
+      this.originalConsoleError.apply(console, args);
       this.logError("Console Error", {
         args: args.map((a) => String(a)).join(" "),
       });
-      originalConsoleError.apply(console, args);
     };
 
     // Log navigation events
@@ -71,7 +71,7 @@ class FrontendLogger {
       if (now - this.lastErrorTime < 100) {
         this.errorCount++;
         if (this.errorCount > 10) {
-          return; // Too many errors, skip
+          return;
         }
       } else {
         this.errorCount = 0;
@@ -83,14 +83,15 @@ class FrontendLogger {
       const dataStr = data ? JSON.stringify(data) : null;
       await invoke("log_frontend", { level, message, data: dataStr });
     } catch (err) {
-      // Fallback to console if backend logging fails
-      console.warn("[Logger] Failed to send log to backend:", err);
+      // Use original console to avoid triggering the override
+      this.originalConsoleError("[Logger] Failed to send log to backend:", err);
     }
   }
 
   logError(message: string, data?: any) {
     if (this.isDev) {
-      console.error(`[ERROR] ${message}`, data);
+      // Use original console.error to avoid infinite recursion
+      this.originalConsoleError(`[ERROR] ${message}`, data);
     }
     this.sendToBackend("ERROR", message, data);
   }
@@ -106,9 +107,7 @@ class FrontendLogger {
     if (this.isDev) {
       console.log(`[INFO] ${message}`, data);
     }
-    // Only send INFO logs in production if important
     if (!this.isDev) {
-      // Skip info logs in production to reduce noise
       return;
     }
     this.sendToBackend("INFO", message, data);
