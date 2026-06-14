@@ -7,8 +7,21 @@ pub async fn download_update(url: String, filename: String) -> Result<String, St
 
     let file_path = temp_dir.join(&filename);
 
-    // Download using reqwest (add to Cargo.toml if not present)
-    let response = reqwest::get(&url).await.map_err(|e| e.to_string())?;
+    // Download with proper headers for GitHub
+    let client = reqwest::Client::builder()
+        .user_agent("Kyma-Player/1.0")
+        .redirect(reqwest::redirect::Policy::limited(10))
+        .build()
+        .map_err(|e| e.to_string())?;
+
+    let response = client.get(&url).send().await.map_err(|e| e.to_string())?;
+
+    if !response.status().is_success() {
+        return Err(format!(
+            "Download failed with status: {}",
+            response.status()
+        ));
+    }
 
     let bytes = response.bytes().await.map_err(|e| e.to_string())?;
 

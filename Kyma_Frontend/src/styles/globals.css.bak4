@@ -141,7 +141,7 @@ body {
 }
 
 .logo {
-    padding: var(--space-lg) 20px;
+    padding: 24px 20px;
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
     overflow: hidden;
@@ -149,7 +149,7 @@ body {
 }
 
 .nav-section {
-    padding: var(--space-xs) 16px;
+    padding: 8px 16px;
 }
 
 .nav-label {
@@ -165,8 +165,8 @@ body {
 .nav-item {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-sm) 12px;
+    gap: 12px;
+    padding: 10px 12px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     font-size: 14px;
@@ -201,7 +201,7 @@ body {
     color: var(--text3);
     font-size: 10px;
     font-family: var(--font-family-base, "Syne", sans-serif);
-    padding: var(--space-3xs) 6px;
+    padding: 2px 6px;
     border-radius: var(--radius-pill);
 }
 
@@ -212,8 +212,8 @@ body {
 .playlist-item {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-xs) 10px;
+    gap: 10px;
+    padding: 8px 10px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: all var(--anim-normal) var(--anim-easing);
@@ -244,11 +244,11 @@ body {
 }
 
 .user-profile {
-    padding: var(--space-md) 20px;
+    padding: 16px 20px;
     border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 12px;
     background: var(--surface);
     flex-shrink: 0;
     overflow: hidden;
@@ -329,7 +329,7 @@ body {
     padding: 0 0 16px 0;
     border-bottom: 1px solid var(--border);
     margin-bottom: 16px;
-    gap: var(--space-md);
+    gap: 16px;
     flex-shrink: 0;
     background: var(--bg);
 
@@ -360,7 +360,7 @@ body {
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: var(--space-sm) 12px 10px 36px;
+    padding: 10px 12px 10px 36px;
     color: var(--text);
     font-family: var(--font-family-base, "Syne", sans-serif);
 
@@ -380,7 +380,7 @@ body {
 .top-actions {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 8px;
 }
 
 .icon-btn {
@@ -444,7 +444,7 @@ body {
 .song-list-pane {
     flex: 1;
     overflow-y: auto;
-    padding: var(--space-lg) 12px;
+    padding: 20px 12px;
     min-width: 0;
 }
 
@@ -454,7 +454,7 @@ body {
     justify-content: space-between;
     margin-bottom: 20px;
     flex-wrap: wrap;
-    gap: var(--space-sm);
+    gap: 12px;
 }
 
 .section-title {
@@ -472,7 +472,7 @@ body {
 /* Genre Filters */
 .genre-filters {
     display: flex;
-    gap: var(--space-xs);
+    gap: 8px;
     overflow-x: auto;
     padding-bottom: 8px;
     margin-bottom: 16px;
@@ -486,7 +486,7 @@ body {
     white-space: nowrap;
     font-size: 12px;
     font-family: var(--font-family-base, "Syne", sans-serif);
-    padding: var(--space-xs) 16px;
+    padding: 6px 16px;
     border-radius: var(--radius-pill);
     border: 1px solid var(--border2);
     cursor: pointer;
@@ -509,7 +509,7 @@ body {
 /* Sort Row */
 .sort-row {
     display: flex;
-    gap: var(--space-xs);
+    gap: 8px;
     margin-bottom: 16px;
     border-bottom: 1px solid var(--border);
     padding-bottom: 12px;
@@ -520,7 +520,7 @@ body {
     font-size: 11px;
     font-family: var(--font-family-base, "Syne", sans-serif);
     color: var(--text3);
-    padding: var(--space-2xs) 12px;
+    padding: 4px 12px;
     border-radius: var(--radius-pill);
     cursor: pointer;
     transition: all var(--anim-normal) var(--anim-easing);
@@ -542,8 +542,8 @@ body {
     display: grid;
     grid-template-columns: 40px 48px 1fr 1.5fr 80px 80px;
     align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-sm) 12px;
+    gap: 12px;
+    padding: 10px 12px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: background var(--anim-fast) var(--anim-easing);
@@ -634,7 +634,7 @@ body {
 
 .song-actions {
     display: flex;
-    gap: var(--space-2xs);
+    gap: 4px;
     opacity: 0;
     transition: opacity var(--anim-fast) var(--anim-easing);
 }
@@ -704,8 +704,8 @@ body {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    padding: var(--space-lg);
-    gap: var(--space-lg);
+    padding: 24px;
+    gap: 20px;
     background: var(--surface);
 }
 
@@ -726,8 +726,8 @@ body {
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
-    padding: var(--space-lg) 20px;
+    gap: 18px;
+    padding: 24px 20px;
     overflow-y: auto;
     border-left: 1px solid var(--border);
     height: 100%;
@@ -736,7 +736,7 @@ body {
 .np-info-col-inline {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: 18px;
     width: 100%;
 }
 
@@ -774,7 +774,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-sm);
+    gap: 10px;
 }
 
 .np-song-title {
@@ -828,7 +828,7 @@ body {
 /* Tags */
 .np-tags {
     display: flex;
-    gap: var(--space-xs);
+    gap: 6px;
     flex-wrap: wrap;
 }
 
@@ -857,7 +857,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-lg) 36px 16px;
+    padding: 22px 36px 16px;
     flex-shrink: 0;
     border-bottom: 1px solid var(--border);
 }
@@ -875,7 +875,7 @@ body {
     color: var(--text3);
     font-family: var(--font-family-base, "Syne", sans-serif);
     background: var(--surface2);
-    padding: var(--space-3xs) 10px;
+    padding: 2px 10px;
     border-radius: var(--radius-pill);
     border: 1px solid var(--border);
 }
@@ -894,7 +894,7 @@ body {
 .np-lyrics-lines {
     display: flex;
     flex-direction: column;
-    padding: var(--space-lg) 36px 0;
+    padding: 24px 36px 0;
 }
 
 .np-lyrics-spacer {
@@ -910,7 +910,7 @@ body {
     font-size: 18px;
     font-weight: 600;
     line-height: 1.65;
-    padding: var(--space-2xs) 0;
+    padding: 4px 0;
     color: var(--text3);
     transition:
         color 0.3s ease,
@@ -944,7 +944,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--space-sm);
+    gap: 10px;
     color: var(--text3);
     font-size: 13px;
     padding: 60px 36px;
@@ -958,11 +958,11 @@ body {
 .player-bar {
     background: var(--surface);
     border-top: 1px solid var(--border);
-    padding: var(--space-sm) 24px;
+    padding: 12px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-lg);
+    gap: 20px;
     flex-shrink: 0;
     min-height: var(--player-h);
 }
@@ -970,7 +970,7 @@ body {
 .player-left {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 12px;
     min-width: 180px;
     flex: 1;
 }
@@ -1019,7 +1019,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 8px;
     max-width: 500px;
 }
 
@@ -1027,7 +1027,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--space-md);
+    gap: 16px;
 }
 
 .player-control-btn {
@@ -1099,7 +1099,7 @@ body {
 .progress-wrap {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+    gap: 6px;
     width: 100%;
 }
 
@@ -1150,7 +1150,7 @@ body {
 .volume-row {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 10px;
     width: 100%;
     max-width: 140px;
 }
@@ -1232,7 +1232,7 @@ body {
 .queue-next {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+    gap: 8px;
     margin-top: 8px;
 }
 
@@ -1248,8 +1248,8 @@ body {
 .queue-item {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-xs);
+    gap: 10px;
+    padding: 8px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: background var(--anim-fast) var(--anim-easing);
@@ -1307,13 +1307,13 @@ body {
 .stats-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-sm);
+    gap: 12px;
 }
 
 .stat-card {
     background: var(--surface2);
     border-radius: var(--radius-sm);
-    padding: var(--space-sm);
+    padding: 12px;
     text-align: center;
     border: 1px solid var(--border);
 }
@@ -1341,7 +1341,7 @@ body {
     font-family: var(--font-family-base, "Syne", sans-serif);
     background: var(--surface2);
     color: var(--text2);
-    padding: var(--space-2xs) 10px;
+    padding: 4px 10px;
     border-radius: var(--radius-pill);
 }
 
@@ -1443,7 +1443,7 @@ body {
     align-items: flex-start;
     margin-bottom: 32px;
     flex-wrap: wrap;
-    gap: var(--space-lg);
+    gap: 20px;
 }
 
 .home-greeting-title {
@@ -1460,9 +1460,9 @@ body {
 
 .home-stats-strip {
     display: flex;
-    gap: var(--space-md);
+    gap: 16px;
     background: var(--surface2);
-    padding: var(--space-sm) 20px;
+    padding: 12px 20px;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border);
 }
@@ -1496,13 +1496,13 @@ body {
 .home-cards-row {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: var(--space-md);
+    gap: 14px;
 }
 
 .home-card {
     background: var(--surface2);
     border-radius: var(--radius);
-    padding: var(--space-sm);
+    padding: 12px;
     cursor: pointer;
     transition: all var(--anim-slow) var(--anim-easing);
     border: 1px solid transparent;
@@ -1581,14 +1581,14 @@ body {
 .home-two-col {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-xs);
+    gap: 8px;
 }
 
 .home-row {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-xs) 12px;
+    gap: 12px;
+    padding: 8px 12px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: background var(--anim-fast) var(--anim-easing);
@@ -1630,7 +1630,7 @@ body {
 
 .home-row-meta {
     display: flex;
-    gap: var(--space-sm);
+    gap: 12px;
     align-items: center;
 }
 
@@ -1646,7 +1646,7 @@ body {
     color: #fff;
     font-size: 9px;
     font-weight: 700;
-    padding: var(--space-3xs) 5px;
+    padding: 1px 5px;
     border-radius: var(--radius-xs);
     margin-left: 6px;
     vertical-align: middle;
@@ -1703,20 +1703,20 @@ body {
     }
     .song-row {
         grid-template-columns: 48px 56px 1fr 1.5fr 100px 100px;
-        padding: var(--space-md) 16px;
+        padding: 14px 16px;
     }
     .nav-item {
         font-size: 15px;
-        padding: var(--space-sm) 14px;
+        padding: 12px 14px;
     }
     .player-bar {
-        padding: var(--space-md) 40px;
+        padding: 16px 40px;
     }
     .top-bar {
-        padding: var(--space-lg) 40px;
+        padding: 20px 40px;
     }
     .song-list-pane {
-        padding: var(--space-xl) 40px;
+        padding: 28px 40px;
     }
 }
 
@@ -1745,7 +1745,7 @@ body {
 @media (max-width: 1439px) and (min-width: 1201px) {
     .song-row {
         grid-template-columns: 40px 48px 1fr 1.2fr 80px 70px;
-        gap: var(--space-sm);
+        gap: 10px;
     }
 }
 
@@ -1753,7 +1753,7 @@ body {
 @media (max-width: 1200px) {
     .song-row {
         grid-template-columns: 40px 48px 1fr 1fr 80px 60px;
-        gap: var(--space-xs);
+        gap: 8px;
     }
     .song-album {
         display: none;
@@ -1785,17 +1785,17 @@ body {
     }
 
     .top-bar {
-        padding: var(--space-sm) 16px;
-        gap: var(--space-sm);
+        padding: 12px 16px;
+        gap: 12px;
     }
 
     .song-list-pane {
-        padding: var(--space-md) 20px;
+        padding: 16px 20px;
     }
 
     .player-bar {
-        padding: var(--space-sm) 16px;
-        gap: var(--space-sm);
+        padding: 10px 16px;
+        gap: 12px;
     }
 
     .player-center {
@@ -1820,7 +1820,7 @@ body {
         border-left: none;
         border-bottom: 1px solid var(--border);
         height: auto;
-        padding: var(--space-lg);
+        padding: 20px;
     }
 
     .np-lyrics-col {
@@ -1828,10 +1828,10 @@ body {
     }
 
     .player-controls {
-        gap: var(--space-sm);
+        gap: 10px;
     }
     .player-bar {
-        gap: var(--space-sm);
+        gap: 12px;
     }
 }
 
@@ -1849,7 +1849,7 @@ body {
     }
 
     .logo {
-        padding: var(--space-lg) 12px;
+        padding: 20px 12px;
     }
     .logo-text,
     .logo-sub,
@@ -1860,11 +1860,11 @@ body {
     }
 
     .nav-section {
-        padding: var(--space-xs) 10px;
+        padding: 6px 10px;
     }
     .nav-item {
         justify-content: center;
-        padding: var(--space-sm) 8px;
+        padding: 12px 8px;
         gap: 0;
     }
     .nav-item svg {
@@ -1881,7 +1881,7 @@ body {
 
     .user-profile {
         justify-content: center;
-        padding: var(--space-md) 8px;
+        padding: 14px 8px;
     }
 
     /* Song list */
@@ -1891,14 +1891,14 @@ body {
     }
     .song-row {
         grid-template-columns: 36px 44px 1fr 60px;
-        gap: var(--space-xs);
-        padding: var(--space-xs) 10px;
+        gap: 8px;
+        padding: 8px 10px;
     }
 
     /* Player */
     .player-bar {
-        padding: var(--space-xs) 12px;
-        gap: var(--space-xs);
+        padding: 8px 12px;
+        gap: 8px;
         min-height: 68px;
     }
     .player-left,
@@ -1923,7 +1923,7 @@ body {
 
     /* Player controls — tighten */
     .player-controls {
-        gap: var(--space-xs);
+        gap: 8px;
     }
     .player-play-btn {
         width: 40px;
@@ -1951,11 +1951,11 @@ body {
     }
     .home-greeting {
         margin-bottom: 20px;
-        gap: var(--space-sm);
+        gap: 12px;
     }
     .home-stats-strip {
-        padding: var(--space-sm) 14px;
-        gap: var(--space-sm);
+        padding: 10px 14px;
+        gap: 12px;
     }
     .home-stat-val {
         font-size: 16px;
@@ -1963,7 +1963,7 @@ body {
 
     /* Top bar */
     .top-bar {
-        padding: var(--space-sm) 12px;
+        padding: 10px 12px;
     }
     .search-wrap {
         max-width: 100%;
@@ -1972,7 +1972,7 @@ body {
         font-size: 20px;
     }
     .song-list-pane {
-        padding: var(--space-md) 16px;
+        padding: 14px 16px;
     }
 }
 
@@ -1997,7 +1997,7 @@ body {
     /* Home cards: 2-col */
     .home-cards-row {
         grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-sm);
+        gap: 10px;
     }
     .home-card-art {
         font-size: 36px;
@@ -2011,15 +2011,15 @@ body {
         font-size: 19px;
     }
     .np-lyrics-lines {
-        padding: var(--space-lg) 20px 0;
+        padding: 20px 20px 0;
     }
     .np-lyrics-header {
-        padding: var(--space-md) 20px 12px;
+        padding: 16px 20px 12px;
     }
 
     /* Search */
     .top-actions {
-        gap: var(--space-2xs);
+        gap: 4px;
     }
     .icon-btn {
         width: 32px;
@@ -2078,8 +2078,8 @@ body {
 
     .sidebar .nav-item {
         justify-content: flex-start;
-        padding: var(--space-sm) 12px;
-        gap: var(--space-sm);
+        padding: 10px 12px;
+        gap: 12px;
     }
 
     .sidebar .nav-item svg {
@@ -2089,7 +2089,7 @@ body {
 
     .sidebar .user-profile {
         justify-content: flex-start;
-        padding: var(--space-md) 20px;
+        padding: 16px 20px;
     }
 
     /* Main fills full width */
@@ -2099,8 +2099,8 @@ body {
 
     /* Top bar */
     .top-bar {
-        padding: var(--space-xs) 12px;
-        gap: var(--space-xs);
+        padding: 8px 12px;
+        gap: 8px;
         flex-wrap: nowrap;
     }
 
@@ -2111,12 +2111,12 @@ body {
 
     /* Song list */
     .song-list-pane {
-        padding: var(--space-sm);
+        padding: 12px;
     }
     .song-row {
         grid-template-columns: 36px 40px 1fr 50px;
-        gap: var(--space-xs);
-        padding: var(--space-xs) 6px;
+        gap: 6px;
+        padding: 8px 6px;
     }
     .song-num {
         font-size: 11px;
@@ -2130,15 +2130,15 @@ body {
 
     /* Player */
     .player-bar {
-        padding: var(--space-xs) 12px;
-        gap: var(--space-xs);
+        padding: 8px 12px;
+        gap: 6px;
         min-height: 64px;
     }
     .player-center {
-        gap: var(--space-2xs);
+        gap: 4px;
     }
     .player-controls {
-        gap: var(--space-xs);
+        gap: 6px;
     }
     .progress-times {
         font-size: 10px;
@@ -2150,7 +2150,7 @@ body {
     }
     .section-header {
         margin-bottom: 12px;
-        gap: var(--space-xs);
+        gap: 8px;
     }
 
     /* Home */
@@ -2164,27 +2164,27 @@ body {
         font-size: 8px;
     }
     .home-stats-strip {
-        gap: var(--space-sm);
-        padding: var(--space-xs) 12px;
+        gap: 10px;
+        padding: 8px 12px;
     }
     .home-section {
         margin-bottom: 24px;
     }
     .home-cards-row {
         grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-xs);
+        gap: 8px;
     }
 
     /* Genre chips */
     .genre-chip {
         font-size: 11px;
-        padding: var(--space-2xs) 12px;
+        padding: 5px 12px;
     }
 
     /* Sort */
     .sort-chip {
         font-size: 10px;
-        padding: var(--space-3xs) 10px;
+        padding: 3px 10px;
     }
 }
 
@@ -2199,7 +2199,7 @@ body {
 
     .song-row {
         grid-template-columns: 28px 36px 1fr 44px;
-        gap: var(--space-xs);
+        gap: 6px;
     }
     .song-thumb {
         width: 36px;
@@ -2228,11 +2228,11 @@ body {
 
     .home-cards-row {
         grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-xs);
+        gap: 6px;
     }
 
     .home-card {
-        padding: var(--space-xs);
+        padding: 8px;
     }
     .home-card-art {
         font-size: 28px;
@@ -2298,7 +2298,7 @@ body {
 
     .player-bar {
         min-height: var(--player-h);
-        padding: var(--space-xs) 16px;
+        padding: 6px 16px;
     }
 
     .player-song-thumb {
@@ -2323,20 +2323,20 @@ body {
         height: 28px;
     }
     .player-controls {
-        gap: var(--space-xs);
+        gap: 6px;
     }
     .progress-wrap {
-        gap: var(--space-3xs);
+        gap: 3px;
     }
     .progress-times {
         font-size: 9px;
     }
 
     .top-bar {
-        padding: var(--space-xs) 12px;
+        padding: 6px 12px;
     }
     .song-list-pane {
-        padding: var(--space-xs) 12px;
+        padding: 8px 12px;
     }
 
     /* Lyrics: shorter spacer */
@@ -2419,13 +2419,13 @@ body {
 .artists-search-row {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 12px;
 }
 
 .artists-search {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 8px;
 }
 
 .artists-search input {
@@ -2441,13 +2441,13 @@ body {
 .artists-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: var(--space-md);
+    gap: 14px;
 }
 
 .artist-card {
     background: var(--surface);
     border-radius: var(--radius);
-    padding: var(--space-md);
+    padding: 16px;
     border: 1px solid var(--border);
     cursor: pointer;
     transition: all var(--anim-slow) var(--anim-easing);
@@ -2498,7 +2498,7 @@ body {
 }
 
 .artist-back-btn {
-    padding: var(--space-xs) 16px;
+    padding: 8px 16px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-pill);
@@ -2511,14 +2511,14 @@ body {
     margin-top: 2rem;
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 6px;
 }
 
 .artist-profile {
     padding: 2rem 0;
     display: flex;
     align-items: center;
-    gap: var(--space-lg);
+    gap: 24px;
     flex-wrap: wrap;
 }
 
@@ -2550,7 +2550,7 @@ body {
 .artist-name-row {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 12px;
 }
 
 .artist-name-lg {
@@ -2564,7 +2564,7 @@ body {
 
 .artist-stats {
     display: flex;
-    gap: var(--space-lg);
+    gap: 24px;
     margin-top: 12px;
     flex-wrap: wrap;
 }
@@ -2582,7 +2582,7 @@ body {
 }
 
 .artist-play-all {
-    padding: var(--space-sm) 28px;
+    padding: 12px 28px;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
     border: none;
     border-radius: var(--radius-pill);
@@ -2594,7 +2594,7 @@ body {
     font-weight: 700;
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 8px;
     margin-bottom: 2rem;
 }
 
@@ -2602,8 +2602,8 @@ body {
     display: grid;
     grid-template-columns: 40px 48px 1fr 1fr 80px 60px;
     align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-sm) 12px;
+    gap: 12px;
+    padding: 10px 12px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     border: 1px solid transparent;
@@ -2666,7 +2666,7 @@ body {
     font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 8px;
     letter-spacing: 0.05em;
-    padding: var(--space-3xs) 6px;
+    padding: 2px 6px;
     border-radius: var(--radius-pill);
 }
 
@@ -2713,7 +2713,7 @@ body {
 }
 
 .artist-unfollow-btn {
-    padding: var(--space-xs) 14px;
+    padding: 6px 14px;
     border-radius: var(--radius-pill);
     background: var(--surface2);
     border: 1px solid var(--border);
@@ -2752,7 +2752,7 @@ body {
 }
 
 .modal-header {
-    padding: var(--space-lg) 24px 0;
+    padding: 24px 24px 0;
 }
 
 .modal-title-row {
@@ -2783,7 +2783,7 @@ body {
 
 .modal-input {
     width: 100%;
-    padding: var(--space-sm) 14px;
+    padding: 12px 14px;
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -2805,7 +2805,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-sm) 12px;
+    padding: 10px 12px;
     border-radius: var(--radius-md);
 }
 
@@ -2816,7 +2816,7 @@ body {
 .modal-artist-info {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 10px;
 }
 
 .modal-artist-avatar {
@@ -2841,7 +2841,7 @@ body {
 }
 
 .modal-follow-btn {
-    padding: var(--space-2xs) 14px;
+    padding: 5px 14px;
     border-radius: var(--radius-pill);
     background: var(--accent);
     border: none;
@@ -2863,7 +2863,7 @@ body {
 
 .modal-no-results {
     text-align: center;
-    padding: var(--space-lg);
+    padding: 20px;
     color: var(--text3);
     font-size: 12px;
 }
@@ -2887,7 +2887,7 @@ body {
 /* ── List View ── */
 .ap-page {
     overflow-y: auto;
-    padding: var(--space-lg) 12px;
+    padding: 20px 12px;
     min-width: 0;
 }
 
@@ -2907,7 +2907,7 @@ body {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: var(--space-md);
+    gap: 16px;
     flex-wrap: wrap;
 }
 
@@ -2927,7 +2927,7 @@ body {
     line-height: 1;
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 10px;
 }
 
 .ap-page-count {
@@ -2938,24 +2938,24 @@ body {
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: var(--radius-pill);
-    padding: var(--space-3xs) 10px;
+    padding: 2px 10px;
     letter-spacing: 0;
 }
 
 .ap-page-controls {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 10px;
 }
 
 .ap-search-wrap {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 8px;
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: var(--space-xs) 12px;
+    padding: 8px 12px;
     transition: border-color var(--anim-normal) var(--anim-easing);
 }
 
@@ -2980,8 +2980,8 @@ body {
 .ap-add-btn {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
-    padding: var(--space-xs) 16px;
+    gap: 6px;
+    padding: 8px 16px;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
     border: none;
     border-radius: var(--radius-sm);
@@ -3006,7 +3006,7 @@ body {
 .ap-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: var(--space-sm);
+    gap: 12px;
 }
 
 .ap-card {
@@ -3063,7 +3063,7 @@ body {
 }
 
 .ap-card-info {
-    padding: var(--space-sm) 12px 12px;
+    padding: 10px 12px 12px;
 }
 
 .ap-card-name {
@@ -3092,7 +3092,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 8px;
 }
 
 .ap-empty-icon {
@@ -3130,10 +3130,10 @@ body {
 .ap-back {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 6px;
     margin-top: 1.75rem;
     margin-bottom: 0;
-    padding: var(--space-xs) 14px;
+    padding: 7px 14px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-pill);
@@ -3220,14 +3220,14 @@ body {
 
 .ap-hero-stats {
     display: flex;
-    gap: var(--space-lg);
+    gap: 20px;
     flex-wrap: wrap;
 }
 
 .ap-stat {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3xs);
+    gap: 2px;
 }
 
 .ap-stat-val {
@@ -3252,7 +3252,7 @@ body {
 .ap-hero-actions {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 10px;
     padding: 1.25rem 0 1.5rem;
     position: relative;
     z-index: 1;
@@ -3261,8 +3261,8 @@ body {
 .ap-play-all {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
-    padding: var(--space-sm) 22px;
+    gap: 8px;
+    padding: 10px 22px;
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -3288,11 +3288,11 @@ body {
     font-size: 10px;
     background: rgba(255, 255, 255, 0.15);
     border-radius: var(--radius-pill);
-    padding: var(--space-3xs) 7px;
+    padding: 1px 7px;
 }
 
 .ap-unfollow {
-    padding: var(--space-xs) 18px;
+    padding: 9px 18px;
     border-radius: var(--radius-pill);
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -3320,7 +3320,7 @@ body {
 .ap-tracks-header {
     display: grid;
     grid-template-columns: 40px 48px 1fr 1.5fr 80px 80px;
-    gap: var(--space-sm);
+    gap: 12px;
     padding: 0 12px 8px;
     border-bottom: 1px solid var(--border);
     margin-bottom: 4px;
@@ -3335,8 +3335,8 @@ body {
     display: grid;
     grid-template-columns: 40px 48px 1fr 1.5fr 80px 80px;
     align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-xs) 12px;
+    gap: 12px;
+    padding: 8px 12px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     border: 1px solid transparent;
@@ -3417,7 +3417,7 @@ body {
     font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 8px;
     letter-spacing: 0.05em;
-    padding: var(--space-3xs) 6px;
+    padding: 2px 6px;
     border-radius: var(--radius-pill);
 }
 
@@ -3444,7 +3444,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-md);
+    gap: 16px;
     padding: 4rem 2rem;
     color: var(--text3);
     font-family: var(--font-family-base, "Syne", sans-serif);
@@ -3453,7 +3453,7 @@ body {
 
 .ap-loading-dots {
     display: flex;
-    gap: var(--space-xs);
+    gap: 6px;
 }
 
 /* ── Spinner ── */
@@ -3553,7 +3553,7 @@ body {
 .ap-end-marker {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 12px;
     padding: 1.5rem 12px;
     color: var(--text3);
     font-family: var(--font-family-base, "Syne", sans-serif);
@@ -3597,7 +3597,7 @@ body {
 }
 
 .ap-modal-header {
-    padding: var(--space-lg) 22px 0;
+    padding: 22px 22px 0;
 }
 
 .ap-modal-title-row {
@@ -3637,11 +3637,11 @@ body {
 .ap-modal-search-wrap {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 10px;
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: var(--space-sm) 14px;
+    padding: 11px 14px;
     margin-bottom: 12px;
     transition: border-color var(--anim-normal) var(--anim-easing);
 }
@@ -3675,7 +3675,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-sm) 12px;
+    padding: 10px 12px;
     border-radius: var(--radius-sm);
     transition: background var(--anim-fast) var(--anim-easing);
 }
@@ -3687,7 +3687,7 @@ body {
 .ap-modal-artist-info {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 10px;
 }
 
 .ap-modal-avatar {
@@ -3714,7 +3714,7 @@ body {
 }
 
 .ap-follow-btn {
-    padding: var(--space-xs) 14px;
+    padding: 6px 14px;
     border-radius: var(--radius-pill);
     background: var(--accent);
     border: none;
@@ -3746,7 +3746,7 @@ body {
 
 .ap-modal-empty {
     text-align: center;
-    padding: var(--space-xl);
+    padding: 28px;
     color: var(--text3);
     font-size: 12px;
     font-family: var(--font-family-base, "Syne", sans-serif);
@@ -3818,13 +3818,13 @@ select:focus {
 }
 
 .sidebar.sidebar--collapsed .logo {
-    padding: var(--space-lg) 12px !important;
+    padding: 20px 12px !important;
     justify-content: center !important;
 }
 
 .sidebar.sidebar--collapsed .nav-item {
     justify-content: center !important;
-    padding: var(--space-sm) 8px !important;
+    padding: 12px 8px !important;
     gap: 0 !important;
 }
 
@@ -3899,7 +3899,7 @@ select:focus {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: var(--space-md);
+    gap: 16px;
     flex-wrap: wrap;
 }
 .ex-header-left {
@@ -3934,11 +3934,11 @@ select:focus {
 }
 .ex-view-toggle {
     display: flex;
-    gap: var(--space-3xs);
+    gap: 3px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: var(--space-3xs);
+    padding: 3px;
 }
 .ex-toggle-btn {
     width: 30px;
@@ -3970,7 +3970,7 @@ select:focus {
 }
 .ex-chip {
     flex-shrink: 0;
-    padding: var(--space-xs) 16px;
+    padding: 8px 16px;
     background: transparent;
     border: none;
     border-bottom: 2px solid transparent;
@@ -4000,7 +4000,7 @@ select:focus {
     border-bottom: 1px solid var(--border);
 }
 .ex-source-tab {
-    padding: var(--space-xs) 32px;
+    padding: 8px 32px;
     background: transparent;
     border: none;
     border-bottom: 2px solid transparent;
@@ -4022,7 +4022,7 @@ select:focus {
 .ex-strip {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 12px;
     padding: 0.75rem 0;
 }
 .ex-play-circle {
@@ -4059,7 +4059,7 @@ select:focus {
 .ex-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
-    gap: var(--space-sm);
+    gap: 12px;
 }
 .ex-card {
     border-radius: var(--radius);
@@ -4157,7 +4157,7 @@ select:focus {
 }
 .ex-card-bars {
     display: flex;
-    gap: var(--space-3xs);
+    gap: 3px;
     align-items: flex-end;
     height: 16px;
 }
@@ -4173,7 +4173,7 @@ select:focus {
     font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 8px;
     letter-spacing: 0.05em;
-    padding: var(--space-3xs) 7px;
+    padding: 2px 7px;
     border-radius: var(--radius-pill);
     backdrop-filter: blur(8px);
     z-index: 2;
@@ -4189,7 +4189,7 @@ select:focus {
     border: 1px solid rgba(255, 100, 0, 0.3);
 }
 .ex-card-info {
-    padding: var(--space-sm) 11px 12px;
+    padding: 10px 11px 12px;
 }
 .ex-card-title {
     font-size: 13px;
@@ -4221,7 +4221,7 @@ select:focus {
     background: var(--surface2);
 }
 .ex-skeleton-body {
-    padding: var(--space-sm) 11px 12px;
+    padding: 10px 11px 12px;
 }
 .ex-skeleton-line {
     height: 12px;
@@ -4295,7 +4295,7 @@ select:focus {
 }
 .ab-chip {
     flex-shrink: 0;
-    padding: var(--space-xs) 16px;
+    padding: 8px 16px;
     background: transparent;
     border: none;
     border-bottom: 2px solid transparent;
@@ -4321,11 +4321,11 @@ select:focus {
 .ab-search {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 8px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: var(--space-xs) 12px;
+    padding: 8px 12px;
     margin: 0.75rem 0;
 }
 .ab-search:focus-within {
@@ -4351,7 +4351,7 @@ select:focus {
 .ab-track-header {
     display: grid;
     grid-template-columns: 32px 48px 1fr 100px;
-    gap: var(--space-sm);
+    gap: 12px;
     padding: 0 12px 8px;
     border-bottom: 1px solid var(--border);
     margin-bottom: 4px;
@@ -4365,8 +4365,8 @@ select:focus {
     display: grid;
     grid-template-columns: 32px 48px 1fr 100px;
     align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-sm) 12px;
+    gap: 12px;
+    padding: 10px 12px;
     border-radius: var(--radius-md);
     cursor: pointer;
     border: 1px solid transparent;
@@ -4461,7 +4461,7 @@ select:focus {
 }
 .pod-chip {
     flex-shrink: 0;
-    padding: var(--space-xs) 16px;
+    padding: 8px 16px;
     background: transparent;
     border: none;
     border-bottom: 2px solid transparent;
@@ -4487,11 +4487,11 @@ select:focus {
 .pod-search {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 8px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: var(--space-xs) 12px;
+    padding: 8px 12px;
     margin: 0.75rem 0;
 }
 .pod-search:focus-within {
@@ -4517,7 +4517,7 @@ select:focus {
 .pod-track-header {
     display: grid;
     grid-template-columns: 32px 48px 1fr 100px;
-    gap: var(--space-sm);
+    gap: 12px;
     padding: 0 12px 8px;
     border-bottom: 1px solid var(--border);
     margin-bottom: 4px;
@@ -4531,8 +4531,8 @@ select:focus {
     display: grid;
     grid-template-columns: 32px 48px 1fr 100px;
     align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-sm) 12px;
+    gap: 12px;
+    padding: 10px 12px;
     border-radius: var(--radius-md);
     cursor: pointer;
     border: 1px solid transparent;
@@ -4728,14 +4728,14 @@ select:focus {
 .onb-fields {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: 16px;
     width: 100%;
     max-width: 340px;
 }
 .onb-field {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+    gap: 6px;
 }
 .onb-label {
     font-family: var(--font-family-base, "Syne", sans-serif);
@@ -4746,7 +4746,7 @@ select:focus {
 }
 .onb-input-field {
     width: 100%;
-    padding: var(--space-sm) 14px;
+    padding: 12px 14px;
     background: var(--surface2);
     border: 1.5px solid var(--border);
     border-radius: var(--radius-md);
@@ -4777,15 +4777,15 @@ select:focus {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: var(--space-lg);
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: 14px;
 }
 .onb-ytdlp-header {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 10px;
 }
 .onb-ytdlp-title {
     font-family: var(--font-family-base, "Syne", sans-serif);
@@ -4798,7 +4798,7 @@ select:focus {
     font-family: var(--font-family-base, "Syne", sans-serif);
     font-size: 10px;
     letter-spacing: 0.05em;
-    padding: var(--space-2xs) 10px;
+    padding: 4px 10px;
     border-radius: var(--radius-pill);
     background: rgba(255, 170, 50, 0.1);
     color: #ffaa33;
@@ -4818,11 +4818,11 @@ select:focus {
 .onb-ytdlp-cmd-wrap {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 8px;
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    padding: var(--space-sm) 14px;
+    padding: 10px 14px;
 }
 .onb-ytdlp-cmd {
     flex: 1;
@@ -4853,7 +4853,7 @@ select:focus {
     border-color: var(--border2);
 }
 .onb-ytdlp-retry {
-    padding: var(--space-xs) 16px;
+    padding: 8px 16px;
     border-radius: var(--radius-md);
     background: var(--surface2);
     border: 1px solid var(--border);
@@ -4875,11 +4875,11 @@ select:focus {
     max-width: 340px;
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: 12px;
     align-items: center;
 }
 .onb-main-btn {
-    padding: var(--space-md) 48px;
+    padding: 14px 48px;
     border-radius: var(--radius-lg);
     border: none;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
@@ -4942,7 +4942,7 @@ select:focus {
     cursor: pointer;
     letter-spacing: 0.05em;
     transition: color var(--anim-normal) var(--anim-easing);
-    padding: var(--space-2xs) 8px;
+    padding: 4px 8px;
 }
 .onb-back-btn:hover {
     color: var(--text2);
@@ -5072,11 +5072,11 @@ select:focus {
     background: var(--surface2);
     border: 1px solid var(--border2);
     border-radius: var(--radius-lg);
-    padding: var(--space-sm) 0 10px;
+    padding: 12px 0 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 8px;
     z-index: 500;
     box-shadow: var(--shadow-lg);
     user-select: none;
