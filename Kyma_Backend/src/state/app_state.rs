@@ -5,7 +5,9 @@ use crate::user_action;
 use crate::user_error;
 use parking_lot::Mutex;
 use sqlx::SqlitePool;
+use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
+use std::time::Instant;
 use tauri::AppHandle;
 
 pub struct AppState {
@@ -17,6 +19,8 @@ pub struct AppState {
     pub queue_index: parking_lot::Mutex<usize>,
     pub library: Arc<Mutex<Vec<Song>>>,
     pub db: SqlitePool,
+    pub prefetched_urls: Arc<Mutex<HashMap<String, (String, Instant)>>>,
+    pub pending_prefetches: Arc<Mutex<HashSet<String>>>,
 }
 
 impl AppState {
@@ -53,6 +57,8 @@ impl AppState {
             queue_index: parking_lot::Mutex::new(0),
             library: Arc::new(Mutex::new(Vec::new())),
             db,
+            prefetched_urls: Arc::new(Mutex::new(HashMap::new())),
+            pending_prefetches: Arc::new(Mutex::new(HashSet::new())),
         }
     }
 

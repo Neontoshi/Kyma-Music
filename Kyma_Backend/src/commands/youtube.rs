@@ -167,7 +167,7 @@ pub fn invalidate_stream_url(video_id: String) {
 }
 
 pub fn secs_to_duration_str(secs: f64) -> String {
-    let total = secs as u64;
+    let total = secs.round() as u64;
     let h = total / 3600;
     let m = (total % 3600) / 60;
     let s = total % 60;

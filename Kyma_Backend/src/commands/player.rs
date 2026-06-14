@@ -77,6 +77,17 @@ pub async fn get_resume_state() -> Result<ResumeState, KymaError> {
     })
 }
 
+/// Helper: check prefetch cache for a song, returning the URL if fresh (< 90s old)
+fn check_prefetch_cache(state: &AppState, song: &FrontendSong) -> Option<String> {
+    let prefetch_cache = state.prefetched_urls.lock();
+    if let Some((url, timestamp)) = prefetch_cache.get(&song.id) {
+        if timestamp.elapsed().as_secs() < 90 {
+            return Some(url.clone());
+        }
+    }
+    None
+}
+
 #[tauri::command]
 pub async fn play_track(
     song: FrontendSong,
@@ -99,10 +110,15 @@ pub async fn play_track(
 
     let app = &*state;
 
-    // Determine the playable URL
+    // Determine the playable URL - check prefetch cache first
     let play_url = if !song.path.is_empty() {
+        // Local file - use path directly
         song.path.clone()
+    } else if let Some(cached_url) = check_prefetch_cache(app, &song) {
+        user_action!("PLAYBACK", "Using prefetched URL for: {}", title_log);
+        cached_url
     } else if let Some(video_id) = &song.video_id {
+        // Not prefetched - resolve now
         if song.source.as_deref() == Some("youtube") {
             match crate::commands::youtube::resolve_youtube_url(video_id.clone()).await {
                 Ok(url) => url,
@@ -222,7 +238,6 @@ pub async fn set_volume(level: f32, state: tauri::State<'_, AppState>) -> Result
 
 #[tauri::command]
 pub async fn get_volume(state: tauri::State<'_, AppState>) -> Result<f32, KymaError> {
-    // REMOVED: No log - called frequently
     Ok(*state.volume.lock())
 }
 
@@ -230,7 +245,6 @@ pub async fn get_volume(state: tauri::State<'_, AppState>) -> Result<f32, KymaEr
 pub async fn get_playback_state(
     state: tauri::State<'_, AppState>,
 ) -> Result<serde_json::Value, KymaError> {
-    // REMOVED: No log - called frequently for UI updates
     let audio_state = state.audio_engine.get_state();
     Ok(serde_json::json!({
         "position": audio_state.position,
@@ -286,7 +300,6 @@ pub async fn next_track(state: tauri::State<'_, AppState>) -> Result<(), KymaErr
         queue[next_idx].clone()
     };
 
-    // Truncate long title for logging
     let title_log = if next_song.title.len() > 50 {
         format!("{}...", &next_song.title[..47])
     } else {
@@ -300,7 +313,14 @@ pub async fn next_track(state: tauri::State<'_, AppState>) -> Result<(), KymaErr
         next_song.artist
     );
 
-    let play_path = resolve_song_path(&next_song).await?;
+    // Check prefetch cache first, then fall back to resolving
+    let play_path = if let Some(cached_url) = check_prefetch_cache(&state, &next_song) {
+        user_action!("PLAYBACK", "Using prefetched URL for next: {}", title_log);
+        cached_url
+    } else {
+        resolve_song_path(&next_song).await?
+    };
+
     state.audio_engine.play(&play_path, false);
     *state.current_track.lock() = Some(next_song);
     *state.is_playing.lock() = true;
@@ -329,7 +349,6 @@ pub async fn prev_track(state: tauri::State<'_, AppState>) -> Result<(), KymaErr
         queue[*idx].clone()
     };
 
-    // Truncate long title for logging
     let title_log = if prev_song.title.len() > 50 {
         format!("{}...", &prev_song.title[..47])
     } else {
@@ -343,7 +362,18 @@ pub async fn prev_track(state: tauri::State<'_, AppState>) -> Result<(), KymaErr
         prev_song.artist
     );
 
-    let play_path = resolve_song_path(&prev_song).await?;
+    // Check prefetch cache first, then fall back to resolving
+    let play_path = if let Some(cached_url) = check_prefetch_cache(&state, &prev_song) {
+        user_action!(
+            "PLAYBACK",
+            "Using prefetched URL for previous: {}",
+            title_log
+        );
+        cached_url
+    } else {
+        resolve_song_path(&prev_song).await?
+    };
+
     state.audio_engine.play(&play_path, false);
     *state.current_track.lock() = Some(prev_song);
     *state.is_playing.lock() = true;
@@ -369,7 +399,6 @@ pub async fn add_to_queue(
     song: FrontendSong,
     state: tauri::State<'_, AppState>,
 ) -> Result<(), KymaError> {
-    // Truncate long title for logging
     let title_log = if song.title.len() > 50 {
         format!("{}...", &song.title[..47])
     } else {
@@ -387,7 +416,6 @@ pub async fn add_to_queue(
 
 #[tauri::command]
 pub async fn get_queue(state: tauri::State<'_, AppState>) -> Result<Vec<FrontendSong>, KymaError> {
-    // REMOVED: Individual song logs - too verbose when queue is large
     let queue = state.queue.lock();
     user_action!("QUEUE", "Get queue: {} songs", queue.len());
     Ok(queue.clone())
@@ -399,7 +427,6 @@ pub async fn add_to_queue_at_position(
     position: usize,
     state: tauri::State<'_, AppState>,
 ) -> Result<(), KymaError> {
-    // Truncate long title for logging
     let title_log = if song.title.len() > 40 {
         format!("{}...", &song.title[..37])
     } else {

@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { Song } from "../../core/entities/Song";
 import { tauriCommands } from "../../services/tauriBridge";
 import { usePlayerStore } from "./playerStore";
+import { logger } from "../../services/logger";
 
 export type QueueSource = "library" | "search" | "playlist" | "none";
 
@@ -34,7 +35,6 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
       const currentQueue = get().queue;
       const currentIndex = get().currentIndex;
 
-      // Preserve queueTag from existing local queue
       const tagMap = new Map<string, "next">();
       for (const s of currentQueue) {
         if (s.queueTag === "next") tagMap.set(s.id, "next");
@@ -45,7 +45,6 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
         return existingTag ? { ...s, queueTag: existingTag as "next" } : s;
       });
 
-      // Re-anchor currentIndex to the current song by ID
       const currentSongId = usePlayerStore.getState().currentSong?.id;
       const newIndex = currentSongId
         ? mergedQueue.findIndex((s: Song) => s.id === currentSongId)
@@ -69,12 +68,19 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
     };
     set(state);
 
-    // Sync to backend
     await tauriCommands.setQueue(songs);
   },
 
   getNextSong: (isShuffle, repeatMode) => {
     const { queue, currentIndex } = get();
+
+    logger.logUI("QueueStore", "getNextSong", {
+      queueLength: queue.length,
+      currentIndex,
+      isShuffle,
+      repeatMode,
+    });
+
     if (queue.length === 0) {
       return null;
     }
@@ -85,7 +91,6 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
         randomIndex = Math.floor(Math.random() * queue.length);
       } while (randomIndex === currentIndex && queue.length > 1);
       set({ currentIndex: randomIndex });
-
       return queue[randomIndex];
     }
 
@@ -96,10 +101,12 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
     }
 
     if (repeatMode === 1) {
+      // Repeat all - wrap around
       set({ currentIndex: 0 });
       return queue[0];
     }
 
+    // repeatMode 0 or 2 - no more songs
     return null;
   },
 
@@ -119,7 +126,6 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
 
   clearQueue: async () => {
     await tauriCommands.clearQueue();
-
     set({
       queue: [],
       currentIndex: -1,
@@ -134,7 +140,6 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
     await tauriCommands.removeFromQueue(songId);
     const newQueue = await tauriCommands.getQueue();
 
-    // If removed song was before current, shift index back by 1
     const newIndex =
       removedIdx !== -1 && removedIdx < currentIndex
         ? currentIndex - 1

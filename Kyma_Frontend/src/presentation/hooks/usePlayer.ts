@@ -6,6 +6,7 @@ import { tauriCommands } from "../../services/tauriBridge";
 import { useLibraryStore } from "../stores/libraryStore";
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../services/logger";
+import { usePrefetchQueue } from "../hooks/usePrefetchQueue";
 
 const pendingPlayId = { current: null as string | null };
 
@@ -291,12 +292,39 @@ export const usePlayer = () => {
 
   const handleNext = useCallback(() => {
     const state = usePlayerStore.getState();
+    const queueState = useQueueStore.getState();
+
     logger.logUI("Player", "next_requested", {
       isShuffle: state.isShuffle,
       repeatMode: state.repeatMode,
+      queueLength: queueState.queue.length,
+      currentIndex: queueState.currentIndex,
     });
 
-    const nextSong = getNextSong(state.isShuffle, state.repeatMode);
+    let nextSong = getNextSong(state.isShuffle, state.repeatMode);
+
+    // Fallback: if getNextSong returns null but queue has songs,
+    // try to find current song by ID and play the one after it
+    if (!nextSong && queueState.queue.length > 0 && state.currentSong) {
+      const currentId = state.currentSong.id;
+      const currentIdx = queueState.queue.findIndex((s) => s.id === currentId);
+      if (currentIdx >= 0 && currentIdx + 1 < queueState.queue.length) {
+        nextSong = queueState.queue[currentIdx + 1];
+        useQueueStore.getState().setIndex(currentIdx + 1);
+        logger.logUI("Player", "next_fallback_used", {
+          fromIndex: currentIdx,
+          toIndex: currentIdx + 1,
+          songId: nextSong.id,
+          title: nextSong.title.slice(0, 50),
+        });
+      } else if (state.repeatMode === 0 && currentIdx >= 0) {
+        // At end of queue with no repeat - this is expected
+        logger.logUI("Player", "next_end_of_queue", {
+          currentIndex: currentIdx,
+          queueLength: queueState.queue.length,
+        });
+      }
+    }
 
     if (nextSong) {
       logger.logUI("Player", "next_song_found", {
@@ -304,6 +332,9 @@ export const usePlayer = () => {
         source: nextSong.source,
         videoId: nextSong.videoId,
       });
+
+      // Cancel any pending prefetches since we're manually changing songs
+      tauriCommands.cancelPrefetch([]).catch(() => {});
 
       lastPlayedId.current = null;
       setCurrentSong(nextSong);
@@ -337,16 +368,17 @@ export const usePlayer = () => {
         }
         const store = usePlayerStore.getState();
 
+        // Clear loading state when playback is active with valid duration
+        if (backendIsPlaying && duration > 0 && isLoadingRef.current) {
+          isLoadingRef.current = false;
+          store.setIsLoading(false);
+        }
+
         if (store.isPlaying !== backendIsPlaying) {
           store.setPlaying(backendIsPlaying);
         }
 
         store.setBuffered(buffered ?? 1.0);
-
-        if (isLoadingRef.current) {
-          isLoadingRef.current = false;
-          store.setIsLoading(false);
-        }
 
         if (Date.now() < ignorePositionUntil.current) {
           return;
@@ -354,7 +386,20 @@ export const usePlayer = () => {
 
         if (store.duration === 0 && duration > 0) {
           store.setDuration(duration);
-
+          // Sync queue index: find current song in queue and update index
+          const currentTrack = store.currentSong;
+          if (currentTrack) {
+            const qState = useQueueStore.getState();
+            const idx = qState.queue.findIndex((s) => s.id === currentTrack.id);
+            if (idx >= 0 && idx !== qState.currentIndex) {
+              logger.logUI("Player", "index_sync", {
+                oldIndex: qState.currentIndex,
+                newIndex: idx,
+                songId: currentTrack.id,
+              });
+              qState.setIndex(idx);
+            }
+          }
           // Update the song in library with correct duration
           const current = store.currentSong;
           if (current && current.duration === 0) {
@@ -477,6 +522,9 @@ export const usePlayer = () => {
             songId: prev.id,
             title: prev.title.slice(0, 50),
           });
+          // Cancel any pending prefetches
+          tauriCommands.cancelPrefetch([]).catch(() => {});
+
           lastPlayedId.current = null;
           setCurrentSong(prev);
           setProgress(0);
@@ -523,7 +571,7 @@ export const usePlayer = () => {
 
     isSeekingRef.current = true;
     songEndHandled.current = true;
-    ignorePositionUntil.current = Date.now() + 500; // block stale events for 500ms
+    ignorePositionUntil.current = Date.now() + 500;
     setProgress(position);
     try {
       await playerRepo.current.seek(position);
@@ -544,6 +592,8 @@ export const usePlayer = () => {
   const nextSong = () => {
     logger.logUI("Player", "next_triggered", {});
     lastPlayedId.current = null;
+    // Cancel any pending prefetches
+    tauriCommands.cancelPrefetch([]).catch(() => {});
     handleNext();
   };
 
@@ -554,6 +604,9 @@ export const usePlayer = () => {
         songId: prev.id,
         title: prev.title.slice(0, 50),
       });
+      // Cancel any pending prefetches
+      tauriCommands.cancelPrefetch([]).catch(() => {});
+
       lastPlayedId.current = null;
       setCurrentSong(prev);
       setProgress(0);
@@ -569,6 +622,9 @@ export const usePlayer = () => {
 
   const setVolume = (v: number) => setVolumeStore(v);
   const toggleMute = () => toggleMuteStore();
+
+  // Initialize prefetch queue watcher
+  usePrefetchQueue();
 
   return {
     currentSong,

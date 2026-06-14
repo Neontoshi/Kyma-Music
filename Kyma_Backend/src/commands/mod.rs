@@ -8,6 +8,7 @@ pub mod metadata_providers;
 pub mod notifications;
 pub mod player;
 pub mod playlist;
+pub mod prefetch;
 pub mod radio;
 pub mod settings;
 pub mod soundcloud;
@@ -19,6 +20,8 @@ pub mod youtube;
 pub use artists::{get_saved_artists, remove_artist, save_artist, search_artist_for_save};
 
 pub use history::{get_recently_played, save_play_history};
+
+pub use prefetch::{cancel_prefetch, clear_prefetch_cache, get_prefetched_url, prefetch_track};
 
 pub use logs::*;
 

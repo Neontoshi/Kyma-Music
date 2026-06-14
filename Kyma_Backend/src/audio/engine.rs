@@ -149,9 +149,11 @@ pub fn run(rx: Receiver<Command>, _tx: Sender<Command>, app_handle: tauri::AppHa
                 // Re-resolve in a background thread then restart the decoder
                 std::thread::spawn(move || {
                     let rt = tokio::runtime::Runtime::new().unwrap();
-                    let result =
+                    // Invalidate cached URL first to get a fresh CDN URL
+                    crate::commands::youtube::invalidate_stream_url(vid.clone());
+                    let new_url =
                         rt.block_on(crate::commands::youtube::resolve_youtube_url(vid.clone()));
-                    match result {
+                    match new_url {
                         Ok(new_url) => {
                             user_action!("STREAM", "Re-resolved successfully: {}", vid);
                             tracing::info!(

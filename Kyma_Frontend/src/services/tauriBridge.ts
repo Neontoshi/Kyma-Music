@@ -90,6 +90,18 @@ export const tauriCommands = {
   openFile: (path: string): Promise<void> =>
     handleInvoke("open_file", { path }),
 
+  // Prefetch
+  prefetchTrack: (song: Song): Promise<void> =>
+    handleInvoke("prefetch_track", { song }),
+
+  getPrefetchedUrl: (songId: string): Promise<string | null> =>
+    handleInvoke("get_prefetched_url", { songId }),
+
+  cancelPrefetch: (songIds: string[]): Promise<void> =>
+    handleInvoke("cancel_prefetch", { songIds }),
+
+  clearPrefetchCache: (): Promise<void> => handleInvoke("clear_prefetch_cache"),
+
   // Player
   playTrack: (song: Song): Promise<number> => {
     logger.logInfo(`Play track called: ${song.title} - ${song.artist}`, {

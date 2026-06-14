@@ -419,7 +419,7 @@ fn decode_inner(
                     was_buffering = true;
                 }
 
-                if consecutive_errors > 10 {
+                if consecutive_errors > 5 {
                     return Err(format!(
                         "Persistent network error after {} attempts: {}",
                         consecutive_errors, e
@@ -427,13 +427,8 @@ fn decode_inner(
                 }
 
                 // Only log first few errors to avoid spam
-                if consecutive_errors <= 3 {
-                    user_action!(
-                        "NETWORK",
-                        "Error (attempt {}/10): {}",
-                        consecutive_errors,
-                        e
-                    );
+                if consecutive_errors <= 5 {
+                    user_action!("NETWORK", "Error (attempt {}/5): {}", consecutive_errors, e);
                 }
                 tracing::warn!(
                     "[DECODER] Network error (attempt {}), buffering...",

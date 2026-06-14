@@ -163,6 +163,10 @@ pub fn run() {
             open_file,
             run_installer,
             download_update,
+            prefetch_track,
+            get_prefetched_url,
+            cancel_prefetch,
+            clear_prefetch_cache,
         ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
