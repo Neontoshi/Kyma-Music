@@ -80,7 +80,7 @@ const LogsSection: React.FC<LogsSectionProps> = ({ logFilePath }) => {
               padding: "12px 16px",
               background: "rgba(124,106,245,0.05)",
               border: "1px solid rgba(124,106,245,0.12)",
-              borderRadius: "12px",
+              borderRadius: "var(--radius-lg)",
             }}
           >
             <div
@@ -102,7 +102,7 @@ const LogsSection: React.FC<LogsSectionProps> = ({ logFilePath }) => {
                 wordBreak: "break-all",
                 background: "rgba(0,0,0,0.2)",
                 padding: "8px 12px",
-                borderRadius: "8px",
+                borderRadius: "var(--radius-md)",
               }}
             >
               {logFilePath || "Loading..."}
@@ -123,7 +123,7 @@ const LogsSection: React.FC<LogsSectionProps> = ({ logFilePath }) => {
                 padding: "14px 18px",
                 background: "rgba(124,106,245,0.1)",
                 border: "1px solid rgba(124,106,245,0.25)",
-                borderRadius: "12px",
+                borderRadius: "var(--radius-lg)",
                 cursor: isExportingLogs ? "wait" : "pointer",
               }}
             >
@@ -153,7 +153,7 @@ const LogsSection: React.FC<LogsSectionProps> = ({ logFilePath }) => {
                 padding: "14px 18px",
                 background: "rgba(255,255,255,0.04)",
                 border: "1px solid rgba(255,255,255,0.08)",
-                borderRadius: "12px",
+                borderRadius: "var(--radius-lg)",
                 cursor: isExportingLogs ? "wait" : "pointer",
               }}
             >
@@ -181,7 +181,7 @@ const LogsSection: React.FC<LogsSectionProps> = ({ logFilePath }) => {
                 padding: "14px 18px",
                 background: "rgba(255,255,255,0.02)",
                 border: "1px solid rgba(255,255,255,0.05)",
-                borderRadius: "12px",
+                borderRadius: "var(--radius-lg)",
                 cursor: isExportingLogs ? "wait" : "pointer",
               }}
             >
@@ -205,7 +205,7 @@ const LogsSection: React.FC<LogsSectionProps> = ({ logFilePath }) => {
               padding: "12px 16px",
               background: "rgba(255,107,53,0.05)",
               border: "1px solid rgba(255,107,53,0.15)",
-              borderRadius: "10px",
+              borderRadius: "var(--radius-md)",
             }}
           >
             <div

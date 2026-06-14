@@ -28,7 +28,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
       style={{
         width: "40px",
         height: "40px",
-        borderRadius: "12px",
+        borderRadius: "var(--radius-lg)",
         background: accent,
         border: "1px solid rgba(255,255,255,0.06)",
         display: "flex",
@@ -72,7 +72,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
           fontFamily: "'DM Mono', monospace",
           letterSpacing: "0.1em",
           padding: "4px 10px",
-          borderRadius: "99px",
+          borderRadius: "var(--radius-pill)",
           background: "rgba(74,222,128,0.1)",
           color: "#4ade80",
           border: "1px solid rgba(74,222,128,0.2)",

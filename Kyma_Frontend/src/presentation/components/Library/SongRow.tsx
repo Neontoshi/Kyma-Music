@@ -28,7 +28,7 @@ const PlayingBars = () => (
         style={{
           width: "3px",
           background: "var(--accent)",
-          borderRadius: "1px",
+          borderRadius: "var(--radius-xs)",
           height: "14px",
           animation: "barBounce 0.8s ease-in-out infinite",
           animationDelay: `${delay}s`,
@@ -322,7 +322,7 @@ const SongRow: React.FC<SongRowProps> = ({
             width: "100%",
             height: "100%",
             objectFit: "cover",
-            borderRadius: "6px",
+            borderRadius: "var(--radius-sm)",
           }}
         />
       );
@@ -335,7 +335,7 @@ const SongRow: React.FC<SongRowProps> = ({
             width: "100%",
             height: "100%",
             objectFit: "cover",
-            borderRadius: "6px",
+            borderRadius: "var(--radius-sm)",
           }}
           onError={(e) => {
             (e.target as HTMLImageElement).style.display = "none";
@@ -499,7 +499,7 @@ const SongRow: React.FC<SongRowProps> = ({
                     height: "2px",
                     background: "var(--error)",
                     transform: "rotate(-45deg)",
-                    borderRadius: "1px",
+                    borderRadius: "var(--radius-xs)",
                   }}
                 />
               </div>
@@ -573,7 +573,7 @@ const SongRow: React.FC<SongRowProps> = ({
                     style={{
                       padding: "8px 12px",
                       cursor: "pointer",
-                      borderRadius: "4px",
+                      borderRadius: "var(--radius-xs)",
                       fontSize: "12px",
                       color: "var(--text2)",
                       whiteSpace: "nowrap",
@@ -645,7 +645,7 @@ const SongRow: React.FC<SongRowProps> = ({
                 style={{
                   padding: "8px 12px",
                   cursor: "pointer",
-                  borderRadius: "4px",
+                  borderRadius: "var(--radius-xs)",
                   fontSize: "12px",
                   color: "var(--text2)",
                   display: "flex",
@@ -681,7 +681,7 @@ const SongRow: React.FC<SongRowProps> = ({
                 style={{
                   padding: "8px 12px",
                   cursor: "pointer",
-                  borderRadius: "4px",
+                  borderRadius: "var(--radius-xs)",
                   fontSize: "12px",
                   color: "var(--text2)",
                   display: "flex",

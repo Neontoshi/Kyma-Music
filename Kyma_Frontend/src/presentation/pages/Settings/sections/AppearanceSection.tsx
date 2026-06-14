@@ -74,7 +74,7 @@ const AppearanceSection: React.FC<AppearanceSectionProps> = ({
                 marginTop: "16px",
                 padding: "16px 20px",
                 background: "var(--surface2)",
-                borderRadius: "12px",
+                borderRadius: "var(--radius-lg)",
                 border: "1px solid var(--border)",
                 fontFamily: FONT_OPTIONS.find((f) => f.value === selectedFont)
                   ?.fontFamily,
@@ -211,7 +211,7 @@ const AppearanceSection: React.FC<AppearanceSectionProps> = ({
                       alignItems: "center",
                       gap: "8px",
                       padding: "12px 8px",
-                      borderRadius: "12px",
+                      borderRadius: "var(--radius-lg)",
                       border: isActive
                         ? "2px solid var(--accent)"
                         : "1px solid rgba(255,255,255,0.08)",
@@ -227,7 +227,7 @@ const AppearanceSection: React.FC<AppearanceSectionProps> = ({
                       style={{
                         width: "40px",
                         height: "40px",
-                        borderRadius: "50%",
+                        borderRadius: "var(--radius-circle)",
                         background: `linear-gradient(135deg, ${t.colors["--accent"]}, ${t.colors["--accent2"]})`,
                         border: `3px solid ${t.colors["--surface2"]}`,
                         boxShadow: isActive
@@ -295,7 +295,7 @@ const AppearanceSection: React.FC<AppearanceSectionProps> = ({
                       alignItems: "center",
                       gap: "8px",
                       padding: "12px 8px",
-                      borderRadius: "12px",
+                      borderRadius: "var(--radius-lg)",
                       border: isActive
                         ? "2px solid var(--accent)"
                         : "1px solid rgba(255,255,255,0.08)",
@@ -311,7 +311,7 @@ const AppearanceSection: React.FC<AppearanceSectionProps> = ({
                       style={{
                         width: "40px",
                         height: "40px",
-                        borderRadius: "50%",
+                        borderRadius: "var(--radius-circle)",
                         background: `linear-gradient(135deg, ${t.colors["--accent"]}, ${t.colors["--accent2"]})`,
                         border: `3px solid ${t.colors["--surface2"]}`,
                         boxShadow: isActive

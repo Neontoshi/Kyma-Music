@@ -234,7 +234,7 @@ const RadioPage: React.FC = () => {
           alignItems: "center",
           gap: 12,
           padding: "8px 12px",
-          borderRadius: 8,
+          borderRadius: "var(--radius-md)",
           cursor: ytdlpAvailable ? "pointer" : "default",
           marginBottom: 1,
           opacity: ytdlpAvailable ? 1 : 0.5,
@@ -274,7 +274,7 @@ const RadioPage: React.FC = () => {
                 style={{
                   display: "block",
                   width: 2,
-                  borderRadius: 1,
+                  borderRadius: "var(--radius-xs)",
                   background: "var(--accent2)",
                   animation: "rBar1 0.8s ease-in-out infinite",
                 }}
@@ -283,7 +283,7 @@ const RadioPage: React.FC = () => {
                 style={{
                   display: "block",
                   width: 2,
-                  borderRadius: 1,
+                  borderRadius: "var(--radius-xs)",
                   background: "var(--accent2)",
                   animation: "rBar2 0.8s ease-in-out infinite 0.15s",
                 }}
@@ -292,7 +292,7 @@ const RadioPage: React.FC = () => {
                 style={{
                   display: "block",
                   width: 2,
-                  borderRadius: 1,
+                  borderRadius: "var(--radius-xs)",
                   background: "var(--accent2)",
                   animation: "rBar3 0.8s ease-in-out infinite 0.3s",
                 }}
@@ -303,7 +303,7 @@ const RadioPage: React.FC = () => {
               style={{
                 width: 5,
                 height: 5,
-                borderRadius: "50%",
+                borderRadius: "var(--radius-circle)",
                 background: genreColor,
                 display: "block",
               }}
@@ -333,7 +333,7 @@ const RadioPage: React.FC = () => {
                   letterSpacing: "0.06em",
                   textTransform: "uppercase",
                   padding: "1px 6px",
-                  borderRadius: 3,
+                  borderRadius: "var(--radius-xs)",
                   border: `1px solid ${genreColor}33`,
                   color: genreColor,
                 }}
@@ -382,7 +382,7 @@ const RadioPage: React.FC = () => {
             style={{
               width: 4,
               height: 4,
-              borderRadius: "50%",
+              borderRadius: "var(--radius-circle)",
               background: isActive ? "#4ade80" : "var(--text3)",
             }}
           />
@@ -399,7 +399,7 @@ const RadioPage: React.FC = () => {
               style={{
                 width: 26,
                 height: 26,
-                borderRadius: 5,
+                borderRadius: "var(--radius-sm)",
                 border: "none",
                 cursor: "pointer",
                 display: "flex",
@@ -430,7 +430,7 @@ const RadioPage: React.FC = () => {
               style={{
                 width: 26,
                 height: 26,
-                borderRadius: 5,
+                borderRadius: "var(--radius-sm)",
                 border: "none",
                 cursor: "pointer",
                 display: "flex",
@@ -457,7 +457,7 @@ const RadioPage: React.FC = () => {
               style={{
                 width: 26,
                 height: 26,
-                borderRadius: 5,
+                borderRadius: "var(--radius-sm)",
                 border: "none",
                 cursor: "pointer",
                 display: "flex",
@@ -506,7 +506,7 @@ const RadioPage: React.FC = () => {
             style={{
               padding: "8px 16px",
               margin: "0 0 1rem",
-              borderRadius: 8,
+              borderRadius: "var(--radius-md)",
               background: "rgba(255,170,50,0.08)",
               border: "1px solid rgba(255,170,50,0.2)",
               color: "#ffaa33",
@@ -533,7 +533,7 @@ const RadioPage: React.FC = () => {
                 alignItems: "center",
                 gap: 6,
                 padding: "5px 12px",
-                borderRadius: 100,
+                borderRadius: "var(--radius-pill)",
                 background: "rgba(255,60,60,0.08)",
                 border: "1px solid rgba(255,60,60,0.2)",
               }}
@@ -542,7 +542,7 @@ const RadioPage: React.FC = () => {
                 style={{
                   width: 7,
                   height: 7,
-                  borderRadius: "50%",
+                  borderRadius: "var(--radius-circle)",
                   background: "#ff3333",
                   animation: "recPulse 1s ease-in-out infinite",
                 }}
@@ -598,7 +598,7 @@ const RadioPage: React.FC = () => {
             }}
             style={{
               padding: "6px 14px",
-              borderRadius: 99,
+              borderRadius: "var(--radius-pill)",
               border: "1px solid var(--border)",
               background:
                 !activeGenre && !searchQuery
@@ -622,7 +622,7 @@ const RadioPage: React.FC = () => {
               onClick={() => handleGenre(genre)}
               style={{
                 padding: "6px 14px",
-                borderRadius: 99,
+                borderRadius: "var(--radius-pill)",
                 border: "1px solid var(--border)",
                 background:
                   activeGenre === genre ? "var(--accent)" : "var(--surface)",

@@ -276,7 +276,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onOpen, onClose }) => {
             alignItems: "center",
             justifyContent: "center",
             padding: "4px",
-            borderRadius: "6px",
+            borderRadius: "var(--radius-sm)",
             transition: "all 0.15s",
             flexShrink: 0,
           }}
@@ -399,7 +399,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onOpen, onClose }) => {
                 style={{
                   width: "24px",
                   height: "24px",
-                  borderRadius: "4px",
+                  borderRadius: "var(--radius-xs)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -442,7 +442,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onOpen, onClose }) => {
                     style={{
                       width: "32px",
                       height: "32px",
-                      borderRadius: "6px",
+                      borderRadius: "var(--radius-sm)",
                       background: "var(--surface2)",
                       border: "1px solid var(--border)",
                       display: "flex",
@@ -534,7 +534,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onOpen, onClose }) => {
                   style={{
                     width: "72px",
                     height: "72px",
-                    borderRadius: "12px",
+                    borderRadius: "var(--radius-lg)",
                     background: "var(--surface2)",
                     border: "1px dashed var(--border)",
                     display: "flex",
@@ -597,7 +597,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onOpen, onClose }) => {
                       style={{
                         width: "28px",
                         height: "28px",
-                        borderRadius: "8px",
+                        borderRadius: "var(--radius-md)",
                         background: "var(--surface2)",
                         border: "1px solid var(--border)",
                         display: "flex",
@@ -637,7 +637,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onOpen, onClose }) => {
                         style={{
                           width: "32px",
                           height: "32px",
-                          borderRadius: "8px",
+                          borderRadius: "var(--radius-md)",
                           background:
                             newEmoji === e
                               ? "rgba(124,106,245,0.15)"
@@ -778,7 +778,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onOpen, onClose }) => {
                           fontSize: "10px",
                           letterSpacing: "0.05em",
                           padding: "5px 12px",
-                          borderRadius: "20px",
+                          borderRadius: "var(--radius-pill)",
                           border: isActive
                             ? `1px solid ${m.color}`
                             : "1px solid var(--border)",

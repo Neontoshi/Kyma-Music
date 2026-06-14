@@ -316,7 +316,7 @@ const PlayerBar: React.FC = () => {
               alignItems: "center",
               gap: "6px",
               padding: "6px 10px",
-              borderRadius: "20px",
+              borderRadius: "var(--radius-pill)",
               transition: "all 0.15s",
             }}
             onMouseEnter={(e) => {
@@ -372,7 +372,7 @@ const PlayerBar: React.FC = () => {
               maxHeight: "550px",
               background: "var(--surface)",
               border: "1px solid var(--border)",
-              borderRadius: "16px",
+              borderRadius: "var(--radius-xl)",
               overflow: "hidden",
               zIndex: 9999,
               boxShadow: "0 20px 40px rgba(0,0,0,0.5)",
@@ -405,7 +405,7 @@ const PlayerBar: React.FC = () => {
                       cursor: "pointer",
                       fontSize: "12px",
                       padding: "4px 8px",
-                      borderRadius: "6px",
+                      borderRadius: "var(--radius-sm)",
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.background = "rgba(255,107,53,0.1)";
@@ -424,7 +424,7 @@ const PlayerBar: React.FC = () => {
                   style={{
                     background: "var(--surface2)",
                     border: "none",
-                    borderRadius: "6px",
+                    borderRadius: "var(--radius-sm)",
                     color: "var(--text2)",
                     cursor: "pointer",
                     width: "28px",
@@ -481,7 +481,7 @@ const PlayerBar: React.FC = () => {
                           padding: "10px 16px",
                           margin: "0 8px 4px",
                           background: "rgba(124,106,245,0.08)",
-                          borderRadius: "10px",
+                          borderRadius: "var(--radius-md)",
                           border: "1px solid rgba(124,106,245,0.15)",
                         }}
                       >
@@ -489,7 +489,7 @@ const PlayerBar: React.FC = () => {
                           style={{
                             width: "36px",
                             height: "36px",
-                            borderRadius: "8px",
+                            borderRadius: "var(--radius-md)",
                             background:
                               currentSong.grad ||
                               "linear-gradient(135deg, var(--accent), var(--accent2))",
@@ -577,7 +577,7 @@ const PlayerBar: React.FC = () => {
                                 style={{
                                   width: "3px",
                                   background: "var(--accent)",
-                                  borderRadius: "1px",
+                                  borderRadius: "var(--radius-xs)",
                                   height: "12px",
                                   animation:
                                     "barBounce 0.8s ease-in-out infinite",
@@ -642,7 +642,7 @@ const PlayerBar: React.FC = () => {
                                 margin: "0 8px",
                                 cursor: "pointer",
                                 transition: "background 0.1s",
-                                borderRadius: "8px",
+                                borderRadius: "var(--radius-md)",
                                 background: isPlayNext
                                   ? "rgba(124,106,245,0.06)"
                                   : "transparent",
@@ -662,7 +662,7 @@ const PlayerBar: React.FC = () => {
                                 style={{
                                   width: "36px",
                                   height: "36px",
-                                  borderRadius: "8px",
+                                  borderRadius: "var(--radius-md)",
                                   background:
                                     song.grad ||
                                     "linear-gradient(135deg, var(--accent), var(--accent2))",
@@ -729,7 +729,7 @@ const PlayerBar: React.FC = () => {
                                         fontSize: "9px",
                                         fontWeight: 700,
                                         padding: "2px 6px",
-                                        borderRadius: "4px",
+                                        borderRadius: "var(--radius-xs)",
                                         background: "var(--accent)",
                                         color: "#fff",
                                         letterSpacing: "0.04em",
@@ -773,7 +773,7 @@ const PlayerBar: React.FC = () => {
                                   color: "var(--text3)",
                                   cursor: "pointer",
                                   padding: "4px",
-                                  borderRadius: "4px",
+                                  borderRadius: "var(--radius-xs)",
                                   fontSize: "14px",
                                   flexShrink: 0,
                                 }}

@@ -17,7 +17,7 @@ const inputStyle: React.CSSProperties = {
   padding: "11px 14px",
   background: "rgba(255,255,255,0.04)",
   border: "1px solid rgba(255,255,255,0.08)",
-  borderRadius: "10px",
+  borderRadius: "var(--radius-md)",
   color: "var(--text)",
   fontFamily: "'DM Mono', monospace",
   fontSize: "12px",
@@ -63,7 +63,7 @@ const IntegrationsSection: React.FC<IntegrationsSectionProps> = ({
               style={{
                 width: "40px",
                 height: "40px",
-                borderRadius: "12px",
+                borderRadius: "var(--radius-lg)",
                 background: "rgba(214,62,62,0.1)",
                 border: "1px solid rgba(255,255,255,0.06)",
                 display: "flex",
@@ -105,7 +105,7 @@ const IntegrationsSection: React.FC<IntegrationsSectionProps> = ({
               padding: "12px 16px",
               background: "rgba(124,106,247,0.05)",
               border: "1px solid rgba(124,106,247,0.12)",
-              borderRadius: "10px",
+              borderRadius: "var(--radius-md)",
               marginBottom: "18px",
             }}
           >
@@ -176,7 +176,7 @@ const IntegrationsSection: React.FC<IntegrationsSectionProps> = ({
               style={{
                 width: "40px",
                 height: "40px",
-                borderRadius: "12px",
+                borderRadius: "var(--radius-lg)",
                 background: "rgba(76,175,80,0.08)",
                 border: "1px solid rgba(255,255,255,0.06)",
                 display: "flex",

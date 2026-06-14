@@ -19,7 +19,7 @@ const inputStyle: React.CSSProperties = {
   padding: "11px 14px",
   background: "rgba(255,255,255,0.04)",
   border: "1px solid rgba(255,255,255,0.08)",
-  borderRadius: "10px",
+  borderRadius: "var(--radius-md)",
   color: "var(--text)",
   fontFamily: "'DM Mono', monospace",
   fontSize: "12px",
@@ -156,7 +156,7 @@ const LibrarySection: React.FC<LibrarySectionProps> = ({
                 padding: "8px 14px",
                 background: "rgba(124,106,245,0.12)",
                 border: "1px solid rgba(124,106,245,0.25)",
-                borderRadius: "10px",
+                borderRadius: "var(--radius-md)",
                 color: "var(--accent2)",
                 cursor: "pointer",
                 fontSize: "12px",
@@ -172,7 +172,7 @@ const LibrarySection: React.FC<LibrarySectionProps> = ({
             <div
               style={{
                 padding: "20px",
-                borderRadius: "10px",
+                borderRadius: "var(--radius-md)",
                 background: "rgba(255,255,255,0.02)",
                 border: "1px dashed rgba(255,255,255,0.07)",
                 textAlign: "center",
@@ -197,7 +197,7 @@ const LibrarySection: React.FC<LibrarySectionProps> = ({
                     padding: "10px 14px",
                     background: "rgba(255,255,255,0.03)",
                     border: "1px solid rgba(255,255,255,0.05)",
-                    borderRadius: "10px",
+                    borderRadius: "var(--radius-md)",
                   }}
                 >
                   <span style={{ fontSize: "14px" }}>📂</span>
@@ -220,7 +220,7 @@ const LibrarySection: React.FC<LibrarySectionProps> = ({
                       padding: "5px 10px",
                       background: "rgba(248,113,113,0.08)",
                       border: "1px solid rgba(248,113,113,0.15)",
-                      borderRadius: "7px",
+                      borderRadius: "var(--radius-sm)",
                       color: "#f87171",
                       cursor: "pointer",
                       fontSize: "11px",

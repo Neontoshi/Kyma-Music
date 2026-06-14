@@ -69,7 +69,7 @@ class ErrorBoundary extends React.Component<Props, State> {
             }}
             style={{
               padding: "10px 24px",
-              borderRadius: 99,
+              borderRadius: "var(--radius-pill)",
               background:
                 "linear-gradient(135deg, var(--accent), var(--accent2))",
               border: "none",

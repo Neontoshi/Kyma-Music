@@ -31,7 +31,7 @@ const PlayingBars = () => (
       style={{
         width: 3,
         background: "var(--accent)",
-        borderRadius: 1,
+        borderRadius: "var(--radius-xs)",
         animation: "barBounce 0.8s ease-in-out infinite",
         height: 14,
       }}
@@ -40,7 +40,7 @@ const PlayingBars = () => (
       style={{
         width: 3,
         background: "var(--accent)",
-        borderRadius: 1,
+        borderRadius: "var(--radius-xs)",
         animation: "barBounce 0.8s ease-in-out infinite",
         animationDelay: "0.15s",
         height: 14,
@@ -50,7 +50,7 @@ const PlayingBars = () => (
       style={{
         width: 3,
         background: "var(--accent)",
-        borderRadius: 1,
+        borderRadius: "var(--radius-xs)",
         animation: "barBounce 0.8s ease-in-out infinite",
         animationDelay: "0.3s",
         height: 14,
@@ -169,7 +169,7 @@ const PlaylistDetailPage: React.FC = () => {
               padding: "7px 14px",
               background: "var(--surface)",
               border: "1px solid var(--border)",
-              borderRadius: 99,
+              borderRadius: "var(--radius-pill)",
               color: "var(--text2)",
               fontFamily: "'Syne',sans-serif",
               fontSize: 12,
@@ -287,7 +287,7 @@ const PlaylistDetailPage: React.FC = () => {
               background:
                 "linear-gradient(135deg, var(--accent), var(--accent2))",
               border: "none",
-              borderRadius: 99,
+              borderRadius: "var(--radius-pill)",
               color: "#fff",
               fontFamily: "'Syne',sans-serif",
               fontSize: 13,
@@ -304,7 +304,7 @@ const PlaylistDetailPage: React.FC = () => {
             onClick={handleDeletePlaylist}
             style={{
               padding: "9px 18px",
-              borderRadius: 99,
+              borderRadius: "var(--radius-pill)",
               background: "transparent",
               border: "1px solid var(--red)",
               color: "var(--red)",
@@ -380,7 +380,7 @@ const PlaylistDetailPage: React.FC = () => {
                   alignItems: "center",
                   gap: 12,
                   padding: "8px 12px",
-                  borderRadius: 8,
+                  borderRadius: "var(--radius-md)",
                   cursor: "pointer",
                   border: "1px solid transparent",
                   background:
@@ -428,7 +428,7 @@ const PlaylistDetailPage: React.FC = () => {
                     style={{
                       width: 36,
                       height: 36,
-                      borderRadius: 6,
+                      borderRadius: "var(--radius-sm)",
                       flexShrink: 0,
                       display: "flex",
                       alignItems: "center",
@@ -516,7 +516,7 @@ const PlaylistDetailPage: React.FC = () => {
                     style={{
                       width: 26,
                       height: 26,
-                      borderRadius: 5,
+                      borderRadius: "var(--radius-sm)",
                       border: "none",
                       background: "none",
                       color: likedSongs.has(song.song_id)
@@ -546,7 +546,7 @@ const PlaylistDetailPage: React.FC = () => {
                     style={{
                       width: 26,
                       height: 26,
-                      borderRadius: 5,
+                      borderRadius: "var(--radius-sm)",
                       border: "none",
                       background: "none",
                       color: "var(--text3)",

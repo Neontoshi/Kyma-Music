@@ -57,7 +57,7 @@ const Slider: React.FC<SliderProps> = ({
         style={{
           position: "relative",
           height: "6px",
-          borderRadius: "99px",
+          borderRadius: "var(--radius-pill)",
           background: "rgba(255,255,255,0.06)",
         }}
       >
@@ -68,7 +68,7 @@ const Slider: React.FC<SliderProps> = ({
             top: 0,
             width: `${pct}%`,
             height: "100%",
-            borderRadius: "99px",
+            borderRadius: "var(--radius-pill)",
             background: "linear-gradient(90deg, #7c6af5, #c084fc)",
             transition: "width 0.1s",
             boxShadow: "0 0 8px rgba(124,106,245,0.4)",
@@ -99,7 +99,7 @@ const Slider: React.FC<SliderProps> = ({
             transform: "translate(-50%, -50%)",
             width: "16px",
             height: "16px",
-            borderRadius: "50%",
+            borderRadius: "var(--radius-circle)",
             background: "#fff",
             boxShadow:
               "0 0 0 3px rgba(124,106,245,0.5), 0 2px 8px rgba(0,0,0,0.5)",

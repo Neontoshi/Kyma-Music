@@ -37,7 +37,7 @@ const SearchHistory: React.FC<SearchHistoryProps> = ({
         right: 0,
         background: "var(--surface)",
         border: "1px solid var(--border2)",
-        borderRadius: "12px",
+        borderRadius: "var(--radius-lg)",
         boxShadow:
           "0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03)",
         zIndex: 20,
@@ -106,7 +106,7 @@ const SearchHistory: React.FC<SearchHistoryProps> = ({
             transition: "all 0.12s",
             background: "transparent",
             margin: "0 4px",
-            borderRadius: "8px",
+            borderRadius: "var(--radius-md)",
           }}
           onMouseEnter={(e) =>
             (e.currentTarget.style.background = "var(--surface2)")
@@ -120,7 +120,7 @@ const SearchHistory: React.FC<SearchHistoryProps> = ({
             style={{
               width: "44px",
               height: "44px",
-              borderRadius: "8px",
+              borderRadius: "var(--radius-md)",
               background:
                 "linear-gradient(135deg, var(--surface2), var(--surface3))",
               border: "1px solid var(--border)",

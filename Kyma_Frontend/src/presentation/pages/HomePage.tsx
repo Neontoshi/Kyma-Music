@@ -113,7 +113,7 @@ const PlayingBars = () => (
         style={{
           width: "3px",
           background: "var(--accent2)",
-          borderRadius: "2px",
+          borderRadius: "var(--radius-xs)",
           animation: "barBounce 0.7s ease-in-out infinite",
           animationDelay: `${delay}s`,
           height: "12px",
@@ -300,7 +300,7 @@ const MediaCard: React.FC<{
       style={{
         width: "100%",
         aspectRatio: "1",
-        borderRadius: "10px",
+        borderRadius: "var(--radius-md)",
         background: grad || "var(--surface2)",
         overflow: "hidden",
         position: "relative",
@@ -348,7 +348,7 @@ const MediaCard: React.FC<{
             left: 6,
             background: "rgba(0,0,0,0.7)",
             backdropFilter: "blur(4px)",
-            borderRadius: "4px",
+            borderRadius: "var(--radius-xs)",
             padding: "2px 6px",
             fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
             fontSize: "9px",
@@ -370,14 +370,14 @@ const MediaCard: React.FC<{
           alignItems: "center",
           justifyContent: "center",
           transition: "background 0.2s",
-          borderRadius: "9px",
+          borderRadius: "var(--radius-md)",
         }}
       >
         <div
           style={{
             width: 36,
             height: 36,
-            borderRadius: "50%",
+            borderRadius: "var(--radius-circle)",
             background: "var(--accent)",
             display: "flex",
             alignItems: "center",
@@ -446,7 +446,7 @@ const TrackRow: React.FC<{
       alignItems: "center",
       gap: "10px",
       padding: "8px 10px",
-      borderRadius: "8px",
+      borderRadius: "var(--radius-md)",
       cursor: "pointer",
       transition: "background 0.12s",
       background: isActive ? "rgba(124,106,245,0.08)" : "transparent",
@@ -533,7 +533,7 @@ const TrackRow: React.FC<{
             color: "var(--accent)",
             background: "rgba(124,106,245,0.1)",
             padding: "1px 5px",
-            borderRadius: "20px",
+            borderRadius: "var(--radius-pill)",
           }}
         >
           {song.plays}×
@@ -976,7 +976,7 @@ const HomePage: React.FC = () => {
                   textAlign: "center",
                   background: "var(--surface)",
                   border: "1px solid var(--border)",
-                  borderRadius: "10px",
+                  borderRadius: "var(--radius-md)",
                   minWidth: "72px",
                 }}
               >
@@ -1056,7 +1056,7 @@ const HomePage: React.FC = () => {
                     padding: "8px 14px 8px 8px",
                     background: "var(--surface)",
                     border: "1px solid var(--border)",
-                    borderRadius: "40px",
+                    borderRadius: "var(--radius-pill)",
                     cursor: "pointer",
                     transition: "border-color 0.15s, transform 0.15s",
                     fontSize: "12px",
@@ -1075,7 +1075,7 @@ const HomePage: React.FC = () => {
                     style={{
                       width: 28,
                       height: 28,
-                      borderRadius: "50%",
+                      borderRadius: "var(--radius-circle)",
                       background: "var(--surface2)",
                       overflow: "hidden",
                       display: "flex",
@@ -1188,7 +1188,7 @@ const HomePage: React.FC = () => {
             style={{
               background: "var(--surface)",
               border: "1px solid var(--border)",
-              borderRadius: "14px",
+              borderRadius: "var(--radius-xl)",
               padding: "16px",
             }}
           >
@@ -1214,7 +1214,7 @@ const HomePage: React.FC = () => {
               style={{
                 background: "var(--surface)",
                 border: "1px solid var(--border)",
-                borderRadius: "14px",
+                borderRadius: "var(--radius-xl)",
                 padding: "16px",
                 display: "flex",
                 justifyContent: "center",
@@ -1243,7 +1243,7 @@ const HomePage: React.FC = () => {
               style={{
                 background: "var(--surface)",
                 border: "1px solid var(--border)",
-                borderRadius: "14px",
+                borderRadius: "var(--radius-xl)",
                 padding: "16px",
               }}
             >
@@ -1280,7 +1280,7 @@ const HomePage: React.FC = () => {
                         alignItems: "center",
                         gap: "10px",
                         padding: "8px 10px",
-                        borderRadius: "8px",
+                        borderRadius: "var(--radius-md)",
                         cursor: "pointer",
                         transition: "background 0.12s",
                       }}
@@ -1356,7 +1356,7 @@ const HomePage: React.FC = () => {
                 style={{
                   background: "var(--surface)",
                   border: "1px solid var(--border)",
-                  borderRadius: "14px",
+                  borderRadius: "var(--radius-xl)",
                   padding: "16px",
                 }}
               >
@@ -1572,7 +1572,7 @@ const HomePage: React.FC = () => {
                     padding: "7px 14px 7px 8px",
                     background: "var(--surface)",
                     border: "1px solid var(--border)",
-                    borderRadius: "40px",
+                    borderRadius: "var(--radius-pill)",
                     cursor: "pointer",
                     transition: "border-color 0.15s, transform 0.15s",
                     fontSize: "12px",
@@ -1591,7 +1591,7 @@ const HomePage: React.FC = () => {
                     style={{
                       width: 26,
                       height: 26,
-                      borderRadius: "50%",
+                      borderRadius: "var(--radius-circle)",
                       background: "var(--surface2)",
                       display: "flex",
                       alignItems: "center",

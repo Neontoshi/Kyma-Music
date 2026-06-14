@@ -34,7 +34,7 @@ const CastSection: React.FC<CastSectionProps> = ({
               style={{
                 width: "110px",
                 height: "110px",
-                borderRadius: "14px",
+                borderRadius: "var(--radius-xl)",
                 background: "#ffffff",
                 padding: "8px",
                 flexShrink: 0,
@@ -53,7 +53,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                   style={{
                     width: "100%",
                     height: "100%",
-                    borderRadius: "6px",
+                    borderRadius: "var(--radius-sm)",
                   }}
                 />
               ) : (
@@ -62,7 +62,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                     width: "100%",
                     height: "100%",
                     background: "rgba(0,0,0,0.05)",
-                    borderRadius: "6px",
+                    borderRadius: "var(--radius-sm)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -104,7 +104,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                   gap: "10px",
                   background: "rgba(255,255,255,0.04)",
                   border: "1px solid rgba(255,255,255,0.08)",
-                  borderRadius: "10px",
+                  borderRadius: "var(--radius-md)",
                   padding: "10px 14px",
                 }}
               >
@@ -132,7 +132,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                     border: copyLabel.includes("✓")
                       ? "1px solid rgba(74,222,128,0.25)"
                       : "1px solid rgba(124,106,245,0.25)",
-                    borderRadius: "7px",
+                    borderRadius: "var(--radius-sm)",
                     color: copyLabel.includes("✓")
                       ? "#4ade80"
                       : "var(--accent2)",

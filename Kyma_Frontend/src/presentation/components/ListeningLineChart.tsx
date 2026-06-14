@@ -209,7 +209,7 @@ export default function ListeningLineChart({
         width: "100%",
         background: "var(--surface)",
         border: "1px solid var(--border)",
-        borderRadius: "12px",
+        borderRadius: "var(--radius-lg)",
         padding: "14px 16px",
       }}
     >
@@ -314,7 +314,7 @@ function DayTab({
         fontFamily: "'DM Mono', monospace",
         fontSize: "10px",
         padding: "3px 7px",
-        borderRadius: "6px",
+        borderRadius: "var(--radius-sm)",
         border: active
           ? "1px solid rgba(124,106,245,0.5)"
           : "1px solid var(--border)",

@@ -159,7 +159,7 @@ const ExplorePage: React.FC = () => {
     <div style={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
       <div className="ex-header">
         {!ytdlpAvailable && (
-          <div style={{ padding: "10px 16px", marginBottom: 12, borderRadius: 8, background: "rgba(255,170,50,0.08)", border: "1px solid rgba(255,170,50,0.2)", color: "#ffaa33", fontFamily: "'DM Mono',monospace", fontSize: 11, display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ padding: "10px 16px", marginBottom: 12, borderRadius: "var(--radius-md)", background: "rgba(255,170,50,0.08)", border: "1px solid rgba(255,170,50,0.2)", color: "#ffaa33", fontFamily: "'DM Mono',monospace", fontSize: 11, display: "flex", alignItems: "center", gap: 8 }}>
             <span>⚠️</span> yt-dlp not installed. Streaming features unavailable. Run: pip install yt-dlp
           </div>
         )}

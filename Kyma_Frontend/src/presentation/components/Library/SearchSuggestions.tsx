@@ -51,7 +51,7 @@ const SearchSuggestions: React.FC<Props> = ({ query, onSelect, visible }) => {
         right: 0,
         background: "var(--surface)",
         border: "1px solid var(--border2)",
-        borderRadius: "12px",
+        borderRadius: "var(--radius-lg)",
         zIndex: 20,
         overflow: "hidden",
         boxShadow:
@@ -87,7 +87,7 @@ const SearchSuggestions: React.FC<Props> = ({ query, onSelect, visible }) => {
             transition: "all 0.12s",
             background: "transparent",
             margin: "0 4px",
-            borderRadius: "8px",
+            borderRadius: "var(--radius-md)",
           }}
           onMouseEnter={(e) =>
             (e.currentTarget.style.background = "var(--surface2)")
@@ -100,7 +100,7 @@ const SearchSuggestions: React.FC<Props> = ({ query, onSelect, visible }) => {
             style={{
               width: "44px",
               height: "44px",
-              borderRadius: "8px",
+              borderRadius: "var(--radius-md)",
               background:
                 "linear-gradient(135deg, var(--surface2), var(--surface3))",
               overflow: "hidden",

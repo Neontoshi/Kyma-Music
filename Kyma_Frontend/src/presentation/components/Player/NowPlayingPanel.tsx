@@ -363,7 +363,7 @@ const NowPlayingPanel: React.FC<NowPlayingPanelProps> = ({
                 color: "var(--text3)",
                 cursor: "pointer",
                 padding: "4px 8px",
-                borderRadius: "4px",
+                borderRadius: "var(--radius-xs)",
                 transition: "all 0.15s",
               }}
               onMouseEnter={(e) => {
@@ -519,7 +519,7 @@ const QueueItem: React.FC<{
               width: "100%",
               height: "100%",
               objectFit: "cover",
-              borderRadius: "6px",
+              borderRadius: "var(--radius-sm)",
             }}
           />
         ) : song.videoId ? (
@@ -530,7 +530,7 @@ const QueueItem: React.FC<{
               width: "100%",
               height: "100%",
               objectFit: "cover",
-              borderRadius: "6px",
+              borderRadius: "var(--radius-sm)",
             }}
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = "none";
@@ -567,7 +567,7 @@ const QueueItem: React.FC<{
                 fontSize: "8px",
                 fontWeight: 700,
                 padding: "1px 5px",
-                borderRadius: "3px",
+                borderRadius: "var(--radius-xs)",
                 background: "var(--accent)",
                 color: "#fff",
                 letterSpacing: "0.04em",
@@ -611,7 +611,7 @@ const QueueItem: React.FC<{
             color: "var(--text3)",
             cursor: "pointer",
             padding: "4px",
-            borderRadius: "4px",
+            borderRadius: "var(--radius-xs)",
             fontSize: "14px",
             display: "flex",
             alignItems: "center",

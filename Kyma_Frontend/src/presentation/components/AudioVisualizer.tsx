@@ -307,7 +307,7 @@ const OverlayControls: React.FC<{
   const btnStyle: React.CSSProperties = {
     background: "rgba(10,10,15,0.8)",
     border: "1px solid var(--border)",
-    borderRadius: 20,
+    borderRadius: "var(--radius-pill)",
     padding: "6px 14px",
     color: "var(--text2)",
     fontSize: 11,
@@ -351,7 +351,7 @@ const OverlayControls: React.FC<{
             whiteSpace: "nowrap",
             background: "rgba(0,0,0,0.4)",
             padding: "4px 8px",
-            borderRadius: 12,
+            borderRadius: "var(--radius-lg)",
           }}
         >
           🎵 {presetName}

@@ -294,7 +294,7 @@ const SearchPage: React.FC = () => {
             style={{
               padding: "8px 16px",
               marginBottom: 10,
-              borderRadius: 8,
+              borderRadius: "var(--radius-md)",
               background: "rgba(255,170,50,0.08)",
               border: "1px solid rgba(255,170,50,0.2)",
               color: "#ffaa33",
@@ -352,7 +352,7 @@ const SearchPage: React.FC = () => {
                 fontSize: 14,
                 lineHeight: 1,
                 padding: "4px",
-                borderRadius: 4,
+                borderRadius: "var(--radius-xs)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",

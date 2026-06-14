@@ -165,7 +165,7 @@ const AudiobooksPage: React.FC = () => {
             style={{
               padding: "10px 16px",
               margin: "0.5rem 0",
-              borderRadius: 8,
+              borderRadius: "var(--radius-md)",
               background: "rgba(255,170,50,0.08)",
               border: "1px solid rgba(255,170,50,0.2)",
               color: "#ffaa33",

@@ -173,7 +173,7 @@ const LikedPage: React.FC = () => {
               background:
                 "linear-gradient(135deg, var(--accent), var(--accent2))",
               border: "none",
-              borderRadius: 99,
+              borderRadius: "var(--radius-pill)",
               color: "#fff",
               fontFamily: "'Syne',sans-serif",
               fontSize: 13,
@@ -190,7 +190,7 @@ const LikedPage: React.FC = () => {
             onClick={() => setSortMode((sortMode + 1) % sortModes.length)}
             style={{
               padding: "9px 18px",
-              borderRadius: 99,
+              borderRadius: "var(--radius-pill)",
               background: "transparent",
               border: "1px solid var(--border)",
               color: "var(--text2)",
@@ -228,7 +228,7 @@ const LikedPage: React.FC = () => {
               gap: 8,
               background: "var(--surface2)",
               border: "1px solid var(--border)",
-              borderRadius: 8,
+              borderRadius: "var(--radius-md)",
               padding: "0 12px",
               height: 36,
             }}
@@ -287,7 +287,7 @@ const LikedPage: React.FC = () => {
               style={{
                 width: 64,
                 height: 64,
-                borderRadius: "50%",
+                borderRadius: "var(--radius-circle)",
                 background: "rgba(192,132,252,0.08)",
                 border: "1px solid rgba(192,132,252,0.15)",
                 display: "flex",

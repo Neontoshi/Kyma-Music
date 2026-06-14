@@ -281,7 +281,7 @@ const SettingsPage: React.FC = () => {
             padding: "4px",
             background: "rgba(255,255,255,0.03)",
             border: "1px solid rgba(255,255,255,0.06)",
-            borderRadius: "14px",
+            borderRadius: "var(--radius-xl)",
             marginBottom: "0",
             overflowX: "auto",
           }}
@@ -298,7 +298,7 @@ const SettingsPage: React.FC = () => {
                   alignItems: "flex-start",
                   gap: "1px",
                   padding: "9px 14px",
-                  borderRadius: "10px",
+                  borderRadius: "var(--radius-md)",
                   border: "none",
                   background: isActive
                     ? "rgba(124,106,245,0.18)"
@@ -461,7 +461,7 @@ const SettingsPage: React.FC = () => {
                 border: saved
                   ? "1px solid rgba(74,222,128,0.35)"
                   : "1px solid rgba(124,106,245,0.4)",
-                borderRadius: "12px",
+                borderRadius: "var(--radius-lg)",
                 color: saved ? "#4ade80" : "#fff",
                 cursor: "pointer",
                 fontFamily: "'Syne', sans-serif",

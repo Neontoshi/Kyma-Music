@@ -10,7 +10,7 @@ const SectionCard: React.FC<SectionCardProps> = ({ children, style }) => (
     style={{
       background: "rgba(255,255,255,0.025)",
       border: "1px solid rgba(255,255,255,0.07)",
-      borderRadius: "16px",
+      borderRadius: "var(--radius-xl)",
       overflow: "hidden",
       backdropFilter: "blur(12px)",
       ...style,

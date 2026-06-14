@@ -19,7 +19,7 @@ const Toggle: React.FC<ToggleProps> = ({ checked, onChange, setting }) => (
       position: "relative",
       width: "44px",
       height: "24px",
-      borderRadius: "99px",
+      borderRadius: "var(--radius-pill)",
       background: checked
         ? "linear-gradient(135deg, #7c6af5, #c084fc)"
         : "rgba(255,255,255,0.06)",
@@ -40,7 +40,7 @@ const Toggle: React.FC<ToggleProps> = ({ checked, onChange, setting }) => (
         left: checked ? "23px" : "3px",
         width: "16px",
         height: "16px",
-        borderRadius: "50%",
+        borderRadius: "var(--radius-circle)",
         background: checked ? "#fff" : "rgba(255,255,255,0.3)",
         transition: "left 0.25s cubic-bezier(0.4,0,0.2,1), background 0.25s",
         boxShadow: checked ? "0 2px 6px rgba(0,0,0,0.4)" : "none",

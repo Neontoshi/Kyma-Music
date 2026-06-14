@@ -85,7 +85,7 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
               border: updateAvailable
                 ? "1px solid rgba(74,222,128,0.25)"
                 : "1px solid rgba(124,106,245,0.12)",
-              borderRadius: "12px",
+              borderRadius: "var(--radius-lg)",
             }}
           >
             <div
@@ -116,7 +116,7 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                     marginTop: "12px",
                     padding: "8px 12px",
                     background: "rgba(74,222,128,0.12)",
-                    borderRadius: "8px",
+                    borderRadius: "var(--radius-md)",
                     fontSize: "12px",
                     color: "#4ade80",
                     fontFamily: "var(--font-family-mono)",
@@ -130,7 +130,7 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                       marginTop: "12px",
                       padding: "12px",
                       background: "rgba(255,255,255,0.03)",
-                      borderRadius: "8px",
+                      borderRadius: "var(--radius-md)",
                       fontSize: "11px",
                       color: "var(--text2)",
                       fontFamily: "var(--font-family-mono)",
@@ -155,7 +155,7 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                 padding: "12px 16px",
                 background: "rgba(124,106,245,0.08)",
                 border: "1px solid rgba(124,106,245,0.2)",
-                borderRadius: "12px",
+                borderRadius: "var(--radius-lg)",
               }}
             >
               <div
@@ -176,7 +176,7 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                   width: "100%",
                   height: "6px",
                   background: "rgba(255,255,255,0.1)",
-                  borderRadius: "3px",
+                  borderRadius: "var(--radius-xs)",
                   overflow: "hidden",
                 }}
               >
@@ -186,7 +186,7 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                     height: "100%",
                     background:
                       "linear-gradient(90deg, var(--accent), var(--accent2))",
-                    borderRadius: "3px",
+                    borderRadius: "var(--radius-xs)",
                     transition: "width 0.3s ease",
                   }}
                 />
@@ -202,7 +202,7 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                 padding: "10px 14px",
                 background: "rgba(255,107,53,0.1)",
                 border: "1px solid rgba(255,107,53,0.25)",
-                borderRadius: "8px",
+                borderRadius: "var(--radius-md)",
                 fontSize: "11px",
                 fontFamily: "var(--font-family-mono)",
                 color: "#ff6b35",
@@ -227,7 +227,7 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                   ? "rgba(255,255,255,0.05)"
                   : "linear-gradient(135deg, #4ade80, #22c55e)",
                 border: "none",
-                borderRadius: "12px",
+                borderRadius: "var(--radius-lg)",
                 cursor: downloading ? "wait" : "pointer",
                 color: downloading ? "var(--text3)" : "#fff",
                 fontFamily: "var(--font-family-base)",
@@ -270,7 +270,7 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                 background:
                   "linear-gradient(135deg, var(--accent), var(--accent2))",
                 border: "none",
-                borderRadius: "12px",
+                borderRadius: "var(--radius-lg)",
                 cursor: checking ? "wait" : "pointer",
                 color: "#fff",
                 fontFamily: "var(--font-family-base)",
@@ -322,7 +322,7 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
               padding: "12px 16px",
               background: "rgba(255,107,53,0.05)",
               border: "1px solid rgba(255,107,53,0.15)",
-              borderRadius: "10px",
+              borderRadius: "var(--radius-md)",
             }}
           >
             <div

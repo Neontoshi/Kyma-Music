@@ -190,7 +190,7 @@ const LibraryView: React.FC = () => {
                 fontSize: 14,
                 lineHeight: 1,
                 padding: "4px",
-                borderRadius: 4,
+                borderRadius: "var(--radius-xs)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",

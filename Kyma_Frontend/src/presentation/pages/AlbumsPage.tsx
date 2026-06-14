@@ -762,7 +762,7 @@ const AlbumsPage: React.FC = () => {
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
-                      borderRadius: "50%",
+                      borderRadius: "var(--radius-circle)",
                     }}
                   />
                 ) : (
@@ -978,7 +978,7 @@ const AlbumsPage: React.FC = () => {
                       style={{
                         width: 40,
                         height: 40,
-                        borderRadius: 6,
+                        borderRadius: "var(--radius-sm)",
                         flexShrink: 0,
                         display: "flex",
                         alignItems: "center",

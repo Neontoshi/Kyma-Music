@@ -499,7 +499,7 @@ const ArtistsPage: React.FC = () => {
                         width: "100%",
                         height: "100%",
                         objectFit: "cover",
-                        borderRadius: "50%",
+                        borderRadius: "var(--radius-circle)",
                       }}
                     />
                   ) : (
@@ -867,7 +867,7 @@ const ArtistsPage: React.FC = () => {
                                 style={{
                                   width: 36,
                                   height: 36,
-                                  borderRadius: "50%",
+                                  borderRadius: "var(--radius-circle)",
                                   flexShrink: 0,
                                   display: "flex",
                                   alignItems: "center",
