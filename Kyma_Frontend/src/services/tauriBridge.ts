@@ -80,6 +80,16 @@ export const tauriCommands = {
   getMetadata: (path: string): Promise<Partial<Song>> =>
     handleInvoke("get_metadata", { path }),
 
+  // Updates
+  downloadUpdate: (url: string, filename: string): Promise<string> =>
+    handleInvoke("download_update", { url, filename }),
+
+  runInstaller: (path: string): Promise<void> =>
+    handleInvoke("run_installer", { path }),
+
+  openFile: (path: string): Promise<void> =>
+    handleInvoke("open_file", { path }),
+
   // Player
   playTrack: (song: Song): Promise<number> => {
     logger.logInfo(`Play track called: ${song.title} - ${song.artist}`, {

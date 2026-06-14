@@ -40,7 +40,7 @@
       "icons/icon.ico",
       "icons/icon.icns"
     ],
-    "createUpdaterArtifacts": true,
+    "createUpdaterArtifacts": false,
     "macOS": {
       "minimumSystemVersion": "10.15",
       "frameworks": [],
@@ -96,10 +96,5 @@
     "shortDescription": "A modern cross-platform music player",
     "longDescription": "Kyma - A feature-rich music player with YouTube and SoundCloud support"
   },
-  "plugins": {
-    "dialog": true,
-    "windows": {
-      "installMode": "passive"
-    }
-  }
+  "plugins": {}
 }

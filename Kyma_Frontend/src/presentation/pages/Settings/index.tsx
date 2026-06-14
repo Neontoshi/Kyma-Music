@@ -69,9 +69,11 @@ const SettingsPage: React.FC = () => {
     updateUrl,
     updateNotes,
     checking,
+    downloading,
+    downloadProgress,
     checkForUpdates,
+    downloadAndInstall,
   } = useUpdater();
-
   // State for all sections
   const [listenbrainzToken, setListenbrainzToken] = useState("");
   const [listenbrainzUser, setListenbrainzUser] = useState("");
@@ -431,7 +433,10 @@ const SettingsPage: React.FC = () => {
             updateUrl={updateUrl}
             updateNotes={updateNotes}
             checking={checking}
+            downloading={downloading}
+            downloadProgress={downloadProgress}
             checkForUpdates={checkForUpdates}
+            downloadAndInstall={downloadAndInstall}
           />
         )}
 

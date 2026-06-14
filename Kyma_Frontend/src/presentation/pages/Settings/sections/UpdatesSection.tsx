@@ -9,32 +9,54 @@ interface UpdatesSectionProps {
   updateUrl: string;
   updateNotes: string;
   checking: boolean;
+  downloading: boolean;
+  downloadProgress: number;
   checkForUpdates: () => Promise<void>;
+  downloadAndInstall: () => Promise<void>;
 }
 
 const UpdatesSection: React.FC<UpdatesSectionProps> = ({
   updateAvailable,
   updateVersion,
+  //@ts-ignore
   updateUrl,
   updateNotes,
   checking,
+  downloading,
+  downloadProgress,
   checkForUpdates,
+  downloadAndInstall,
 }) => {
-  const handleUpdate = () => {
-    logger.logUI("UpdatesSection", "download_update", {
-      version: updateVersion,
-      url: updateUrl,
-    });
-    window.open(updateUrl, "_blank");
+  const [error, setError] = React.useState("");
+
+  const handleUpdate = async () => {
+    setError("");
+    try {
+      logger.logUI("UpdatesSection", "start_install", {
+        version: updateVersion,
+      });
+      await downloadAndInstall();
+    } catch (e) {
+      const message = String(e);
+      setError(message);
+      logger.logUI("UpdatesSection", "install_error", { error: message });
+    }
   };
 
   const handleCheck = async () => {
-    logger.logUI("UpdatesSection", "manual_check");
-    await checkForUpdates();
+    setError("");
+    try {
+      logger.logUI("UpdatesSection", "manual_check");
+      await checkForUpdates();
+    } catch (e) {
+      const message = String(e);
+      setError(message);
+      logger.logUI("UpdatesSection", "check_error", { error: message });
+    }
   };
 
-  // Get current version - you can also pass this as a prop
-  const currentVersion = "1.1.0"; // Update this or get from backend
+  // Get current version - update this or get from backend
+  const currentVersion = "1.1.1";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -44,7 +66,13 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
           title="Software Updates"
           desc="Check for new versions"
           accent="rgba(74,222,128,0.1)"
-          badge={updateAvailable ? "Update Available" : "Up to Date"}
+          badge={
+            downloading
+              ? "Downloading..."
+              : updateAvailable
+                ? "Update Available"
+                : "Up to Date"
+          }
         />
         <div style={{ padding: "20px 24px" }}>
           <div
@@ -119,9 +147,75 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
             )}
           </div>
 
+          {/* Download Progress Bar */}
+          {downloading && (
+            <div
+              style={{
+                marginBottom: "16px",
+                padding: "12px 16px",
+                background: "rgba(124,106,245,0.08)",
+                border: "1px solid rgba(124,106,245,0.2)",
+                borderRadius: "12px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "8px",
+                  fontSize: "11px",
+                  fontFamily: "var(--font-family-mono)",
+                  color: "var(--text2)",
+                }}
+              >
+                <span>Downloading update...</span>
+                <span>{downloadProgress}%</span>
+              </div>
+              <div
+                style={{
+                  width: "100%",
+                  height: "6px",
+                  background: "rgba(255,255,255,0.1)",
+                  borderRadius: "3px",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    width: `${downloadProgress}%`,
+                    height: "100%",
+                    background:
+                      "linear-gradient(90deg, var(--accent), var(--accent2))",
+                    borderRadius: "3px",
+                    transition: "width 0.3s ease",
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Error Message */}
+          {error && (
+            <div
+              style={{
+                marginBottom: "16px",
+                padding: "10px 14px",
+                background: "rgba(255,107,53,0.1)",
+                border: "1px solid rgba(255,107,53,0.25)",
+                borderRadius: "8px",
+                fontSize: "11px",
+                fontFamily: "var(--font-family-mono)",
+                color: "#ff6b35",
+              }}
+            >
+              ⚠️ {error}
+            </div>
+          )}
+
           {updateAvailable ? (
             <button
               onClick={handleUpdate}
+              disabled={downloading}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -129,18 +223,38 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                 gap: "12px",
                 width: "100%",
                 padding: "14px 18px",
-                background: "linear-gradient(135deg, #4ade80, #22c55e)",
+                background: downloading
+                  ? "rgba(255,255,255,0.05)"
+                  : "linear-gradient(135deg, #4ade80, #22c55e)",
                 border: "none",
                 borderRadius: "12px",
-                cursor: "pointer",
-                color: "#fff",
+                cursor: downloading ? "wait" : "pointer",
+                color: downloading ? "var(--text3)" : "#fff",
                 fontFamily: "var(--font-family-base)",
                 fontSize: "14px",
                 fontWeight: 600,
+                opacity: downloading ? 0.7 : 1,
               }}
             >
-              <span>⬇️</span>
-              <span>Download Update from GitHub</span>
+              {downloading ? (
+                <>
+                  <div
+                    className="ap-spinner ap-spinner--sm"
+                    style={{
+                      width: "16px",
+                      height: "16px",
+                      border: "2px solid rgba(255,255,255,0.3)",
+                      borderTopColor: "var(--accent)",
+                    }}
+                  />
+                  <span>Downloading & Installing...</span>
+                </>
+              ) : (
+                <>
+                  <span>⬇️</span>
+                  <span>Download & Install Update</span>
+                </>
+              )}
             </button>
           ) : (
             <button
@@ -231,9 +345,9 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                 lineHeight: 1.5,
               }}
             >
-              Updates are checked automatically on startup. When a new version
-              is available, you'll be directed to the GitHub releases page to
-              download and install it manually.
+              Updates are checked automatically when you launch Kyma. You can
+              also manually check here. When an update is available, it will be
+              downloaded and installed automatically.
             </div>
           </div>
         </div>
