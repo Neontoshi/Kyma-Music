@@ -24,6 +24,7 @@
     "core:menu:default",
     "notification:default",
     "dialog:default",
-    "updater:default"
+    "updater:default",
+    "process:allow-restart"
   ]
 }
