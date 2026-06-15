@@ -6,7 +6,7 @@
   "build": {
     "beforeDevCommand": "npm run dev --prefix Kyma_Frontend",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build --prefix Kyma_Frontend && rm -rf Kyma_Backend/remote-dist && mkdir -p Kyma_Backend/remote-dist && cp Kyma_Frontend/dist/remote/index.html Kyma_Backend/remote-dist/ && cp -r Kyma_Frontend/dist/assets Kyma_Backend/remote-dist/assets",
+    "beforeBuildCommand": "npm run build --prefix Kyma_Frontend && npm run copy-remote --prefix Kyma_Frontend",
     "frontendDist": "../Kyma_Frontend/dist"
   },
   "app": {
