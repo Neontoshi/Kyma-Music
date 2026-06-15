@@ -84,11 +84,8 @@ export const tauriCommands = {
   downloadUpdate: (url: string, filename: string): Promise<string> =>
     handleInvoke("download_update", { url, filename }),
 
-  runInstaller: (path: string): Promise<void> =>
-    handleInvoke("run_installer", { path }),
-
-  openFile: (path: string): Promise<void> =>
-    handleInvoke("open_file", { path }),
+  installUpdate: (path: string): Promise<void> =>
+    handleInvoke("install_update", { path }),
 
   // Prefetch
   prefetchTrack: (song: Song): Promise<void> =>

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { logger } from "../../services/logger";
-import { relaunch } from "@tauri-apps/plugin-process";
 
 interface GitHubRelease {
   tag_name: string;
@@ -98,8 +97,6 @@ export const useUpdater = () => {
       logger.logUI("Updater", "download_complete", { path: filePath });
 
       await installUpdate(filePath);
-
-      await relaunch();
     } catch (error) {
       console.error("Download/Install failed:", error);
       logger.logUI("Updater", "install_failed", {
@@ -138,7 +135,7 @@ async function getCurrentVersion(): Promise<string> {
     const version = await tauriCommands.getAppVersion();
     return version || "1.0.0";
   } catch {
-    return "1.1.3";
+    return "1.1.6";
   }
 }
 
@@ -203,14 +200,5 @@ async function downloadFile(
 
 async function installUpdate(filePath: string) {
   const { tauriCommands } = await import("../../services/tauriBridge");
-
-  const isWindows = navigator.platform.includes("Win");
-  const isMac = navigator.platform.includes("Mac");
-  const isLinux = navigator.platform.includes("Linux");
-
-  if (isWindows || isMac) {
-    await tauriCommands.runInstaller(filePath);
-  } else if (isLinux) {
-    await tauriCommands.openFile(filePath);
-  }
+  await tauriCommands.installUpdate(filePath);
 }

@@ -55,7 +55,6 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
     }
   };
 
-  // Get current version - update this or get from backend
   const [currentVersion, setCurrentVersion] = React.useState<string>("...");
 
   React.useEffect(() => {
@@ -254,12 +253,12 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                       borderTopColor: "var(--accent)",
                     }}
                   />
-                  <span>Downloading & Installing...</span>
+                  <span>Downloading...</span>
                 </>
               ) : (
                 <>
                   <span>⬇️</span>
-                  <span>Download & Install Update</span>
+                  <span>Download Update</span>
                 </>
               )}
             </button>
@@ -352,9 +351,9 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                 lineHeight: 1.5,
               }}
             >
-              Updates are checked automatically when you launch Kyma. You can
-              also manually check here. When an update is available, it will be
-              downloaded and installed automatically.
+              Updates are checked automatically when you launch Kyma. When an
+              update is available, it will be downloaded to your system. You'll
+              need to install it manually from the downloaded file.
             </div>
           </div>
         </div>

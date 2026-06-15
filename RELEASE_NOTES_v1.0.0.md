@@ -34,7 +34,7 @@ Kyma is officially out. This is the first public release — a privacy-first, cr
 ## 🐧 Installation — Linux (`.deb`)
 
 ```bash
-sudo dpkg -i kyma_1.0.0_amd64.deb
+sudo dpkg -i Kyma_1.1.7_amd64.deb
 ```
 
 Then launch Kyma from your applications menu or run:

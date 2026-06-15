@@ -44,7 +44,7 @@ pub use player::{
     get_resume_state, get_volume, next_track, pause_playback, play_track, prev_track,
     remove_from_queue, resume_playback, seek_to, set_queue, set_volume, stop_playback,
 };
-pub use updates::{download_update, open_file, run_installer};
+pub use updates::{download_update, install_update};
 
 pub use playlist::{
     add_to_playlist, create_playlist, get_playlist_songs, get_playlists, remove_from_playlist,
