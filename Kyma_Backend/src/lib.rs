@@ -95,6 +95,7 @@ pub fn run() {
             youtube_download,
             check_download_exists,
             check_ytdlp,
+            update_ytdlp,
             get_setting,
             set_setting,
             get_app_version,

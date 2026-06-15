@@ -68,5 +68,5 @@ pub use soundcloud::{
 
 pub use youtube::{
     check_download_exists, check_ytdlp, clear_stream_cache, invalidate_stream_url,
-    resolve_youtube_url, stream_youtube, youtube_download, youtube_search,
+    resolve_youtube_url, stream_youtube, update_ytdlp, youtube_download, youtube_search,
 };

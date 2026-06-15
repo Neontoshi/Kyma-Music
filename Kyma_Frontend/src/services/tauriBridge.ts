@@ -433,6 +433,7 @@ export const tauriCommands = {
 
   // Utilities
   checkYtdlp: (): Promise<string> => handleInvoke("check_ytdlp"),
+  updateYtdlp: (): Promise<string> => handleInvoke("update_ytdlp"),
 };
 
 //  Events

@@ -5,7 +5,8 @@ import { Song } from "../../core/entities/Song";
 import { tauriCommands } from "../../services/tauriBridge";
 import { logger } from "../../services/logger";
 
-const PREFETCH_COUNT = 3;
+const PREFETCH_COUNT = 4;
+const CONCURRENCY = 2; // Resolve 2 at a time
 
 const formatDuration = (secs: number) => {
   const m = Math.floor(secs / 60);
@@ -26,6 +27,34 @@ export const useExplorePrefetch = (tracks: Song[]) => {
     lastPrefetchedForId.current = null;
   }, [tracks]);
 
+  const resolveSong = async (song: Song) => {
+    try {
+      const results = await tauriCommands.searchYoutube(
+        `${song.artist} - ${song.title}`,
+        5,
+      );
+      if (results?.length) {
+        const videoId = results[0].id;
+        song.videoId = videoId;
+        if (results[0].duration_secs) {
+          song.duration = results[0].duration_secs;
+          song.dur = formatDuration(results[0].duration_secs);
+        }
+        await tauriCommands.prefetchTrack(song);
+        logger.logUI("ExplorePrefetch", "resolved", {
+          songId: song.id,
+          title: song.title.slice(0, 30),
+          videoId,
+        });
+      }
+    } catch (e) {
+      logger.logUI("ExplorePrefetch", "failed", {
+        songId: song.id,
+        error: String(e),
+      });
+    }
+  };
+
   const prefetchNextBatch = async () => {
     if (isResolvingRef.current) return;
     isResolvingRef.current = true;
@@ -44,6 +73,7 @@ export const useExplorePrefetch = (tracks: Song[]) => {
         if (nextIdx >= currentTracks.length) break;
         const song = currentTracks[nextIdx];
         if (song.videoId || prefetchedRef.current.has(song.id)) continue;
+        prefetchedRef.current.add(song.id);
         toResolve.push(song);
       }
 
@@ -54,44 +84,16 @@ export const useExplorePrefetch = (tracks: Song[]) => {
         songs: toResolve.map((s) => s.title.slice(0, 30)),
       });
 
-      for (const song of toResolve) {
-        prefetchedRef.current.add(song.id);
-        try {
-          // Step 1: Find the YouTube video ID
-          const results = await tauriCommands.searchYoutube(
-            `${song.artist} - ${song.title}`,
-            5,
-          );
-          if (results?.length) {
-            const videoId = results[0].id;
-            song.videoId = videoId;
-            if (results[0].duration_secs) {
-              song.duration = results[0].duration_secs;
-              song.dur = formatDuration(results[0].duration_secs);
-            }
-
-            // Step 2: Resolve the actual stream URL and cache it
-            await tauriCommands.prefetchTrack(song);
-
-            logger.logUI("ExplorePrefetch", "resolved", {
-              songId: song.id,
-              title: song.title.slice(0, 30),
-              videoId,
-            });
-          }
-        } catch (e) {
-          logger.logUI("ExplorePrefetch", "failed", {
-            songId: song.id,
-            error: String(e),
-          });
-        }
+      // Process in batches of CONCURRENCY
+      for (let i = 0; i < toResolve.length; i += CONCURRENCY) {
+        const batch = toResolve.slice(i, i + CONCURRENCY);
+        await Promise.all(batch.map((song) => resolveSong(song)));
       }
     } finally {
       isResolvingRef.current = false;
     }
   };
 
-  // Trigger prefetch whenever a new song starts playing
   useEffect(() => {
     const interval = setInterval(() => {
       const state = usePlayerStore.getState();

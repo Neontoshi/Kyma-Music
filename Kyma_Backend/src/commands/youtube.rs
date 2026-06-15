@@ -1101,6 +1101,36 @@ pub async fn check_ytdlp() -> Result<String, YtError> {
     Ok(version)
 }
 
+#[tauri::command]
+pub async fn update_ytdlp() -> Result<String, String> {
+    user_action!("YOUTUBE", "Updating yt-dlp...");
+
+    let output = tokio::process::Command::new("pip")
+        .args(["install", "--upgrade", "yt-dlp", "--break-system-packages"])
+        .output()
+        .await
+        .map_err(|e| format!("Failed to run pip: {}", e))?;
+
+    if output.status.success() {
+        // Get new version
+        let version_output = tokio::process::Command::new("yt-dlp")
+            .arg("--version")
+            .output()
+            .await
+            .map_err(|e| format!("Failed to get version: {}", e))?;
+
+        let new_version = String::from_utf8_lossy(&version_output.stdout)
+            .trim()
+            .to_string();
+        user_action!("YOUTUBE", "Updated to yt-dlp version: {}", new_version);
+        Ok(new_version)
+    } else {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        user_error!("YOUTUBE", "Failed to update yt-dlp: {}", stderr);
+        Err(format!("Update failed: {}", stderr))
+    }
+}
+
 /// Clears temp `.mp3` stream files AND the persistent disk URL cache JSON.
 /// Called on app shutdown or manual cache-clear.
 pub async fn clear_stream_cache() {

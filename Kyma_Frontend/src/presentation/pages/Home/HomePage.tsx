@@ -10,6 +10,8 @@ import { useRecentlyPlayedStore } from "../../stores/recentlyPlayedStore";
 import { useHomeDataStore } from "../../stores/homeDataStore";
 import { useQueueStore } from "../../stores/queueStore";
 import { logger } from "../../../services/logger";
+import { useUpdater } from "../../hooks/useUpdater";
+import { useSystemStore } from "../../stores/systemStore";
 
 // Section components
 import HeroSection from "./components/HeroSection";
@@ -49,6 +51,7 @@ const HomePage: React.FC = () => {
   const { currentSong, setCurrentSong, setProgress, isPlaying } =
     usePlayerStore();
   const navigate = useNavigate();
+  const { ytdlpOutdated, ytdlpVersion, updateYtdlp } = useSystemStore();
 
   const {
     items: recentlyPlayed,
@@ -64,6 +67,7 @@ const HomePage: React.FC = () => {
     loadAll,
     allTimeStats,
   } = useHomeDataStore();
+  const { updateAvailable, updateVersion, downloadAndInstall } = useUpdater();
 
   useEffect(() => {
     loadRecentPlays();
@@ -487,6 +491,12 @@ const HomePage: React.FC = () => {
           stats={stats}
           weeklyStats={weeklyStats}
           allTimeStats={allTimeStats}
+          updateAvailable={updateAvailable}
+          updateVersion={updateVersion}
+          onUpdateClick={downloadAndInstall}
+          ytdlpOutdated={ytdlpOutdated}
+          ytdlpVersion={ytdlpVersion}
+          onUpdateYtdlp={updateYtdlp}
         />
 
         <TrendingSection
