@@ -465,7 +465,7 @@ export const usePlayer = () => {
 
         if (
           duration > 2 &&
-          position >= duration - 2 &&
+          position >= duration - 0.5 &&
           !songEndHandled.current &&
           Date.now() >= ignorePositionUntil.current
         ) {

@@ -56,7 +56,14 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
   };
 
   // Get current version - update this or get from backend
-  const currentVersion = "1.1.1";
+  const [currentVersion, setCurrentVersion] = React.useState<string>("...");
+
+  React.useEffect(() => {
+    import("@tauri-apps/api/app")
+      .then(({ getVersion }) => getVersion())
+      .then(setCurrentVersion)
+      .catch(() => setCurrentVersion("unknown"));
+  }, []);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
