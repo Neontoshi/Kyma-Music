@@ -1,18 +1,14 @@
 <div align="center">
-
 <img src="Kyma_Backend/icons/icon.png" width="100" alt="Kyma Logo" />
 
-# 🌊 Kyma v1.0.0
-
+# 🌊 Kyma v1.1.8
 ### The first wave.
-
 *June 2026 · Initial Release*
-
 </div>
 
 ---
 
-Kyma is officially out. This is the first public release — a privacy-first, cross-platform desktop music player built with Rust and Tauri 2.0. No subscriptions. No telemetry. No cloud. Just music.
+Kyma is officially out. This is the first public release, a privacy-first, cross-platform desktop music player built with Rust and Tauri 2.0. No subscriptions. No telemetry. No cloud. Just music.
 
 ---
 
@@ -26,37 +22,69 @@ Kyma is officially out. This is the first public release — a privacy-first, cr
 | 🎙️ | **Podcasts** | Subscribe, download, and track listening progress |
 | ❤️ | **Liked Songs & Playlists** | Manage favourites across all sources in one place |
 | 🔍 | **Universal Search** | Local and online results in a single query |
-| 🖥️ | **Cross-platform** | Native builds for Windows, Linux, and macOS |
+| 🖥️ | **Cross-platform** | Native builds for Windows, macOS, and Linux |
 | 🔒 | **Privacy First** | Zero telemetry — all data stays on your machine |
 
 ---
 
-## 🐧 Installation — Linux (`.deb`)
+## 💻 Installation
 
-```bash
-sudo dpkg -i Kyma_1.1.7_amd64.deb
+### 🪟 Windows
+
+Download **`Kyma_1.1.8_x64-setup.exe`** from the [releases page](https://github.com/Neontoshi/Kyma-Music/releases/tag/v1.1.8) and run the installer.
+
+For streaming support, install `yt-dlp`:
+
+```powershell
+winget install yt-dlp.yt-dlp
 ```
 
-Then launch Kyma from your applications menu or run:
+**Requirements:** Windows 10 or later (64-bit)
+
+---
+
+### 🍎 macOS
+
+Download the appropriate `.dmg` for your machine from the [releases page](https://github.com/Neontoshi/Kyma-Music/releases/tag/v1.1.8):
+
+| Mac | File |
+|-----|------|
+| Apple Silicon (M1/M2/M3) | `Kyma_1.1.8_aarch64.dmg` |
+| Intel | `Kyma_1.1.8_x64.dmg` |
+
+Open the `.dmg`, drag Kyma to your Applications folder, and launch it.
+
+For streaming support, install `yt-dlp`:
 
 ```bash
-kyma
+brew install yt-dlp
 ```
 
-### Requirements
+**Requirements:** macOS 11 (Big Sur) or later
 
-- Ubuntu 20.04+ or any Debian-based distro
-- `yt-dlp` for streaming support:
+---
+
+### 🐧 Linux (`.deb`)
+
+Download **`Kyma_1.1.8_amd64.deb`** from the [releases page](https://github.com/Neontoshi/Kyma-Music/releases/tag/v1.1.8) or install directly:
+
+```bash
+sudo dpkg -i Kyma_1.1.8_amd64.deb
+```
+
+For streaming support:
 
 ```bash
 sudo apt install yt-dlp
 ```
 
+**Requirements:** Ubuntu 20.04+ or any Debian-based distro
+
 ---
 
 ## ⚠️ Known Limitations
 
-This is v1.0.0 — a solid foundation with a few rough edges still to smooth out:
+This is v1.1.8 — a solid foundation with a few rough edges still to smooth out:
 
 - Podcast sync is local only — no cross-device support yet
 - SoundCloud search may be slower depending on `yt-dlp` response times
@@ -66,17 +94,19 @@ This is v1.0.0 — a solid foundation with a few rough edges still to smooth out
 
 ## 🐛 Found a Bug?
 
-Open an issue at [github.com/Neontoshi/Kyma/issues](https://github.com/Neontoshi/Kyma/issues) and include:
+Open an issue at [github.com/Neontoshi/Kyma-Music/issues](https://github.com/Neontoshi/Kyma-Music/issues) and include:
 
 - Your OS and version
 - Steps to reproduce
-- Logs from `~/.local/share/Kyma/logs/`
+- Logs from:
+  - **Linux:** `~/.local/share/Kyma/logs/`
+  - **Windows:** `%APPDATA%\Kyma\logs\`
+  - **macOS:** `~/Library/Application Support/Kyma/logs/`
 
 ---
 
 ## 🗺️ What's Next
 
-- [ ] Windows & macOS releases
 - [ ] Lyrics display (lrclib integration)
 - [ ] Queue management improvements
 - [ ] Remote control via Kyma Cast

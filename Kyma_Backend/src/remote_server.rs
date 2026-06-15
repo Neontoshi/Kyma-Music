@@ -128,13 +128,11 @@ pub fn remote_router(app_handle: tauri::AppHandle) -> Router {
         .route("/ws", get(ws_handler))
         .route("/state", get(state_handler))
         .fallback_service({
-            let cwd = std::env::current_dir().unwrap_or_default();
-            let remote_dir = if cwd.join("remote").exists() {
-                cwd.join("remote")
-            } else {
-                // Fallback for dev
-                std::path::PathBuf::from("../Kyma_Frontend/remote")
-            };
+            let remote_dir = app_handle
+                .path()
+                .resource_dir()
+                .unwrap_or_else(|_| std::env::current_dir().unwrap_or_default())
+                .join("remote");
             ServeDir::new(remote_dir)
         })
         .with_state(state)
