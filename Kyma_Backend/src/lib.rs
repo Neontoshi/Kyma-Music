@@ -107,6 +107,7 @@ pub fn run() {
             get_weekly_stats,
             get_deezer_genre_chart,
             get_deezer_genre_artists,
+            get_deezer_playlist_tracks,
             save_play_history,
             get_recently_played,
             toggle_like,

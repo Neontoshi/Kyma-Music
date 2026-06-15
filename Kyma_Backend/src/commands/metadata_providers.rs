@@ -39,7 +39,7 @@ pub struct CleanMetadata {
     pub genre: String,
 }
 
-// ── Deezer ──────────────────────────────────────────────────────────────────
+//  Deezer
 
 #[derive(Debug, Deserialize)]
 struct DeezerSearchResponse {
@@ -67,7 +67,7 @@ struct DeezerAlbum {
     cover_medium: Option<String>,
 }
 
-// ── Deezer Chart (Trending) ─────────────────────────────────────────────────
+//  Deezer Chart (Trending)
 
 #[derive(Debug, Serialize)]
 pub struct DeezerChartTrack {
@@ -140,7 +140,7 @@ pub async fn get_deezer_chart() -> Result<Vec<DeezerChartTrack>, String> {
     }
 }
 
-// ── Last.fm Similar Artists ─────────────────────────────────────────────────
+//  Last.fm Similar Artists
 
 #[derive(Debug, Serialize)]
 pub struct LastfmSimilarArtist {
@@ -227,7 +227,7 @@ pub async fn get_lastfm_similar_artists(
     Ok(artists)
 }
 
-// ── Last.fm Weekly Track Chart ──────────────────────────────────────────────
+//  Last.fm Weekly Track Chart
 
 #[derive(Debug, Serialize)]
 pub struct LastfmWeeklyTrack {
@@ -338,7 +338,7 @@ pub async fn search_deezer(query: String) -> Result<Vec<MetadataTrack>, String> 
     Ok(tracks)
 }
 
-// ── Deezer Artist Search ───────────────────────────────────────────────────
+//  Deezer Artist Search
 
 #[derive(Debug, Serialize, Clone)]
 pub struct DeezerArtistInfo {
@@ -388,7 +388,84 @@ pub async fn search_artists_deezer(query: String) -> Result<Vec<DeezerArtistInfo
     Ok(artists)
 }
 
-// ── MusicBrainz ────────────────────────────────────────────────────────────
+#[derive(Debug, Serialize)]
+pub struct DeezerPlaylistTrack {
+    pub id: u64,
+    pub title: String,
+    pub artist: String,
+    pub album: String,
+    pub duration_secs: u32,
+    pub artwork_url: String,
+}
+
+#[tauri::command]
+pub async fn get_deezer_playlist_tracks(query: String) -> Result<Vec<DeezerPlaylistTrack>, String> {
+    user_action!("DEEZER", "Fetching playlist tracks for: {}", query);
+
+    // Step 1: Search for playlists
+    let search_url = format!(
+        "https://api.deezer.com/search/playlist?q={}&limit=1",
+        query.replace(' ', "%20")
+    );
+
+    let client = reqwest::Client::new();
+    let resp = client
+        .get(&search_url)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+    let data: serde_json::Value = resp.json().await.map_err(|e| e.to_string())?;
+
+    let playlist_id = data["data"]
+        .as_array()
+        .and_then(|arr| arr.first())
+        .and_then(|p| p["id"].as_u64())
+        .unwrap_or(0);
+
+    if playlist_id == 0 {
+        return Err("No playlist found".to_string());
+    }
+
+    // Step 2: Get tracks from that playlist
+    let tracks_url = format!(
+        "https://api.deezer.com/playlist/{}/tracks?limit=30",
+        playlist_id
+    );
+
+    let resp = client
+        .get(&tracks_url)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+    let data: serde_json::Value = resp.json().await.map_err(|e| e.to_string())?;
+
+    let tracks: Vec<DeezerPlaylistTrack> = data["data"]
+        .as_array()
+        .unwrap_or(&vec![])
+        .iter()
+        .map(|t| DeezerPlaylistTrack {
+            id: t["id"].as_u64().unwrap_or(0),
+            title: t["title_short"].as_str().unwrap_or("").to_string(),
+            artist: t["artist"]["name"].as_str().unwrap_or("").to_string(),
+            album: t["album"]["title"].as_str().unwrap_or("").to_string(),
+            duration_secs: t["duration"].as_u64().unwrap_or(0) as u32,
+            artwork_url: t["album"]["cover_medium"]
+                .as_str()
+                .unwrap_or("")
+                .to_string(),
+        })
+        .collect();
+
+    user_action!(
+        "DEEZER",
+        "Got {} tracks from playlist {}",
+        tracks.len(),
+        playlist_id
+    );
+    Ok(tracks)
+}
+
+//  MusicBrainz
 
 #[tauri::command]
 pub async fn search_musicbrainz(query: String) -> Result<Vec<MetadataTrack>, String> {
@@ -450,7 +527,7 @@ pub async fn search_musicbrainz(query: String) -> Result<Vec<MetadataTrack>, Str
     Ok(tracks)
 }
 
-// ── Combined search ────────────────────────────────────────────────────────
+//  Combined search
 
 #[tauri::command]
 pub async fn search_metadata(query: String) -> Result<Vec<MetadataTrack>, String> {
@@ -463,7 +540,7 @@ pub async fn search_metadata(query: String) -> Result<Vec<MetadataTrack>, String
     search_musicbrainz(query).await
 }
 
-// ── Single track cleaning ──────────────────────────────────────────────────
+//  Single track cleaning
 
 #[tauri::command]
 pub async fn clean_track_metadata(title: String, artist: String) -> Result<CleanMetadata, String> {
@@ -529,7 +606,7 @@ fn artist_match(original: &str, deezer: &str) -> bool {
     orig.contains(&dz) || dz.contains(&orig)
 }
 
-// ── Batch clean ────────────────────────────────────────────────────────────
+//  Batch clean
 
 #[tauri::command]
 pub async fn batch_clean_metadata(
@@ -676,7 +753,7 @@ pub async fn batch_clean_metadata(
     Ok(results)
 }
 
-// ── Search Suggestions ─────────────────────────────────────────────────────
+//  Search Suggestions
 
 #[derive(Debug, Serialize)]
 pub struct SearchSuggestion {
@@ -738,7 +815,7 @@ pub async fn search_suggestions(query: String) -> Result<Vec<SearchSuggestion>, 
     Ok(suggestions)
 }
 
-// ── Deezer Albums ──────────────────────────────────────────────────────────
+//  Deezer Albums
 
 #[derive(Debug, Serialize)]
 pub struct DeezerAlbumInfo {
@@ -816,7 +893,7 @@ pub async fn get_album_tracks_deezer(album_id: u64) -> Result<Vec<DeezerAlbumTra
     Ok(tracks)
 }
 
-// ── ListenBrainz ────────────────────────────────────────────────────────────────
+//  ListenBrainz
 
 #[tauri::command]
 pub async fn scrobble_listenbrainz(
@@ -930,7 +1007,7 @@ pub async fn get_listenbrainz_recent(
     Ok(tracks)
 }
 
-// ── ListenBrainz Weekly Stats ──────────────────────────────────────────────
+//  ListenBrainz Weekly Stats
 
 #[derive(Debug, Serialize)]
 pub struct ListenbrainzWeeklyStats {
@@ -998,7 +1075,7 @@ pub async fn get_listenbrainz_weekly_stats(
     })
 }
 
-// ── ListenBrainz Listening Heatmap ─────────────────────────────────────────
+//  ListenBrainz Listening Heatmap
 
 #[derive(Debug, Serialize)]
 pub struct ListenbrainzHeatmapEntry {
@@ -1074,7 +1151,7 @@ pub async fn get_all_time_stats(
     }))
 }
 
-// ── Deezer Genre Chart ──────────────────────────────────────────────────────
+//  Deezer Genre Chart
 
 #[tauri::command]
 pub async fn get_deezer_genre_chart(genre: String) -> Result<Vec<DeezerChartTrack>, String> {
@@ -1301,7 +1378,7 @@ pub async fn get_weekly_stats(
     })
 }
 
-// ── Helpers ────────────────────────────────────────────────────────────────
+//  Helpers
 
 fn clean_title_for_search(title: &str) -> String {
     title

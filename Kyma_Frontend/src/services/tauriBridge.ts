@@ -153,8 +153,8 @@ export const tauriCommands = {
     handleInvoke("add_to_queue_at_position", { song, position }),
 
   // YouTube
-  searchYoutube: (query: string): Promise<YtSong[]> =>
-    handleInvoke("youtube_search", { query }),
+  searchYoutube: (query: string, limit?: number): Promise<any[]> =>
+    handleInvoke("youtube_search", { query, limit }),
 
   streamYoutube: (videoId: string): Promise<string> =>
     handleInvoke("stream_youtube", { videoId }),
@@ -204,6 +204,9 @@ export const tauriCommands = {
 
   searchArtistsDeezer: (query: string): Promise<any[]> =>
     handleInvoke("search_artists_deezer", { query }),
+
+  getDeezerPlaylistTracks: (query: string): Promise<any[]> =>
+    handleInvoke("get_deezer_playlist_tracks", { query }),
 
   // Settings
   getSetting: (key: string): Promise<string | null> =>

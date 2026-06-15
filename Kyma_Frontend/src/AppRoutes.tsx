@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./presentation/components/Layout/Layout";
 import PlaylistsPage from "./presentation/pages/PlaylistsPage";
 import SettingsPage from "./presentation/pages/Settings";
-import HomePage from "./presentation/pages/HomePage";
+import HomePage from "./presentation/pages/Home/HomePage";
 import SongsPage from "./presentation/pages/SongsPage";
 import AlbumsPage from "./presentation/pages/AlbumsPage";
 import ArtistsPage from "./presentation/pages/ArtistsPage";

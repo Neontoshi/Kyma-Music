@@ -9,7 +9,7 @@ async fn test_youtube_search_returns_results() {
 
     std::env::set_var("Kyma_MOCK_YTDLP", mock_path.to_str().unwrap());
 
-    let results = youtube_search("test".to_string()).await.unwrap();
+    let results = youtube_search("test".to_string(), None).await.unwrap();
     assert!(!results.is_empty());
     assert_eq!(results.len(), 3);
 

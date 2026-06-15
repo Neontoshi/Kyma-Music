@@ -63,7 +63,7 @@ pub struct YtSong {
     pub source: String,
 }
 
-// ─── Stream URL Cache (disk-backed) ──────────────────────────────────────────
+//  Stream URL Cache (disk-backed)
 
 static STREAM_URL_CACHE: StdMutex<Option<HashMap<String, (String, Instant)>>> = StdMutex::new(None);
 
@@ -190,7 +190,7 @@ fn cache_is_complete(path: &PathBuf) -> bool {
     path.metadata().map(|m| m.len() > 102_400).unwrap_or(false)
 }
 
-// ─── Input Validation ────────────────────────────────────────────────────────
+//  Input Validation
 
 pub fn validate_video_id(id: &str) -> Result<(), YtError> {
     if id.is_empty() {
@@ -229,7 +229,7 @@ pub fn validate_sc_id(id: &str) -> Result<(), YtError> {
     Ok(())
 }
 
-// ─── Language Filter ─────────────────────────────────────────────────────────
+//  Language Filter
 
 fn is_likely_english(title: &str) -> bool {
     for c in title.chars() {
@@ -250,7 +250,7 @@ fn is_likely_english(title: &str) -> bool {
     true
 }
 
-// ─── Query Intelligence ───────────────────────────────────────────────────────
+//  Query Intelligence
 
 #[derive(Debug, Default)]
 struct ParsedQuery {
@@ -356,7 +356,7 @@ fn parse_query(raw: &str) -> ParsedQuery {
     pq
 }
 
-// ─── Normalisation ────────────────────────────────────────────────────────────
+//  Normalisation
 
 fn normalize(text: &str) -> String {
     let mut s = text.to_lowercase();
@@ -446,7 +446,7 @@ fn token_overlap(a: &str, b: &str) -> f32 {
     intersection / union
 }
 
-// ─── Scoring ──────────────────────────────────────────────────────────────────
+//  Scoring
 
 fn artist_from_entry(entry: &YtDlpEntry) -> String {
     if !entry.uploader.is_empty() {
@@ -614,7 +614,7 @@ fn score_song(ctx: &ScoreContext) -> i32 {
     score
 }
 
-// ─── Deduplication ───────────────────────────────────────────────────────────
+//  Deduplication
 
 fn dedup_results(candidates: Vec<(YtSong, i32)>) -> Vec<YtSong> {
     let mut seen_keys: Vec<String> = Vec::new();
@@ -639,10 +639,10 @@ fn dedup_results(candidates: Vec<(YtSong, i32)>) -> Vec<YtSong> {
     results
 }
 
-// ─── Main command ─────────────────────────────────────────────────────────────
+//  Main command
 
 #[tauri::command]
-pub async fn youtube_search(query: String) -> Result<Vec<YtSong>, YtError> {
+pub async fn youtube_search(query: String, limit: Option<u32>) -> Result<Vec<YtSong>, YtError> {
     let query_trimmed = query.trim();
     user_action!("YOUTUBE", "Searching: \"{}\"", query_trimmed);
 
@@ -664,8 +664,8 @@ pub async fn youtube_search(query: String) -> Result<Vec<YtSong>, YtError> {
             None => pq.raw.clone(),
         }
     };
-
-    let search_arg = format!("ytsearch50:{best_query}");
+    let result_limit = limit.unwrap_or(50).clamp(10, 50);
+    let search_arg = format!("ytsearch{result_limit}:{best_query}");
 
     let output = tokio::time::timeout(
         std::time::Duration::from_secs(30),
@@ -794,7 +794,7 @@ pub async fn youtube_search(query: String) -> Result<Vec<YtSong>, YtError> {
     Ok(results)
 }
 
-// ─── URL Resolution & Download Commands ──────────────────────────────────────
+// URL Resolution & Download Commands
 
 #[tauri::command]
 pub async fn resolve_youtube_url(video_id: String) -> Result<String, YtError> {

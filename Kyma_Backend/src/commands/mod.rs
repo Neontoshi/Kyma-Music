@@ -33,8 +33,8 @@ pub use likes::{
 
 pub use metadata_providers::{
     batch_clean_metadata, clean_track_metadata, get_album_tracks_deezer, get_all_time_stats,
-    get_deezer_chart, get_deezer_genre_artists, get_deezer_genre_chart, get_heatmap,
-    get_lastfm_similar_artists, get_lastfm_weekly_chart, get_listenbrainz_recent,
+    get_deezer_chart, get_deezer_genre_artists, get_deezer_genre_chart, get_deezer_playlist_tracks,
+    get_heatmap, get_lastfm_similar_artists, get_lastfm_weekly_chart, get_listenbrainz_recent,
     get_listenbrainz_weekly_stats, get_weekly_stats, scrobble_listenbrainz, search_albums_deezer,
     search_artists_deezer, search_deezer, search_metadata, search_musicbrainz, search_suggestions,
 };

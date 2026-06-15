@@ -7,6 +7,7 @@ import { useLibraryStore } from "../stores/libraryStore";
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../services/logger";
 import { usePrefetchQueue } from "../hooks/usePrefetchQueue";
+import { resolveAndPlaySong } from "../hooks/useResolveAndPlay";
 
 const pendingPlayId = { current: null as string | null };
 
@@ -76,6 +77,12 @@ export const usePlayer = () => {
 
   const playSong = useCallback(async (song: typeof currentSong) => {
     if (!song) return;
+    if (song.path === "__resolving__") return; // ← sentinel, skip until URL is ready
+
+    if (!song.videoId && !song.path) {
+      resolveAndPlaySong(song);
+      return;
+    }
 
     // Claim this generation — any older in-flight load will see a mismatch and bail
     const generation = ++generationRef.current;
@@ -366,6 +373,10 @@ export const usePlayer = () => {
         if (eventTrackId !== currentTrackIdRef.current) {
           return;
         }
+
+        const currentSong = usePlayerStore.getState().currentSong;
+        if (currentSong?.path === "__resolving__") return;
+
         const store = usePlayerStore.getState();
 
         // Clear loading state when playback is active with valid duration

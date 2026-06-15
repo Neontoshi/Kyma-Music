@@ -45,6 +45,8 @@ export const usePrefetchQueue = () => {
       // Skip local files
       if (song.path && !song.path.startsWith("http")) continue;
 
+      if (!song.videoId && !song.path) continue;
+
       // Skip if already prefetched or pending
       if (prefetchedRef.current.has(song.id) || pendingRef.current.has(song.id))
         continue;

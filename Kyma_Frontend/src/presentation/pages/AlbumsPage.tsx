@@ -191,6 +191,11 @@ const SEARCH_QUERIES = [
   (artist: string, title: string) => `${artist} - ${title} vevo`,
 ];
 
+const QUERY_CONCURRENCY = 3; // Run 3 search queries at once per track
+
+// Shared YouTube search cache across all tracks in the same album
+const searchPool: Map<string, any[]> = new Map();
+
 const resolveTrack = async (
   artist: string,
   title: string,
@@ -204,57 +209,122 @@ const resolveTrack = async (
       .replace(/\s+/g, " ")
       .trim();
 
-  for (const queryFn of SEARCH_QUERIES) {
-    try {
-      const results = await tauriCommands.searchYoutube(
-        queryFn(artist, cleanTitle),
-      );
-      if (!results?.length) continue;
+  // Check shared pool first
+  for (const [, results] of searchPool) {
+    const match = findMatchInResults(
+      results,
+      artist,
+      cleanTitle,
+      expectedDuration,
+      normalize,
+    );
+    if (match) return match;
+  }
 
-      let match = results.find((r: any) => {
-        const titleMatch =
-          normalize(r.title).includes(normalize(cleanTitle)) ||
-          normalize(cleanTitle).includes(normalize(r.title));
-        const artistMatch =
-          normalize(r.artist).includes(normalize(artist)) ||
-          normalize(artist).includes(normalize(r.artist));
-        const durationMatch =
-          !expectedDuration ||
-          !r.duration_secs ||
-          Math.abs(r.duration_secs - expectedDuration) <
-            expectedDuration * 0.15;
-        return titleMatch && artistMatch && durationMatch;
-      });
+  // Generate all queries
+  const queries = SEARCH_QUERIES.map((fn) => fn(artist, cleanTitle));
 
-      if (!match) {
-        match = results.find((r: any) => {
-          const titleMatch =
-            normalize(r.title).includes(normalize(cleanTitle)) ||
-            normalize(cleanTitle).includes(normalize(r.title));
-          const artistMatch =
-            normalize(r.artist).includes(normalize(artist)) ||
-            normalize(artist).includes(normalize(r.artist));
-          return titleMatch && artistMatch;
-        });
-      }
+  // Run queries in parallel batches
+  const allResults: any[] = [];
+  for (let i = 0; i < queries.length; i += QUERY_CONCURRENCY) {
+    const batch = queries.slice(i, i + QUERY_CONCURRENCY);
 
-      if (!match) {
-        match = results.find((r: any) =>
-          normalize(r.title).includes(normalize(cleanTitle)),
-        );
-      }
+    const batchResults = await Promise.all(
+      batch.map(async (q) => {
+        // Check pool again before searching
+        const cacheKey = q.toLowerCase();
+        for (const [, cached] of searchPool) {
+          const match = findMatchInResults(
+            cached,
+            artist,
+            cleanTitle,
+            expectedDuration,
+            normalize,
+          );
+          if (match) return cached; // Return full results so we don't double-search
+        }
 
-      if (match) {
-        return {
-          videoId: match.id,
-          duration_secs: match.duration_secs || expectedDuration,
-        };
-      }
-    } catch {}
+        try {
+          const results = await tauriCommands.searchYoutube(q, 20);
+          searchPool.set(cacheKey, results || []);
+          return results || [];
+        } catch {
+          return [];
+        }
+      }),
+    );
+
+    for (const results of batchResults) {
+      allResults.push(...results);
+    }
+
+    // Check if we found a match in this batch
+    const match = findMatchInResults(
+      allResults,
+      artist,
+      cleanTitle,
+      expectedDuration,
+      normalize,
+    );
+    if (match) return match;
   }
 
   return null;
 };
+
+function findMatchInResults(
+  results: any[],
+  artist: string,
+  cleanTitle: string,
+  expectedDuration: number,
+  normalize: (s: string) => string,
+): { videoId: string; duration_secs: number } | null {
+  if (!results?.length) return null;
+
+  // Exact match: title + artist + duration
+  let match = results.find((r: any) => {
+    const titleMatch =
+      normalize(r.title).includes(normalize(cleanTitle)) ||
+      normalize(cleanTitle).includes(normalize(r.title));
+    const artistMatch =
+      normalize(r.artist).includes(normalize(artist)) ||
+      normalize(artist).includes(normalize(r.artist));
+    const durationMatch =
+      !expectedDuration ||
+      !r.duration_secs ||
+      Math.abs(r.duration_secs - expectedDuration) < expectedDuration * 0.15;
+    return titleMatch && artistMatch && durationMatch;
+  });
+
+  // Fallback: title + artist
+  if (!match) {
+    match = results.find((r: any) => {
+      const titleMatch =
+        normalize(r.title).includes(normalize(cleanTitle)) ||
+        normalize(cleanTitle).includes(normalize(r.title));
+      const artistMatch =
+        normalize(r.artist).includes(normalize(artist)) ||
+        normalize(artist).includes(normalize(r.artist));
+      return titleMatch && artistMatch;
+    });
+  }
+
+  // Final fallback: title only
+  if (!match) {
+    match = results.find((r: any) =>
+      normalize(r.title).includes(normalize(cleanTitle)),
+    );
+  }
+
+  if (match) {
+    return {
+      videoId: match.id,
+      duration_secs: match.duration_secs || expectedDuration,
+    };
+  }
+
+  return null;
+}
 
 const highlightMatch = (text: string, query: string): React.ReactNode => {
   if (!query.trim()) return text;
@@ -354,7 +424,7 @@ const AlbumsPage: React.FC = () => {
     } catch {
       if (requestId === suggestionRequestId.current) {
         setSuggestions([]);
-        setShowSuggestions(true); // show empty state
+        setShowSuggestions(true);
       }
     } finally {
       if (requestId === suggestionRequestId.current) {
@@ -489,6 +559,9 @@ const AlbumsPage: React.FC = () => {
     addToRecentlyViewed(album);
     setRecentlyViewed(loadRecentlyViewed());
 
+    // Clear shared search pool for new album
+    searchPool.clear();
+
     activeAlbumIdRef.current = albumId;
     setSelectedAlbum(album);
     setTracks([]);
@@ -536,59 +609,65 @@ const AlbumsPage: React.FC = () => {
         }
       }
 
-      const concurrencyLimit = 5;
+      // Resolve tracks with parallel queries - track concurrency limit of 5
+      const trackConcurrencyLimit = 5;
+      const unresolvedTracks = mapped.filter((t) => !t.videoId);
+      const queue: (() => Promise<void>)[] = [];
       let activeRequests = 0;
-      const queue: (() => void)[] = [];
 
       const runNext = () => {
-        if (queue.length === 0 || activeRequests >= concurrencyLimit) return;
+        if (queue.length === 0 || activeRequests >= trackConcurrencyLimit)
+          return;
         const next = queue.shift()!;
         activeRequests++;
-        next();
+        next().finally(() => {
+          activeRequests--;
+          runNext();
+        });
       };
 
-      await Promise.all(
-        mapped
-          .filter((track) => !track.videoId)
-          .map((track) => {
-            return new Promise<void>((resolve) => {
-              const task = async () => {
-                if (activeAlbumIdRef.current !== albumId) {
-                  activeRequests--;
-                  runNext();
-                  resolve();
-                  return;
+      await new Promise<void>((resolve) => {
+        for (const track of unresolvedTracks) {
+          const task = async () => {
+            if (activeAlbumIdRef.current !== albumId) return;
+            try {
+              const resolved = await resolveTrack(
+                track.artist,
+                track.title,
+                track.duration,
+              );
+              if (resolved && activeAlbumIdRef.current === albumId) {
+                track.videoId = resolved.videoId as any;
+                if (resolved.duration_secs) {
+                  track.duration = resolved.duration_secs;
+                  track.dur = formatDuration(resolved.duration_secs);
                 }
-                try {
-                  const resolved = await resolveTrack(
-                    track.artist,
-                    track.title,
-                    track.duration,
-                  );
-                  if (resolved && activeAlbumIdRef.current === albumId) {
-                    track.videoId = resolved.videoId as any;
-                    if (resolved.duration_secs) {
-                      track.duration = resolved.duration_secs;
-                      track.dur = formatDuration(resolved.duration_secs);
-                    }
-                    const cacheKey =
-                      `${track.artist}__${track.title}`.toLowerCase();
-                    newCache[cacheKey] = resolved.videoId;
-                  } else {
-                    setFailedTracks((prev) => new Set(prev).add(track.id));
-                  }
-                } catch {
-                  setFailedTracks((prev) => new Set(prev).add(track.id));
-                }
-                activeRequests--;
-                runNext();
-                resolve();
-              };
-              queue.push(task);
-              runNext();
-            });
-          }),
-      );
+                const cacheKey =
+                  `${track.artist}__${track.title}`.toLowerCase();
+                newCache[cacheKey] = resolved.videoId;
+              } else {
+                setFailedTracks((prev) => new Set(prev).add(track.id));
+              }
+            } catch {
+              setFailedTracks((prev) => new Set(prev).add(track.id));
+            }
+          };
+          queue.push(task);
+        }
+
+        // Start initial batch
+        for (let i = 0; i < trackConcurrencyLimit; i++) {
+          runNext();
+        }
+
+        // Poll for completion
+        const checkDone = setInterval(() => {
+          if (queue.length === 0 && activeRequests === 0) {
+            clearInterval(checkDone);
+            resolve();
+          }
+        }, 100);
+      });
 
       if (activeAlbumIdRef.current === albumId) {
         saveCachedVideoIds(albumId, newCache);
@@ -643,6 +722,7 @@ const AlbumsPage: React.FC = () => {
     player.setCurrentSong(song);
     player.setProgress(0);
   };
+
   //@ts-ignore
   const handleRetry = async (song: Song) => {
     logger.logUI("AlbumsPage", "retry_track", {
