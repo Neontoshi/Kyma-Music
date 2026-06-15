@@ -90,7 +90,7 @@
         "depends": ["yt-dlp", "alsa-lib", "webkit2gtk4.1", "openssl", "gtk3"]
       }
     },
-    "resources": ["remote/*"],
+    "resources": ["../Kyma_Frontend/remote/*"],
     "copyright": "Copyright 2026",
     "category": "Music",
     "shortDescription": "A modern cross-platform music player",
