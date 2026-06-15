@@ -135,7 +135,7 @@ async function getCurrentVersion(): Promise<string> {
     const version = await tauriCommands.getAppVersion();
     return version || "1.0.0";
   } catch {
-    return "1.1.6";
+    return "1.1.7";
   }
 }
 
@@ -159,22 +159,39 @@ function findPlatformAsset(
   const isMac = navigator.platform.includes("Mac");
   const isLinux = navigator.platform.includes("Linux");
 
-  for (const asset of assets) {
-    const name = asset.name.toLowerCase();
+  // Windows - prefer .exe, fallback to .msi
+  if (isWindows) {
+    for (const asset of assets) {
+      const name = asset.name.toLowerCase();
+      if (name.endsWith(".exe")) return asset;
+    }
+    for (const asset of assets) {
+      const name = asset.name.toLowerCase();
+      if (name.endsWith(".msi")) return asset;
+    }
+  }
 
-    if (isWindows && (name.endsWith(".exe") || name.endsWith(".msi"))) {
-      return asset;
+  // macOS - prefer .dmg, fallback to .app
+  if (isMac) {
+    for (const asset of assets) {
+      const name = asset.name.toLowerCase();
+      if (name.endsWith(".dmg")) return asset;
     }
-    if (isMac && (name.endsWith(".dmg") || name.endsWith(".app"))) {
-      return asset;
+    for (const asset of assets) {
+      const name = asset.name.toLowerCase();
+      if (name.endsWith(".app")) return asset;
     }
-    if (
-      isLinux &&
-      (name.endsWith(".deb") ||
-        name.endsWith(".rpm") ||
-        name.endsWith(".appimage"))
-    ) {
-      return asset;
+  }
+
+  // Linux - prefer .deb, fallback to .rpm or .AppImage
+  if (isLinux) {
+    for (const asset of assets) {
+      const name = asset.name.toLowerCase();
+      if (name.endsWith(".deb")) return asset;
+    }
+    for (const asset of assets) {
+      const name = asset.name.toLowerCase();
+      if (name.endsWith(".rpm") || name.endsWith(".appimage")) return asset;
     }
   }
 

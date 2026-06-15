@@ -1,12 +1,12 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Kyma",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "identifier": "com.kyma-player",
   "build": {
     "beforeDevCommand": "npm run dev --prefix Kyma_Frontend",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build --prefix Kyma_Frontend",
+    "beforeBuildCommand": "npm run build --prefix Kyma_Frontend && rm -rf Kyma_Backend/remote-dist && mkdir -p Kyma_Backend/remote-dist && cp Kyma_Frontend/dist/remote/index.html Kyma_Backend/remote-dist/ && cp -r Kyma_Frontend/dist/assets Kyma_Backend/remote-dist/assets",
     "frontendDist": "../Kyma_Frontend/dist"
   },
   "app": {
@@ -90,7 +90,7 @@
         "depends": ["yt-dlp", "alsa-lib", "webkit2gtk4.1", "openssl", "gtk3"]
       }
     },
-    "resources": ["../Kyma_Frontend/remote/*"],
+    "resources": ["remote-dist/*", "remote-dist/assets/*"],
     "copyright": "Copyright 2026",
     "category": "Music",
     "shortDescription": "A modern cross-platform music player",

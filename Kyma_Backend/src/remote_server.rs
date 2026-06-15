@@ -132,7 +132,7 @@ pub fn remote_router(app_handle: tauri::AppHandle) -> Router {
                 .path()
                 .resource_dir()
                 .unwrap_or_else(|_| std::env::current_dir().unwrap_or_default())
-                .join("remote");
+                .join("remote-dist");
             ServeDir::new(remote_dir)
         })
         .with_state(state)
