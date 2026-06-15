@@ -84,6 +84,12 @@ const ExplorePage: React.FC = () => {
         );
       }
 
+      // Get liked song IDs from store
+      const likedIds = useLibraryStore
+        .getState()
+        .songs.filter((s) => s.liked)
+        .map((s) => s.id);
+
       const mapped: Song[] = (deezerTracks || []).map((t: any, i: number) => ({
         id: `dz-${t.id || i}`,
         path: "",
@@ -103,7 +109,7 @@ const ExplorePage: React.FC = () => {
         bpm: 0,
         key: "—",
         plays: 0,
-        liked: false,
+        liked: likedIds.includes(`dz-${t.id || i}`), // Check if liked
       }));
 
       setTracks(mapped);
@@ -139,9 +145,16 @@ const ExplorePage: React.FC = () => {
   const handleLike = async (e: React.MouseEvent, song: Song) => {
     e.stopPropagation();
     try {
+      const newLiked = !song.liked;
       toggleLike(song.id, song.liked ? undefined : song);
       await tauriCommands.toggleLike({ trackId: song.id });
-      setTracks([...tracks]);
+
+      // Update the specific song in tracks
+      setTracks((prevTracks) =>
+        prevTracks.map((t) =>
+          t.id === song.id ? { ...t, liked: newLiked } : t,
+        ),
+      );
     } catch (err) {
       console.error("Failed to toggle like:", err);
     }
@@ -298,7 +311,9 @@ const ExplorePage: React.FC = () => {
                     className="ex-like-btn"
                     onClick={(e) => handleLike(e, song)}
                     style={{
-                      color: song.liked ? "#ff4466" : "rgba(255,255,255,0.7)",
+                      color: song.liked
+                        ? "var(--accent2)"
+                        : "rgba(255,255,255,0.7)",
                     }}
                   >
                     <svg
