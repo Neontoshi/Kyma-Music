@@ -1,4 +1,5 @@
 import { useEffect, useRef, useMemo, useState } from "react";
+import { useThemeStore } from "../stores/themeStore";
 import {
   Chart,
   LineElement,
@@ -45,10 +46,6 @@ const HOUR_LABELS = Array.from({ length: 24 }, (_, h) => {
   return `${h - 12}pm`;
 });
 
-const ACCENT = "#7C6AF5";
-const ACCENT_FILL = "rgba(124,106,245,0.10)";
-const ACCENT_FILL_DARK = "rgba(124,106,245,0.15)";
-
 //  Helpers
 
 function buildHourlyData(
@@ -90,6 +87,7 @@ export default function ListeningLineChart({
     () => window.matchMedia("(prefers-color-scheme: dark)").matches,
     [],
   );
+  const theme = useThemeStore((state) => state.theme);
 
   const chartData = useMemo(
     () => buildHourlyData(heatmap, activeDay),
@@ -107,6 +105,17 @@ export default function ListeningLineChart({
   useEffect(() => {
     if (!canvasRef.current) return;
 
+    const rootStyles = getComputedStyle(document.documentElement);
+    const accent =
+      rootStyles.getPropertyValue("--accent").trim() || "#9dff3a";
+    const accent2 =
+      rootStyles.getPropertyValue("--accent2").trim() || "#b8ff66";
+    const accentRgb =
+      rootStyles.getPropertyValue("--accent-rgb").trim() || "157, 255, 58";
+    const accentFill = `rgba(${accentRgb}, 0.10)`;
+    const accentFillDark = `rgba(${accentRgb}, 0.15)`;
+    const accentBorder = `rgba(${accentRgb}, 0.22)`;
+
     const gridColor = isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)";
     const tickColor = isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.35)";
 
@@ -119,13 +128,13 @@ export default function ListeningLineChart({
             {
               label: "Plays",
               data: chartData,
-              borderColor: ACCENT,
-              backgroundColor: isDark ? ACCENT_FILL_DARK : ACCENT_FILL,
+              borderColor: accent,
+              backgroundColor: isDark ? accentFillDark : accentFill,
               borderWidth: 2,
               pointRadius: 0,
               pointHoverRadius: 5,
-              pointHoverBackgroundColor: ACCENT,
-              pointHoverBorderColor: isDark ? "#1a1730" : "#fff",
+              pointHoverBackgroundColor: accent,
+              pointHoverBorderColor: isDark ? "#111111" : "#fff",
               pointHoverBorderWidth: 2,
               fill: true,
               tension: 0.45,
@@ -140,17 +149,15 @@ export default function ListeningLineChart({
           plugins: {
             legend: { display: false },
             tooltip: {
-              backgroundColor: isDark ? "#1e1c2e" : "#ffffff",
-              borderColor: isDark
-                ? "rgba(124,106,245,0.25)"
-                : "rgba(124,106,245,0.18)",
+              backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
+              borderColor: accentBorder,
               borderWidth: 1,
-              titleColor: isDark ? "#c4b8ff" : "#534AB7",
-              bodyColor: isDark ? "#ede8ff" : "#26215C",
+              titleColor: isDark ? accent2 : accent,
+              bodyColor: isDark ? "#ffffff" : "#111111",
               padding: 10,
-              titleFont: { family: "'DM Mono', monospace", size: 11 },
+              titleFont: { family: "'Inter', sans-serif", size: 11 },
               bodyFont: {
-                family: "'DM Mono', monospace",
+                family: "'Inter', sans-serif",
                 size: 12,
                 weight: 500,
               },
@@ -166,7 +173,7 @@ export default function ListeningLineChart({
               border: { display: false },
               ticks: {
                 color: tickColor,
-                font: { family: "'DM Mono', monospace", size: 10 },
+                font: { family: "'Inter', sans-serif", size: 10 },
                 maxRotation: 0,
                 autoSkip: true,
                 maxTicksLimit: 9,
@@ -178,7 +185,7 @@ export default function ListeningLineChart({
               beginAtZero: true,
               ticks: {
                 color: tickColor,
-                font: { family: "'DM Mono', monospace", size: 10 },
+                font: { family: "'Inter', sans-serif", size: 10 },
                 maxTicksLimit: 4,
                 callback: (v) => String(Math.round(Number(v))),
               },
@@ -187,11 +194,22 @@ export default function ListeningLineChart({
         },
       });
     } else {
-      // Update existing chart data
-      chartRef.current.data.datasets[0].data = chartData;
+      // Update existing chart data and theme colors
+      const dataset = chartRef.current.data.datasets[0];
+      dataset.data = chartData;
+      dataset.borderColor = accent;
+      dataset.backgroundColor = isDark ? accentFillDark : accentFill;
+      (dataset as any).pointHoverBackgroundColor = accent;
+
+      const tooltip = chartRef.current.options.plugins?.tooltip;
+      if (tooltip) {
+        tooltip.borderColor = accentBorder;
+        tooltip.titleColor = isDark ? accent2 : accent;
+      }
+
       chartRef.current.update("active");
     }
-  }, [chartData, isDark]);
+  }, [chartData, isDark, theme]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -273,7 +291,7 @@ function Stat({ label, value }: { label: string; value: string }) {
     <div>
       <div
         style={{
-          fontFamily: "'DM Mono', monospace",
+          fontFamily: "'Inter', sans-serif",
           fontSize: "9px",
           color: "var(--text3)",
           letterSpacing: "0.06em",
@@ -285,7 +303,7 @@ function Stat({ label, value }: { label: string; value: string }) {
       </div>
       <div
         style={{
-          fontFamily: "'DM Mono', monospace",
+          fontFamily: "'Inter', sans-serif",
           fontSize: "15px",
           fontWeight: 600,
           color: "var(--text1)",
@@ -311,15 +329,15 @@ function DayTab({
     <button
       onClick={onClick}
       style={{
-        fontFamily: "'DM Mono', monospace",
+        fontFamily: "'Inter', sans-serif",
         fontSize: "10px",
         padding: "3px 7px",
         borderRadius: "var(--radius-sm)",
         border: active
-          ? "1px solid rgba(124,106,245,0.5)"
+          ? "1px solid rgba(var(--accent-rgb),0.5)"
           : "1px solid var(--border)",
-        background: active ? "rgba(124,106,245,0.12)" : "transparent",
-        color: active ? "#7C6AF5" : "var(--text3)",
+        background: active ? "rgba(var(--accent-rgb),0.12)" : "transparent",
+        color: active ? "var(--accent)" : "var(--text3)",
         cursor: "pointer",
         transition: "all 0.15s ease",
         fontWeight: active ? 600 : 400,

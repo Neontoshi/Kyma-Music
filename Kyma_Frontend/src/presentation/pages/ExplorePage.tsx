@@ -74,7 +74,6 @@ const ExplorePage: React.FC = () => {
         );
       }
 
-      // Get liked song IDs from store
       const likedIds = useLibraryStore
         .getState()
         .songs.filter((s) => s.liked)
@@ -134,7 +133,6 @@ const ExplorePage: React.FC = () => {
       toggleLike(song.id, song.liked ? undefined : song);
       await tauriCommands.toggleLike({ trackId: song.id });
 
-      // Update the specific song in tracks
       setTracks((prevTracks) =>
         prevTracks.map((t) =>
           t.id === song.id ? { ...t, liked: newLiked } : t,
@@ -145,248 +143,267 @@ const ExplorePage: React.FC = () => {
     }
   };
 
-  return (
-    <div
-      style={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-      }}
-    >
-      <div className="ex-header">
-        {!ytdlpAvailable && (
-          <div
-            style={{
-              padding: "10px 16px",
-              marginBottom: 12,
-              borderRadius: "var(--radius-md)",
-              background: "rgba(255,170,50,0.08)",
-              border: "1px solid rgba(255,170,50,0.2)",
-              color: "#ffaa33",
-              fontFamily: "'DM Mono',monospace",
-              fontSize: 11,
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            <span>⚠️</span> yt-dlp not installed. Streaming features
-            unavailable. Run: pip install yt-dlp
-          </div>
-        )}
-        <div className="ex-header-top">
-          <div className="ex-header-left">
-            <div className="ex-eyebrow">Discovery</div>
-            <h1 className="ex-title">
-              <span className="ex-title-dim">Explore</span>
-              <span className="ex-title-accent">Trending</span>
-            </h1>
-          </div>
-          <div className="ex-view-toggle">
-            <button
-              className={`ex-toggle-btn${viewMode === "list" ? " active" : ""}`}
-              onClick={() => setViewMode("list")}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                width="13"
-                height="13"
-              >
-                <line x1="8" y1="6" x2="21" y2="6" />
-                <line x1="8" y1="12" x2="21" y2="12" />
-                <line x1="8" y1="18" x2="21" y2="18" />
-                <line x1="3" y1="6" x2="3.01" y2="6" />
-                <line x1="3" y1="12" x2="3.01" y2="12" />
-                <line x1="3" y1="18" x2="3.01" y2="18" />
-              </svg>
-            </button>
-            <button
-              className={`ex-toggle-btn${viewMode === "grid" ? " active" : ""}`}
-              onClick={() => setViewMode("grid")}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                width="13"
-                height="13"
-              >
-                <rect x="3" y="3" width="7" height="7" />
-                <rect x="14" y="3" width="7" height="7" />
-                <rect x="3" y="14" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" />
-              </svg>
-            </button>
-          </div>
-        </div>
-        <div className="ex-tape">
-          {EXPLORE_CATEGORIES.map((q, i) => (
-            <button
-              key={q.label}
-              className={`ex-chip${activeQuery === i ? " active" : ""}`}
-              onClick={() => {
-                if (!ytdlpAvailable) return;
-                setActiveQuery(i);
-              }}
-            >
-              {q.label}
-            </button>
-          ))}
-        </div>
-        {!loading && tracks.length > 0 && (
-          <div className="ex-strip">
-            <button className="ex-play-circle" onClick={handlePlayAll}>
-              <svg
-                viewBox="0 0 24 24"
-                fill="#fff"
-                width="16"
-                height="16"
-                style={{ marginLeft: "2px" }}
-              >
-                <polygon points="5,3 19,12 5,21" />
-              </svg>
-            </button>
-            <div>
-              <div className="ex-strip-title">
-                {EXPLORE_CATEGORIES[activeQuery].label}
-              </div>
-              <div className="ex-strip-count">{tracks.length} tracks</div>
-            </div>
-          </div>
-        )}
-      </div>
+  const category = EXPLORE_CATEGORIES[activeQuery];
+  const heroArt = tracks.find((track) => track.artwork)?.artwork;
 
-      <div className="ex-content">
-        {!ytdlpAvailable ? (
-          <div
-            style={{
-              textAlign: "center",
-              padding: "3rem 0",
-              color: "var(--text3)",
-              fontFamily: "'DM Mono',monospace",
-              fontSize: 11,
-            }}
-          >
-            Install yt-dlp to explore trending music
-          </div>
-        ) : loading ? (
-          <div className="ex-grid" style={{ marginTop: "1rem" }}>
-            {Array.from({ length: 16 }).map((_, i) => (
-              <SkeletonCard key={i} index={i} />
+  return (
+    <div className="browse-page">
+      <div className="browse-header-wrap">
+        <div className="browse-header-inner">
+          {!ytdlpAvailable && (
+            <div className="browse-warning">
+              <span>⚠️</span> yt-dlp not installed. Streaming features are
+              unavailable. Run: <code>pip install yt-dlp</code>
+            </div>
+          )}
+
+          <header className="artist-collection-header browse-collection-header">
+            <div className="artist-collection-copy">
+              <div className="artist-collection-eyebrow">
+                <span className="artist-collection-dot" />
+                Discover
+              </div>
+              <h1 className="artist-collection-title">Browse</h1>
+              <p className="artist-collection-subtitle">
+                {loading
+                  ? "Finding something worth hearing"
+                  : `${category.label} · ${tracks.length} tracks curated for you`}
+              </p>
+            </div>
+            <div className="artist-collection-controls">
+              <div className="ex-view-toggle">
+                <button
+                  type="button"
+                  className={`ex-toggle-btn${viewMode === "list" ? " active" : ""}`}
+                  onClick={() => setViewMode("list")}
+                  aria-label="List view"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    width="13"
+                    height="13"
+                  >
+                    <line x1="8" y1="6" x2="21" y2="6" />
+                    <line x1="8" y1="12" x2="21" y2="12" />
+                    <line x1="8" y1="18" x2="21" y2="18" />
+                    <line x1="3" y1="6" x2="3.01" y2="6" />
+                    <line x1="3" y1="12" x2="3.01" y2="12" />
+                    <line x1="3" y1="18" x2="3.01" y2="18" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  className={`ex-toggle-btn${viewMode === "grid" ? " active" : ""}`}
+                  onClick={() => setViewMode("grid")}
+                  aria-label="Grid view"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    width="13"
+                    height="13"
+                  >
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </header>
+
+          <div className="browse-categories">
+            {EXPLORE_CATEGORIES.map((item, i) => (
+              <button
+                key={item.label}
+                type="button"
+                className={`browse-chip${activeQuery === i ? " active" : ""}`}
+                onClick={() => {
+                  if (!ytdlpAvailable) return;
+                  setActiveQuery(i);
+                }}
+                disabled={!ytdlpAvailable}
+              >
+                {item.label}
+              </button>
             ))}
           </div>
-        ) : viewMode === "grid" ? (
-          <div className="ex-grid">
-            {tracks.map((song, idx) => {
-              const isActive = currentSong?.id === song.id;
-              const isResolving = resolvingId === song.id;
-              return (
-                <div
-                  key={song.id}
-                  className={`ex-card${isActive ? " is-active" : ""}`}
-                  style={{ animationDelay: `${idx * 0.022}s` }}
-                  onClick={() => handlePlay(song, idx)}
-                >
+        </div>
+      </div>
+
+      <div className="browse-scroll">
+        <div className="browse-inner">
+          {!ytdlpAvailable ? (
+            <div className="browse-empty">
+              <div className="browse-empty-icon">🎧</div>
+              <h2>Streaming needs yt-dlp</h2>
+              <p>Install yt-dlp to explore trending music and curated mixes.</p>
+            </div>
+          ) : loading ? (
+            <div className="ex-grid browse-grid">
+              {Array.from({ length: 16 }).map((_, i) => (
+                <SkeletonCard key={i} index={i} />
+              ))}
+            </div>
+          ) : tracks.length === 0 ? (
+            <div className="browse-empty">
+              <div className="browse-empty-icon">🎧</div>
+              <h2>Nothing here yet</h2>
+              <p>Try another category to discover something new.</p>
+            </div>
+          ) : (
+            <>
+              <section className="browse-hero">
+                <div className="browse-hero-disc">
+                  {heroArt ? (
+                    <img src={heroArt} alt="" />
+                  ) : (
+                    <span>{tracks[0]?.emoji || "♪"}</span>
+                  )}
+                </div>
+                <div className="browse-hero-copy">
+                  <div className="browse-hero-eyebrow">
+                    {category.type === "chart"
+                      ? "Top charts"
+                      : "Editor picks"}
+                  </div>
+                  <h2>{category.label}</h2>
+                  <p>
+                    {tracks.length} tracks · Handpicked for your next listen
+                  </p>
                   <button
-                    className="ex-like-btn"
-                    onClick={(e) => handleLike(e, song)}
-                    style={{
-                      color: song.liked
-                        ? "var(--accent2)"
-                        : "rgba(255,255,255,0.7)",
-                    }}
+                    type="button"
+                    className="browse-hero-play"
+                    onClick={handlePlayAll}
                   >
                     <svg
                       viewBox="0 0 24 24"
-                      fill={song.liked ? "currentColor" : "none"}
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      width="14"
-                      height="14"
+                      fill="currentColor"
+                      width="13"
+                      height="13"
                     >
-                      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                      <polygon points="5,3 19,12 5,21" />
                     </svg>
+                    Play mix
                   </button>
-                  <div
-                    className="ex-card-art"
-                    style={{
-                      background: song.grad || randomGradient(song.title),
-                    }}
-                  >
-                    {song.artwork ? (
-                      <img src={song.artwork} alt="" loading="lazy" />
-                    ) : (
-                      song.emoji
-                    )}
-                    <div className="ex-card-overlay">
-                      {isResolving ? (
-                        <div
-                          className="ap-spinner ap-spinner--sm"
-                          style={{ width: 20, height: 20 }}
-                        />
-                      ) : isActive ? (
-                        <div className="ex-card-bars">
-                          {[0, 0.15, 0.3].map((d, bi) => (
-                            <div
-                              key={bi}
-                              className="ex-bar"
-                              style={{
-                                height: "16px",
-                                animation:
-                                  "exBarBounce 0.75s ease-in-out infinite",
-                                animationDelay: `${d}s`,
-                              }}
-                            />
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="ex-card-play-btn">
+                </div>
+              </section>
+
+              <div className="browse-results-head">
+                <div className="album-section-title">
+                  {category.label} tracks
+                </div>
+                <span className="browse-count">{tracks.length}</span>
+              </div>
+
+              {viewMode === "grid" ? (
+                <div className="ex-grid browse-grid">
+                  {tracks.map((song, idx) => {
+                    const isActive = currentSong?.id === song.id;
+                    const isResolving = resolvingId === song.id;
+                    return (
+                      <div
+                        key={song.id}
+                        className={`ex-card${isActive ? " is-active" : ""}`}
+                        style={{ animationDelay: `${idx * 0.022}s` }}
+                        onClick={() => handlePlay(song, idx)}
+                      >
+                        <button
+                          className={`ex-like-btn${song.liked ? " liked" : ""}`}
+                          onClick={(e) => handleLike(e, song)}
+                          aria-label="Like song"
+                        >
                           <svg
                             viewBox="0 0 24 24"
-                            fill="#fff"
-                            width="16"
-                            height="16"
-                            style={{ marginLeft: "2px" }}
+                            fill={song.liked ? "currentColor" : "none"}
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            width="14"
+                            height="14"
                           >
-                            <polygon points="5,3 19,12 5,21" />
+                            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
                           </svg>
+                        </button>
+                        <div
+                          className="ex-card-art"
+                          style={{
+                            background: song.grad || randomGradient(song.title),
+                          }}
+                        >
+                          {song.artwork ? (
+                            <img src={song.artwork} alt="" loading="lazy" />
+                          ) : (
+                            song.emoji
+                          )}
+                          <div className="ex-card-overlay">
+                            {isResolving ? (
+                              <div className="ap-spinner ap-spinner--sm" />
+                            ) : isActive ? (
+                              <div className="ex-card-bars">
+                                {[0, 0.15, 0.3].map((d, bi) => (
+                                  <div
+                                    key={bi}
+                                    className="ex-bar"
+                                    style={{
+                                      height: "16px",
+                                      animation:
+                                        "exBarBounce 0.75s ease-in-out infinite",
+                                      animationDelay: `${d}s`,
+                                    }}
+                                  />
+                                ))}
+                              </div>
+                            ) : (
+                              <div className="ex-card-play-btn">
+                                <svg
+                                  viewBox="0 0 24 24"
+                                  fill="currentColor"
+                                  width="16"
+                                  height="16"
+                                  style={{ marginLeft: "2px" }}
+                                >
+                                  <polygon points="5,3 19,12 5,21" />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="ex-card-info">
-                    <div
-                      className="ex-card-title"
-                      style={{
-                        color: isActive ? "var(--accent2)" : "var(--text)",
-                      }}
-                    >
-                      {song.title}
-                    </div>
-                    <div className="ex-card-artist">{song.artist}</div>
-                  </div>
+                        <div className="ex-card-info">
+                          <div className="ex-card-title">{song.title}</div>
+                          <div className="ex-card-artist">{song.artist}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div>
-            {tracks.map((song, idx) => (
-              <SongRow
-                key={song.id}
-                song={song}
-                index={idx}
-                isCurrent={currentSong?.id === song.id}
-                onPlay={() => handlePlay(song, idx)}
-              />
-            ))}
-          </div>
-        )}
+              ) : (
+                <section className="artist-all-songs browse-list-panel">
+                  <div className="artist-section-head">
+                    <h2>{category.label}</h2>
+                    <span>{tracks.length}</span>
+                  </div>
+                  <div className="browse-list">
+                    {tracks.map((song, idx) => (
+                      <SongRow
+                        key={song.id}
+                        song={song}
+                        index={idx}
+                        isCurrent={currentSong?.id === song.id}
+                        onPlay={() => handlePlay(song, idx)}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

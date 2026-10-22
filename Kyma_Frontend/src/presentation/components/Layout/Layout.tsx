@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
+import TopBar from "./TopBar";
 import PlayerBar from "../Player/PlayerBar";
 import { logger } from "../../../services/logger";
 
@@ -18,15 +19,8 @@ const Layout: React.FC = () => {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100vh",
-        overflow: "hidden",
-      }}
-    >
-      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+    <div className="app-shell">
+      <div className="app-body">
         <Sidebar
           className={sidebarOpen ? "sidebar--open" : undefined}
           onOpen={handleSidebarOpen}
@@ -37,8 +31,11 @@ const Layout: React.FC = () => {
           className={`sidebar-backdrop ${sidebarOpen ? "sidebar-backdrop--visible" : ""}`}
           onClick={handleSidebarClose}
         />
-        <div className="main">
-          <Outlet />
+        <div className="app-content">
+          <TopBar />
+          <div className="main">
+            <Outlet />
+          </div>
         </div>
       </div>
       <PlayerBar />

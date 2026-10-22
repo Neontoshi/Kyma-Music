@@ -35,9 +35,9 @@ const TrackRow: React.FC<TrackRowProps> = ({
       borderRadius: "var(--radius-md)",
       cursor: "pointer",
       transition: "background 0.12s",
-      background: isActive ? "rgba(124,106,245,0.08)" : "transparent",
+      background: isActive ? "rgba(var(--accent-rgb),0.08)" : "transparent",
       border: "1px solid",
-      borderColor: isActive ? "rgba(124,106,245,0.2)" : "transparent",
+      borderColor: isActive ? "rgba(var(--accent-rgb),0.2)" : "transparent",
     }}
     onMouseEnter={(e) => {
       if (!isActive) e.currentTarget.style.background = "var(--surface2)";
@@ -49,7 +49,7 @@ const TrackRow: React.FC<TrackRowProps> = ({
     {index !== undefined && (
       <div
         style={{
-          fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
+          fontFamily: "var(--font-family-mono, 'Inter', sans-serif)",
           fontSize: "10px",
           color: isActive ? "var(--accent)" : "var(--text3)",
           textAlign: "center",
@@ -103,7 +103,7 @@ const TrackRow: React.FC<TrackRowProps> = ({
       {showTime && (
         <span
           style={{
-            fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
+            fontFamily: "var(--font-family-mono, 'Inter', sans-serif)",
             fontSize: "10px",
             color: "var(--text3)",
           }}
@@ -114,10 +114,10 @@ const TrackRow: React.FC<TrackRowProps> = ({
       {showPlays && (song.plays ?? 0) > 0 && (
         <span
           style={{
-            fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
+            fontFamily: "var(--font-family-mono, 'Inter', sans-serif)",
             fontSize: "9px",
             color: "var(--accent)",
-            background: "rgba(124,106,245,0.1)",
+            background: "rgba(var(--accent-rgb),0.1)",
             padding: "1px 5px",
             borderRadius: "var(--radius-pill)",
           }}

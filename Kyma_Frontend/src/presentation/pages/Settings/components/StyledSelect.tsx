@@ -96,7 +96,7 @@ const StyledSelect: React.FC<StyledSelectProps> = ({
           width: "100%",
           padding: "9px 14px",
           background: "rgba(255,255,255,0.04)",
-          border: `1px solid ${isOpen ? "rgba(124,106,245,0.5)" : "rgba(255,255,255,0.1)"}`,
+          border: `1px solid ${isOpen ? "rgba(var(--accent-rgb),0.5)" : "rgba(255,255,255,0.1)"}`,
           borderRadius: "var(--radius-md)",
           color: "var(--text)",
           fontSize: "13px",
@@ -110,7 +110,7 @@ const StyledSelect: React.FC<StyledSelectProps> = ({
         }}
         onMouseEnter={(e) => {
           if (!isOpen)
-            e.currentTarget.style.borderColor = "rgba(124,106,245,0.4)";
+            e.currentTarget.style.borderColor = "rgba(var(--accent-rgb),0.4)";
         }}
         onMouseLeave={(e) => {
           if (!isOpen)
@@ -174,7 +174,7 @@ const StyledSelect: React.FC<StyledSelectProps> = ({
                     fontFamily: opt.fontFamily || "inherit",
                     color: isSelected ? "var(--accent2)" : "var(--text)",
                     background: isSelected
-                      ? "rgba(124,106,245,0.1)"
+                      ? "rgba(var(--accent-rgb),0.1)"
                       : "transparent",
                     transition: "background 0.15s",
                   }}
@@ -185,7 +185,7 @@ const StyledSelect: React.FC<StyledSelectProps> = ({
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = isSelected
-                      ? "rgba(124,106,245,0.1)"
+                      ? "rgba(var(--accent-rgb),0.1)"
                       : "transparent";
                   }}
                 >

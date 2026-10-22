@@ -22,7 +22,7 @@ const CastSection: React.FC<CastSectionProps> = ({
           icon="⊛"
           title="Kyma Cast"
           desc="Remote control via local network"
-          accent="rgba(124,106,247,0.1)"
+          accent="rgba(var(--accent-rgb),0.1)"
           badge="Active"
         />
         <div style={{ padding: "24px" }}>
@@ -90,7 +90,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                   color: "var(--text2)",
                   lineHeight: 1.6,
                   marginBottom: "14px",
-                  fontFamily: "'DM Mono', monospace",
+                  fontFamily: "'Inter', sans-serif",
                   letterSpacing: "0.02em",
                 }}
               >
@@ -111,7 +111,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                 <span
                   style={{
                     fontSize: "12px",
-                    fontFamily: "'DM Mono', monospace",
+                    fontFamily: "'Inter', sans-serif",
                     color: "var(--accent2)",
                     flex: 1,
                     letterSpacing: "0.04em",
@@ -127,16 +127,16 @@ const CastSection: React.FC<CastSectionProps> = ({
                   }}
                   style={{
                     background: copyLabel.includes("✓")
-                      ? "rgba(74,222,128,0.12)"
-                      : "rgba(124,106,245,0.12)",
+                      ? "rgba(var(--accent3-rgb),0.12)"
+                      : "rgba(var(--accent-rgb),0.12)",
                     border: copyLabel.includes("✓")
-                      ? "1px solid rgba(74,222,128,0.25)"
-                      : "1px solid rgba(124,106,245,0.25)",
+                      ? "1px solid rgba(var(--accent3-rgb),0.25)"
+                      : "1px solid rgba(var(--accent-rgb),0.25)",
                     borderRadius: "var(--radius-sm)",
                     color: copyLabel.includes("✓")
-                      ? "#4ade80"
+                      ? "var(--accent3)"
                       : "var(--accent2)",
-                    fontFamily: "'DM Mono', monospace",
+                    fontFamily: "'Inter', sans-serif",
                     fontSize: "10px",
                     padding: "5px 12px",
                     cursor: "pointer",

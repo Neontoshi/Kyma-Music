@@ -7,6 +7,7 @@ import { tauriCommands } from "../../../services/tauriBridge";
 import { useNavigate } from "react-router-dom";
 import { useLibrary } from "../../hooks/useLibrary";
 import { useRecentlyPlayedStore } from "../../stores/recentlyPlayedStore";
+import { useUserStore } from "../../stores/userStore";
 import { useHomeDataStore } from "../../stores/homeDataStore";
 import { useQueueStore } from "../../stores/queueStore";
 import { logger } from "../../../services/logger";
@@ -16,6 +17,7 @@ import { makeSong } from "../../../lib/song";
 
 // Section components
 import HeroSection from "./components/HeroSection";
+import HomeSpotlight from "./components/HomeSpotlight";
 import TrendingSection from "./components/TrendingSection";
 import SimilarArtists from "./components/SimilarArtists";
 import ListeningPattern from "./components/ListeningPattern";
@@ -53,6 +55,7 @@ const HomePage: React.FC = () => {
     usePlayerStore();
   const navigate = useNavigate();
   const { ytdlpOutdated, ytdlpVersion, updateYtdlp } = useSystemStore();
+  const { displayName } = useUserStore();
 
   const {
     items: recentlyPlayed,
@@ -300,10 +303,53 @@ const HomePage: React.FC = () => {
   }, [songs, mood]);
 
   const moodConfig = {
-    energetic: { label: "Energy Boost", color: "#f59e0b", icon: "⚡" },
-    chill: { label: "Late Night Vibes", color: "#818cf8", icon: "🌙" },
-    focus: { label: "Deep Focus", color: "#34d399", icon: "🎯" },
+    energetic: { label: "Energy Boost", color: "#ff4d4d", icon: "⚡" },
+    chill: { label: "Late Night Vibes", color: "var(--accent2)", icon: "🌙" },
+    focus: { label: "Deep Focus", color: "var(--accent3)", icon: "🎯" },
   };
+  const spotlightMixes = useMemo(() => {
+    const config = moodConfig[mood];
+    return [
+      {
+        label: config.label,
+        subtitle: `${moodPicks.length} tracks · picked for this ${mood}`,
+        gradient:
+          "linear-gradient(135deg, color-mix(in srgb, var(--accent) 24%, #080808) 0%, #080808 100%)",
+        songs: moodPicks,
+      },
+      {
+        label: "Daily Mix 1",
+        subtitle: `${quickPicks.length} tracks · based on your listening`,
+        gradient: "linear-gradient(135deg, color-mix(in srgb, var(--accent2) 20%, #080808) 0%, #080808 100%)",
+        songs: quickPicks,
+      },
+      {
+        label: "Liked Songs",
+        subtitle: `${likedSongsPreview.length} tracks you love`,
+        gradient: "linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, #080808) 0%, #080808 100%)",
+        songs: likedSongsPreview,
+      },
+      {
+        label: "On Repeat",
+        subtitle: `${topPlayed.length} tracks played most`,
+        gradient: "linear-gradient(135deg, #2b2b2b 0%, #0b0b0b 100%)",
+        songs: topPlayed,
+      },
+    ].filter((mix) => mix.songs.length > 0);
+  }, [mood, moodPicks, quickPicks, likedSongsPreview, topPlayed]);
+
+  const spotlightAlbums = useMemo(
+    () =>
+      recentlyViewedAlbums.map((album: any) => ({
+        id: String(album.id),
+        title: album.title,
+        artist: album.artist,
+        art: album.cover_url,
+        album,
+      })),
+    [recentlyViewedAlbums],
+  );
+
   const becauseYouLiked = useMemo(() => {
     const liked = songs.filter((s) => s.liked);
     if (!liked.length) return null;
@@ -330,7 +376,7 @@ const HomePage: React.FC = () => {
         <div
           style={{
             color: "var(--text2)",
-            fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
+            fontFamily: "var(--font-family-mono, 'Inter', sans-serif)",
             fontSize: 11,
           }}
         >
@@ -480,6 +526,7 @@ const HomePage: React.FC = () => {
 
       <div style={{ width: "100%" }}>
         <HeroSection
+          displayName={displayName}
           greeting={greeting}
           stats={stats}
           weeklyStats={weeklyStats}
@@ -490,6 +537,18 @@ const HomePage: React.FC = () => {
           ytdlpOutdated={ytdlpOutdated}
           ytdlpVersion={ytdlpVersion}
           onUpdateYtdlp={updateYtdlp}
+        />
+
+        <HomeSpotlight
+          recentlyPlayed={recentlyPlayedAsSongs}
+          mixes={spotlightMixes}
+          albums={spotlightAlbums}
+          currentSong={currentSong}
+          isPlaying={isPlaying}
+          onPlaySong={playSong}
+          onSetQueue={handleSetQueue}
+          onAlbumClick={handleAlbumClick}
+          onNavigate={handleNavigate}
         />
 
         <TrendingSection

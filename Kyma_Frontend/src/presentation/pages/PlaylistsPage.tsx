@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { tauriCommands } from "../../services/tauriBridge";
 import { usePlayerStore } from "../stores/playerStore";
+import { randomGradient } from "../../lib/gradients";
 
 const PlaylistsPage: React.FC = () => {
   const [playlists, setPlaylists] = useState<any[]>([]);
-  const [showCreate, setShowCreate] = useState(false);
-  const [newName, setNewName] = useState("");
-  const [newDesc, setNewDesc] = useState("");
+  const [query, setQuery] = useState("");
   const navigate = useNavigate();
   const setError = usePlayerStore((s) => s.setError);
-  const setMessage = usePlayerStore((s) => s.setMessage);
 
   useEffect(() => {
     loadPlaylists();
@@ -26,202 +24,104 @@ const PlaylistsPage: React.FC = () => {
     }
   };
 
-  const handleCreate = async () => {
-    if (!newName.trim()) return;
-    try {
-      await tauriCommands.createPlaylist(
-        newName.trim(),
-        newDesc.trim() || undefined,
-      );
-      setNewName("");
-      setNewDesc("");
-      setShowCreate(false);
-      setMessage(`Playlist "${newName.trim()}" created`);
-      setTimeout(() => setMessage(null), 2000);
-      loadPlaylists();
-    } catch (err) {
-      console.error("Failed to create playlist:", err);
-      setError(
-        "Couldn't create playlist. Please check the name and try again.",
-      );
-    }
-  };
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return playlists;
+    return playlists.filter((playlist) =>
+      playlist.name?.toLowerCase().includes(q),
+    );
+  }, [playlists, query]);
 
   return (
-    <div className="song-list-pane">
-      <div className="section-header">
-        <div>
-          <div className="section-title">Playlists</div>
-          <div className="section-sub">{playlists.length} playlists</div>
-        </div>
-        <button
-          onClick={() => setShowCreate(true)}
-          style={{
-            padding: "10px 20px",
-            background: "var(--accent)",
-            border: "none",
-            borderRadius: "var(--radius-sm)",
-            color: "#fff",
-            cursor: "pointer",
-            fontFamily: "'Syne', sans-serif",
-            fontSize: "13px",
-            fontWeight: 600,
-          }}
-        >
-          + New Playlist
-        </button>
-      </div>
-
-      {showCreate && (
-        <div
-          style={{
-            background: "var(--surface2)",
-            borderRadius: "var(--radius)",
-            padding: "20px",
-            marginBottom: "20px",
-            border: "1px solid var(--border)",
-          }}
-        >
-          <input
-            type="text"
-            placeholder="Playlist name"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "10px 14px",
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius-sm)",
-              color: "var(--text)",
-              fontSize: "14px",
-              marginBottom: "12px",
-              outline: "none",
-              fontFamily: "'Syne', sans-serif",
-            }}
-          />
-          <input
-            type="text"
-            placeholder="Description (optional)"
-            value={newDesc}
-            onChange={(e) => setNewDesc(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "10px 14px",
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius-sm)",
-              color: "var(--text)",
-              fontSize: "13px",
-              marginBottom: "12px",
-              outline: "none",
-              fontFamily: "'Syne', sans-serif",
-            }}
-          />
-          <div style={{ display: "flex", gap: "8px" }}>
-            <button
-              onClick={handleCreate}
-              style={{
-                padding: "8px 20px",
-                background: "var(--accent)",
-                border: "none",
-                borderRadius: "var(--radius-sm)",
-                color: "#fff",
-                cursor: "pointer",
-                fontFamily: "'Syne', sans-serif",
-                fontSize: "12px",
-                fontWeight: 600,
-              }}
-            >
-              Create
-            </button>
-            <button
-              onClick={() => setShowCreate(false)}
-              style={{
-                padding: "8px 20px",
-                background: "var(--surface3)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius-sm)",
-                color: "var(--text2)",
-                cursor: "pointer",
-                fontFamily: "'Syne', sans-serif",
-                fontSize: "12px",
-              }}
-            >
-              Cancel
-            </button>
+    <div className="playlist-page">
+      <div className="playlist-inner">
+        <header className="artist-collection-header playlist-collection-header">
+          <div className="artist-collection-copy">
+            <div className="artist-collection-eyebrow">
+              <span className="artist-collection-dot" />
+              Collection
+            </div>
+            <h1 className="artist-collection-title">Playlists</h1>
+            <p className="artist-collection-subtitle">
+              {playlists.length} playlist{playlists.length === 1 ? "" : "s"} ·
+              Handpicked by you
+            </p>
           </div>
-        </div>
-      )}
-
-      {playlists.length === 0 ? (
-        <div
-          style={{
-            padding: "40px",
-            textAlign: "center",
-            color: "var(--text3)",
-          }}
-        >
-          No playlists yet. Create your first playlist!
-        </div>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          {playlists.map((pl) => (
-            <div
-              key={pl.id}
-              onClick={() => navigate(`/playlists/${pl.id}`)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-                padding: "16px",
-                borderRadius: "var(--radius-sm)",
-                cursor: "pointer",
-                transition: "background 0.12s",
-                background: "var(--surface2)",
-                border: "1px solid transparent",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.borderColor = "var(--border2)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.borderColor = "transparent")
-              }
-            >
-              <div
-                style={{
-                  width: "48px",
-                  height: "48px",
-                  borderRadius: "var(--radius-sm)",
-                  background:
-                    "linear-gradient(135deg, var(--accent), var(--accent2))",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "20px",
-                  flexShrink: 0,
-                }}
-              >
-                🎵
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: "14px", fontWeight: 600 }}>
-                  {pl.name}
-                </div>
-                <div
-                  style={{
-                    fontSize: "11px",
-                    color: "var(--text3)",
-                    marginTop: "2px",
-                  }}
+          {playlists.length > 0 && (
+            <div className="artist-collection-controls">
+              <div className="ap-search-wrap playlist-search">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--text3)"
+                  strokeWidth="2"
+                  width="13"
+                  height="13"
                 >
-                  {pl.song_count} songs
-                </div>
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Filter playlists…"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          )}
+        </header>
+
+        {filtered.length === 0 ? (
+          <div className="playlist-empty">
+            <div className="playlist-empty-art">
+              <span>♪</span>
+            </div>
+            <h2>{query ? "No playlists found" : "No playlists yet"}</h2>
+            <p>
+              {query
+                ? "Try a different playlist name."
+                : "Use the + next to Playlists in the sidebar to create your first one."}
+            </p>
+          </div>
+        ) : (
+          <div className="playlist-grid">
+            {filtered.map((playlist) => (
+              <button
+                key={playlist.id}
+                type="button"
+                className="playlist-card"
+                onClick={() => navigate(`/playlists/${playlist.id}`)}
+              >
+                <div
+                  className="playlist-card-art"
+                  style={{ background: randomGradient(playlist.name) }}
+                >
+                  <span className="playlist-card-emoji">
+                    {playlist.emoji || "♪"}
+                  </span>
+                  <span className="playlist-card-play">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      width="13"
+                      height="13"
+                    >
+                      <polygon points="5,3 19,12 5,21" />
+                    </svg>
+                  </span>
+                </div>
+                <div className="playlist-card-info">
+                  <span className="playlist-card-name">{playlist.name}</span>
+                  <span className="playlist-card-meta">
+                    {playlist.song_count ?? 0} songs · Playlist
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

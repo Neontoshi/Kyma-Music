@@ -13,41 +13,12 @@ const SettingRow: React.FC<SettingRowProps> = ({
   control,
   last,
 }) => (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: "16px",
-      padding: "14px 0",
-      borderBottom: last ? "none" : "1px solid rgba(255,255,255,0.04)",
-    }}
-  >
-    <div>
-      <div
-        style={{
-          fontSize: "14px",
-          fontWeight: 500,
-          color: "var(--text)",
-          fontFamily: "'Syne', sans-serif",
-          letterSpacing: "-0.01em",
-        }}
-      >
-        {label}
-      </div>
-      <div
-        style={{
-          fontSize: "11px",
-          color: "var(--text3)",
-          fontFamily: "'DM Mono', monospace",
-          marginTop: "2px",
-          letterSpacing: "0.02em",
-        }}
-      >
-        {desc}
-      </div>
+  <div className={`settings-row ${last ? "last" : ""}`}>
+    <div className="settings-row-copy">
+      <div className="settings-row-label">{label}</div>
+      <div className="settings-row-desc">{desc}</div>
     </div>
-    <div style={{ flexShrink: 0 }}>{control}</div>
+    <div className="settings-row-control">{control}</div>
   </div>
 );
 

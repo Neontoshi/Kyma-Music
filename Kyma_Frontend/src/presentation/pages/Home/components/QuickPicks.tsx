@@ -90,7 +90,7 @@ const QuickPicks: React.FC<QuickPicksProps> = ({
           />
           <div
             style={{
-              fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
+              fontFamily: "var(--font-family-mono, 'Inter', sans-serif)",
               fontSize: "10px",
               color: "var(--text3)",
             }}
@@ -179,7 +179,7 @@ const QuickPicks: React.FC<QuickPicksProps> = ({
                 </div>
                 <div
                   style={{
-                    fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
+                    fontFamily: "var(--font-family-mono, 'Inter', sans-serif)",
                     fontSize: "9px",
                     color: "var(--text3)",
                     flexShrink: 0,

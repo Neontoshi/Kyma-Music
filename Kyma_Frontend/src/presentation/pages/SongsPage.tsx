@@ -42,7 +42,7 @@ const SongsPage: React.FC = () => {
         <div
           style={{
             color: "var(--text2)",
-            fontFamily: "'DM Mono', monospace",
+            fontFamily: "'Inter', sans-serif",
             fontSize: 11,
           }}
         >

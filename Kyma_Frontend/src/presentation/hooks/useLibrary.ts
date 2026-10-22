@@ -118,7 +118,7 @@ export const useLibrary = () => {
             path: s.path,
             liked: likedIds.has(s.id),
             dur: "",
-            grad: "linear-gradient(135deg, #7c6af5, #4a3fd4)",
+            grad: "linear-gradient(135deg, var(--accent), #0a0a0a)",
           }),
         );
 

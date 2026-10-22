@@ -47,7 +47,7 @@ const MediaCard: React.FC<MediaCardProps> = ({
           ? "2px solid var(--accent)"
           : "1px solid var(--border)",
         transition: "border-color 0.2s, transform 0.2s",
-        boxShadow: isActive ? "0 0 20px rgba(124,106,245,0.3)" : "none",
+        boxShadow: isActive ? "0 0 20px rgba(var(--accent-rgb),0.3)" : "none",
       }}
     >
       {art ? (
@@ -89,7 +89,7 @@ const MediaCard: React.FC<MediaCardProps> = ({
             backdropFilter: "blur(4px)",
             borderRadius: "var(--radius-xs)",
             padding: "2px 6px",
-            fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
+            fontFamily: "var(--font-family-mono, 'Inter', sans-serif)",
             fontSize: "9px",
             fontWeight: 700,
             color: "#fff",
@@ -129,9 +129,9 @@ const MediaCard: React.FC<MediaCardProps> = ({
           className="card-play-btn"
         >
           {isActive && isPlaying ? (
-            <PlayingBars height={12} color="var(--accent2)" />
+            <PlayingBars height={12} color="#0a0a0a" />
           ) : (
-            <svg viewBox="0 0 24 24" fill="#fff" width="12" height="12">
+            <svg viewBox="0 0 24 24" fill="#0a0a0a" width="12" height="12">
               <polygon points="5,3 19,12 5,21" />
             </svg>
           )}
@@ -155,7 +155,7 @@ const MediaCard: React.FC<MediaCardProps> = ({
       style={{
         fontSize: "10px",
         color: "var(--text3)",
-        fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
+        fontFamily: "var(--font-family-mono, 'Inter', sans-serif)",
         marginTop: "2px",
         whiteSpace: "nowrap",
         overflow: "hidden",

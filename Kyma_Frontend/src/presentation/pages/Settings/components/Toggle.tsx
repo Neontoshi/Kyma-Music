@@ -21,16 +21,16 @@ const Toggle: React.FC<ToggleProps> = ({ checked, onChange, setting }) => (
       height: "24px",
       borderRadius: "var(--radius-pill)",
       background: checked
-        ? "linear-gradient(135deg, #7c6af5, #c084fc)"
+        ? "linear-gradient(135deg, var(--accent), var(--accent))"
         : "rgba(255,255,255,0.06)",
       border: checked
-        ? "1px solid rgba(124,106,245,0.5)"
+        ? "1px solid rgba(var(--accent-rgb),0.5)"
         : "1px solid rgba(255,255,255,0.1)",
       cursor: "pointer",
       transition: "all 0.25s cubic-bezier(0.4,0,0.2,1)",
       flexShrink: 0,
       outline: "none",
-      boxShadow: checked ? "0 0 12px rgba(124,106,245,0.35)" : "none",
+      boxShadow: checked ? "0 0 12px rgba(var(--accent-rgb),0.35)" : "none",
     }}
   >
     <span

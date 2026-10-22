@@ -19,7 +19,7 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid rgba(255,255,255,0.08)",
   borderRadius: "var(--radius-md)",
   color: "var(--text)",
-  fontFamily: "'DM Mono', monospace",
+  fontFamily: "'Inter', sans-serif",
   fontSize: "12px",
   outline: "none",
   boxSizing: "border-box",
@@ -28,7 +28,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: "11px",
-  fontFamily: "'DM Mono', monospace",
+  fontFamily: "'Inter', sans-serif",
   color: "var(--text3)",
   letterSpacing: "0.08em",
   textTransform: "uppercase",
@@ -64,7 +64,7 @@ const IntegrationsSection: React.FC<IntegrationsSectionProps> = ({
                 width: "40px",
                 height: "40px",
                 borderRadius: "var(--radius-lg)",
-                background: "rgba(214,62,62,0.1)",
+                background: "rgba(255,77,77,0.1)",
                 border: "1px solid rgba(255,255,255,0.06)",
                 display: "flex",
                 alignItems: "center",
@@ -80,7 +80,7 @@ const IntegrationsSection: React.FC<IntegrationsSectionProps> = ({
                   fontSize: "15px",
                   fontWeight: 700,
                   color: "var(--text)",
-                  fontFamily: "'Syne', sans-serif",
+                  fontFamily: "'Inter', sans-serif",
                 }}
               >
                 Last.fm
@@ -89,7 +89,7 @@ const IntegrationsSection: React.FC<IntegrationsSectionProps> = ({
                 style={{
                   fontSize: "11px",
                   color: "var(--text3)",
-                  fontFamily: "'DM Mono', monospace",
+                  fontFamily: "'Inter', sans-serif",
                 }}
               >
                 Scrobbling & recommendations
@@ -103,8 +103,8 @@ const IntegrationsSection: React.FC<IntegrationsSectionProps> = ({
               alignItems: "flex-start",
               gap: "12px",
               padding: "12px 16px",
-              background: "rgba(124,106,247,0.05)",
-              border: "1px solid rgba(124,106,247,0.12)",
+              background: "rgba(var(--accent-rgb),0.05)",
+              border: "1px solid rgba(var(--accent-rgb),0.12)",
               borderRadius: "var(--radius-md)",
               marginBottom: "18px",
             }}
@@ -117,7 +117,7 @@ const IntegrationsSection: React.FC<IntegrationsSectionProps> = ({
                 fontSize: "12px",
                 color: "var(--text2)",
                 lineHeight: 1.6,
-                fontFamily: "'DM Mono', monospace",
+                fontFamily: "'Inter', sans-serif",
                 margin: 0,
               }}
             >
@@ -177,7 +177,7 @@ const IntegrationsSection: React.FC<IntegrationsSectionProps> = ({
                 width: "40px",
                 height: "40px",
                 borderRadius: "var(--radius-lg)",
-                background: "rgba(76,175,80,0.08)",
+                background: "rgba(var(--accent3-rgb),0.08)",
                 border: "1px solid rgba(255,255,255,0.06)",
                 display: "flex",
                 alignItems: "center",
@@ -193,7 +193,7 @@ const IntegrationsSection: React.FC<IntegrationsSectionProps> = ({
                   fontSize: "15px",
                   fontWeight: 700,
                   color: "var(--text)",
-                  fontFamily: "'Syne', sans-serif",
+                  fontFamily: "'Inter', sans-serif",
                 }}
               >
                 ListenBrainz
@@ -202,7 +202,7 @@ const IntegrationsSection: React.FC<IntegrationsSectionProps> = ({
                 style={{
                   fontSize: "11px",
                   color: "var(--text3)",
-                  fontFamily: "'DM Mono', monospace",
+                  fontFamily: "'Inter', sans-serif",
                 }}
               >
                 Open-source scrobble tracking
@@ -237,7 +237,7 @@ const IntegrationsSection: React.FC<IntegrationsSectionProps> = ({
                   display: "block",
                   marginTop: "7px",
                   fontSize: "10px",
-                  fontFamily: "'DM Mono', monospace",
+                  fontFamily: "'Inter', sans-serif",
                   color: "var(--text3)",
                 }}
               >

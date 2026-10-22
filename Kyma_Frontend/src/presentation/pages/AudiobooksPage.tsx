@@ -148,10 +148,10 @@ const AudiobooksPage: React.FC = () => {
               padding: "10px 16px",
               margin: "0.5rem 0",
               borderRadius: "var(--radius-md)",
-              background: "rgba(255,170,50,0.08)",
-              border: "1px solid rgba(255,170,50,0.2)",
-              color: "#ffaa33",
-              fontFamily: "'DM Mono',monospace",
+              background: "rgba(255,77,77,0.08)",
+              border: "1px solid rgba(255,77,77,0.2)",
+              color: "#ff4d4d",
+              fontFamily: "'Inter',monospace",
               fontSize: 11,
               display: "flex",
               alignItems: "center",
@@ -171,7 +171,7 @@ const AudiobooksPage: React.FC = () => {
               textAlign: "center",
               padding: "3rem 0",
               color: "var(--text3)",
-              fontFamily: "'DM Mono',monospace",
+              fontFamily: "'Inter',monospace",
               fontSize: 11,
             }}
           >
@@ -185,7 +185,7 @@ const AudiobooksPage: React.FC = () => {
               gap: 8,
               padding: "2rem 0",
               color: "var(--text3)",
-              fontFamily: "'DM Mono',monospace",
+              fontFamily: "'Inter',monospace",
               fontSize: 11,
             }}
           >
@@ -198,7 +198,7 @@ const AudiobooksPage: React.FC = () => {
               textAlign: "center",
               padding: "3rem 0",
               color: "var(--text3)",
-              fontFamily: "'DM Mono',monospace",
+              fontFamily: "'Inter',monospace",
               fontSize: 11,
             }}
           >

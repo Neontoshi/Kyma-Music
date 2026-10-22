@@ -58,11 +58,23 @@ const SongRow: React.FC<SongRowProps> = ({
   const isSoundCloud = song.source === "soundcloud";
   const isStreamable = isYouTube || isSoundCloud;
 
-  // Check if downloads are enabled
+  // Check if downloads are enabled, and stay in sync with Settings.
   useEffect(() => {
     tauriCommands.getSetting("enable_downloads").then((value) => {
       setDownloadsEnabled(value === "true");
     });
+
+    const handleDownloadsChanged = (event: Event) => {
+      const enabled = (event as CustomEvent<boolean>).detail;
+      if (typeof enabled === "boolean") setDownloadsEnabled(enabled);
+    };
+
+    window.addEventListener("kyma:downloads-enabled", handleDownloadsChanged);
+    return () =>
+      window.removeEventListener(
+        "kyma:downloads-enabled",
+        handleDownloadsChanged,
+      );
   }, []);
 
   React.useEffect(() => {
@@ -376,7 +388,7 @@ const SongRow: React.FC<SongRowProps> = ({
           {song.title}
           {isYouTube && <span className="yt-badge">YT</span>}
           {isSoundCloud && (
-            <span className="yt-badge" style={{ background: "#ff5500" }}>
+            <span className="yt-badge" style={{ background: "#ff4d4d" }}>
               SC
             </span>
           )}

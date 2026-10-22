@@ -63,7 +63,7 @@ const TopArtists: React.FC<TopArtistsProps> = ({
             <span>{a.name}</span>
             <span
               style={{
-                fontFamily: "var(--font-family-mono, 'DM Mono', monospace)",
+                fontFamily: "var(--font-family-mono, 'Inter', sans-serif)",
                 fontSize: "9px",
                 color: "var(--text3)",
               }}

@@ -116,7 +116,7 @@ const ProgressSlider: React.FC = () => {
         >
           <span
             style={{
-              fontFamily: "'DM Mono', monospace",
+              fontFamily: "'Inter', sans-serif",
               fontSize: "10px",
               color: "var(--accent)",
               letterSpacing: "0.1em",

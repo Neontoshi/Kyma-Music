@@ -71,22 +71,22 @@ const LogsSection: React.FC<LogsSectionProps> = ({ logFilePath }) => {
           icon="📋"
           title="Logs & Debug"
           desc="Export logs for troubleshooting"
-          accent="rgba(255,107,53,0.15)"
+          accent="rgba(255,77,77,0.15)"
         />
         <div style={{ padding: "20px 24px" }}>
           <div
             style={{
               marginBottom: "20px",
               padding: "12px 16px",
-              background: "rgba(124,106,245,0.05)",
-              border: "1px solid rgba(124,106,245,0.12)",
+              background: "rgba(var(--accent-rgb),0.05)",
+              border: "1px solid rgba(var(--accent-rgb),0.12)",
               borderRadius: "var(--radius-lg)",
             }}
           >
             <div
               style={{
                 fontSize: "11px",
-                fontFamily: "'DM Mono', monospace",
+                fontFamily: "'Inter', sans-serif",
                 color: "var(--text3)",
                 marginBottom: "8px",
                 letterSpacing: "0.05em",
@@ -97,7 +97,7 @@ const LogsSection: React.FC<LogsSectionProps> = ({ logFilePath }) => {
             <div
               style={{
                 fontSize: "11px",
-                fontFamily: "'DM Mono', monospace",
+                fontFamily: "'Inter', sans-serif",
                 color: "var(--accent2)",
                 wordBreak: "break-all",
                 background: "rgba(0,0,0,0.2)",
@@ -121,8 +121,8 @@ const LogsSection: React.FC<LogsSectionProps> = ({ logFilePath }) => {
                 justifyContent: "space-between",
                 width: "100%",
                 padding: "14px 18px",
-                background: "rgba(124,106,245,0.1)",
-                border: "1px solid rgba(124,106,245,0.25)",
+                background: "rgba(var(--accent-rgb),0.1)",
+                border: "1px solid rgba(var(--accent-rgb),0.25)",
                 borderRadius: "var(--radius-lg)",
                 cursor: isExportingLogs ? "wait" : "pointer",
               }}
@@ -132,7 +132,7 @@ const LogsSection: React.FC<LogsSectionProps> = ({ logFilePath }) => {
               >
                 <span style={{ fontSize: "20px" }}>💾</span>
                 <span
-                  style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600 }}
+                  style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600 }}
                 >
                   Export Logs to File
                 </span>
@@ -162,7 +162,7 @@ const LogsSection: React.FC<LogsSectionProps> = ({ logFilePath }) => {
               >
                 <span style={{ fontSize: "20px" }}>📋</span>
                 <span
-                  style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600 }}
+                  style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600 }}
                 >
                   Copy Logs to Clipboard
                 </span>
@@ -190,7 +190,7 @@ const LogsSection: React.FC<LogsSectionProps> = ({ logFilePath }) => {
               >
                 <span style={{ fontSize: "20px" }}>🔍</span>
                 <span
-                  style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600 }}
+                  style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600 }}
                 >
                   Preview Last 200 Lines
                 </span>
@@ -203,16 +203,16 @@ const LogsSection: React.FC<LogsSectionProps> = ({ logFilePath }) => {
             style={{
               marginTop: "20px",
               padding: "12px 16px",
-              background: "rgba(255,107,53,0.05)",
-              border: "1px solid rgba(255,107,53,0.15)",
+              background: "rgba(255,77,77,0.05)",
+              border: "1px solid rgba(255,77,77,0.15)",
               borderRadius: "var(--radius-md)",
             }}
           >
             <div
               style={{
                 fontSize: "10px",
-                fontFamily: "'DM Mono', monospace",
-                color: "#ff6b35",
+                fontFamily: "'Inter', sans-serif",
+                color: "#ff4d4d",
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
                 marginBottom: "6px",
@@ -224,7 +224,7 @@ const LogsSection: React.FC<LogsSectionProps> = ({ logFilePath }) => {
               style={{
                 fontSize: "11px",
                 color: "var(--text2)",
-                fontFamily: "'DM Mono', monospace",
+                fontFamily: "'Inter', sans-serif",
                 lineHeight: 1.5,
               }}
             >

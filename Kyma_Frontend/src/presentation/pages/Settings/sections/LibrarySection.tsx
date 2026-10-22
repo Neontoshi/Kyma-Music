@@ -21,7 +21,7 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid rgba(255,255,255,0.08)",
   borderRadius: "var(--radius-md)",
   color: "var(--text)",
-  fontFamily: "'DM Mono', monospace",
+  fontFamily: "'Inter', sans-serif",
   fontSize: "12px",
   outline: "none",
   boxSizing: "border-box",
@@ -61,7 +61,7 @@ const LibrarySection: React.FC<LibrarySectionProps> = ({
           icon="◧"
           title="Library"
           desc="Music folders & scanning"
-          accent="rgba(74,222,128,0.08)"
+          accent="rgba(var(--accent3-rgb),0.08)"
         />
         <div style={{ padding: "4px 24px 12px" }}>
           <SettingRow
@@ -102,7 +102,7 @@ const LibrarySection: React.FC<LibrarySectionProps> = ({
                     style={{
                       fontSize: "11px",
                       color: "var(--text3)",
-                      fontFamily: "'DM Mono', monospace",
+                      fontFamily: "'Inter', sans-serif",
                     }}
                   >
                     hr
@@ -130,7 +130,7 @@ const LibrarySection: React.FC<LibrarySectionProps> = ({
                   fontSize: "14px",
                   fontWeight: 600,
                   color: "var(--text)",
-                  fontFamily: "'Syne', sans-serif",
+                  fontFamily: "'Inter', sans-serif",
                 }}
               >
                 Scan Folders
@@ -139,7 +139,7 @@ const LibrarySection: React.FC<LibrarySectionProps> = ({
                 style={{
                   fontSize: "11px",
                   color: "var(--text3)",
-                  fontFamily: "'DM Mono', monospace",
+                  fontFamily: "'Inter', sans-serif",
                   marginTop: "2px",
                 }}
               >
@@ -154,13 +154,13 @@ const LibrarySection: React.FC<LibrarySectionProps> = ({
                 alignItems: "center",
                 gap: "6px",
                 padding: "8px 14px",
-                background: "rgba(124,106,245,0.12)",
-                border: "1px solid rgba(124,106,245,0.25)",
+                background: "rgba(var(--accent-rgb),0.12)",
+                border: "1px solid rgba(var(--accent-rgb),0.25)",
                 borderRadius: "var(--radius-md)",
                 color: "var(--accent2)",
                 cursor: "pointer",
                 fontSize: "12px",
-                fontFamily: "'DM Mono', monospace",
+                fontFamily: "'Inter', sans-serif",
                 letterSpacing: "0.03em",
               }}
             >
@@ -178,7 +178,7 @@ const LibrarySection: React.FC<LibrarySectionProps> = ({
                 textAlign: "center",
                 color: "var(--text3)",
                 fontSize: "12px",
-                fontFamily: "'DM Mono', monospace",
+                fontFamily: "'Inter', sans-serif",
               }}
             >
               No folders added yet
@@ -205,7 +205,7 @@ const LibrarySection: React.FC<LibrarySectionProps> = ({
                     style={{
                       flex: 1,
                       fontSize: "12px",
-                      fontFamily: "'DM Mono', monospace",
+                      fontFamily: "'Inter', sans-serif",
                       color: "var(--text2)",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -224,7 +224,7 @@ const LibrarySection: React.FC<LibrarySectionProps> = ({
                       color: "#f87171",
                       cursor: "pointer",
                       fontSize: "11px",
-                      fontFamily: "'DM Mono', monospace",
+                      fontFamily: "'Inter', sans-serif",
                     }}
                   >
                     Remove

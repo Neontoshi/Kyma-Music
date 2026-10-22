@@ -5,31 +5,22 @@ interface PlayingBarsProps {
   color?: string;
 }
 
+const BAR_COUNT = 4;
+
 const PlayingBars: React.FC<PlayingBarsProps> = ({
   height = 14,
   color = "var(--accent)",
 }) => (
   <div
-    style={{
-      display: "flex",
-      alignItems: "flex-end",
-      justifyContent: "center",
-      gap: "2px",
-      height: `${height}px`,
-      width: "14px",
-    }}
+    className="playing-bars"
+    style={{ height: `${height}px`, color }}
+    aria-hidden="true"
   >
-    {[0, 0.2, 0.4].map((delay, i) => (
-      <div
-        key={i}
-        style={{
-          width: "3px",
-          background: color,
-          borderRadius: "var(--radius-xs)",
-          height: `${height}px`,
-          animation: "barBounce 0.8s ease-in-out infinite",
-          animationDelay: `${delay}s`,
-        }}
+    {Array.from({ length: BAR_COUNT }, (_, index) => (
+      <span
+        key={index}
+        className="playing-bar"
+        style={{ "--bar-index": index } as React.CSSProperties}
       />
     ))}
   </div>

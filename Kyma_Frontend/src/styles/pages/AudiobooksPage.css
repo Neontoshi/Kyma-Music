@@ -8,7 +8,7 @@
 }
 
 .ab-eyebrow {
-    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-family: var(--font-family-base, "Inter", sans-serif);
     font-size: 10px;
     letter-spacing: 0.25em;
     text-transform: uppercase;
@@ -17,7 +17,7 @@
 }
 
 .ab-title {
-    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-family: var(--font-family-base, "Inter", sans-serif);
 
     font-size: 2rem;
     font-weight: 800;
@@ -47,7 +47,7 @@
     border-bottom: 2px solid transparent;
     margin-bottom: -1px;
     color: var(--text3);
-    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-family: var(--font-family-base, "Inter", sans-serif);
 
     font-size: 12px;
     font-weight: 600;
@@ -86,7 +86,7 @@
     background: none;
     border: none;
     color: var(--text);
-    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-family: var(--font-family-base, "Inter", sans-serif);
     font-size: 12px;
     outline: none;
     width: 100%;
@@ -109,7 +109,7 @@
     padding: 0 12px 8px;
     border-bottom: 1px solid var(--border);
     margin-bottom: 4px;
-    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-family: var(--font-family-base, "Inter", sans-serif);
     font-size: 10px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -129,19 +129,19 @@
 }
 
 .ab-track-row.active {
-    background: rgba(124, 106, 245, 0.07);
-    border-color: rgba(124, 106, 245, 0.18);
+    background: rgba(var(--accent-rgb), 0.07);
+    border-color: rgba(var(--accent-rgb), 0.18);
 }
 
 .ab-track-num {
-    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-family: var(--font-family-base, "Inter", sans-serif);
     font-size: 12px;
     color: var(--text3);
     text-align: center;
 }
 
 .ab-track-dur {
-    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-family: var(--font-family-base, "Inter", sans-serif);
     font-size: 11px;
     color: var(--text3);
     text-align: right;

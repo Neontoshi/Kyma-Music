@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { usePlayerContext as usePlayer } from "../../hooks/PlayerContext";
 import VolumeControl from "./VolumeControl";
 import ProgressSlider from "./ProgressSlider";
@@ -24,6 +25,7 @@ const PlayerBar: React.FC = () => {
   const { queue, currentIndex, removeFromQueue, clearQueue, setIndex } =
     useQueueStore();
   const [showQueueModal, setShowQueueModal] = useState(false);
+  const hideSliders = useLocation().pathname === "/nowplaying";
 
   if (!currentSong) {
     return (
@@ -296,9 +298,11 @@ const PlayerBar: React.FC = () => {
           </button>
         </div>
 
-        <div className="player-progress">
-          <ProgressSlider />
-        </div>
+        {!hideSliders && (
+          <div className="player-progress">
+            <ProgressSlider />
+          </div>
+        )}
       </div>
 
       <div className="player-right">
@@ -345,7 +349,7 @@ const PlayerBar: React.FC = () => {
               <line x1="3" y1="18" x2="3.01" y2="18" />
             </svg>
           </button>
-          <VolumeControl />
+          {!hideSliders && <VolumeControl />}
         </div>
       </div>
 
@@ -408,7 +412,7 @@ const PlayerBar: React.FC = () => {
                       borderRadius: "var(--radius-sm)",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = "rgba(255,107,53,0.1)";
+                      e.currentTarget.style.background = "rgba(255,77,77,0.1)";
                       e.currentTarget.style.color = "var(--error)";
                     }}
                     onMouseLeave={(e) => {
@@ -447,7 +451,7 @@ const PlayerBar: React.FC = () => {
                     padding: "40px",
                     textAlign: "center",
                     color: "var(--text3)",
-                    fontFamily: "'DM Mono', monospace",
+                    fontFamily: "'Inter', sans-serif",
                     fontSize: "12px",
                   }}
                 >
@@ -464,7 +468,7 @@ const PlayerBar: React.FC = () => {
                       <div
                         style={{
                           padding: "10px 20px 6px",
-                          fontFamily: "'DM Mono', monospace",
+                          fontFamily: "'Inter', sans-serif",
                           fontSize: "10px",
                           letterSpacing: "0.1em",
                           color: "var(--accent)",
@@ -480,9 +484,9 @@ const PlayerBar: React.FC = () => {
                           gap: "12px",
                           padding: "10px 16px",
                           margin: "0 8px 4px",
-                          background: "rgba(124,106,245,0.08)",
+                          background: "rgba(var(--accent-rgb),0.08)",
                           borderRadius: "var(--radius-md)",
-                          border: "1px solid rgba(124,106,245,0.15)",
+                          border: "1px solid rgba(var(--accent-rgb),0.15)",
                         }}
                       >
                         <div
@@ -607,7 +611,7 @@ const PlayerBar: React.FC = () => {
                       <div
                         style={{
                           padding: "16px 20px 6px",
-                          fontFamily: "'DM Mono', monospace",
+                          fontFamily: "'Inter', sans-serif",
                           fontSize: "10px",
                           letterSpacing: "0.1em",
                           color: "var(--text3)",
@@ -644,17 +648,17 @@ const PlayerBar: React.FC = () => {
                                 transition: "background 0.1s",
                                 borderRadius: "var(--radius-md)",
                                 background: isPlayNext
-                                  ? "rgba(124,106,245,0.06)"
+                                  ? "rgba(var(--accent-rgb),0.06)"
                                   : "transparent",
                               }}
                               onMouseEnter={(e) => {
                                 e.currentTarget.style.background = isPlayNext
-                                  ? "rgba(124,106,245,0.12)"
+                                  ? "rgba(var(--accent-rgb),0.12)"
                                   : "var(--surface2)";
                               }}
                               onMouseLeave={(e) => {
                                 e.currentTarget.style.background = isPlayNext
-                                  ? "rgba(124,106,245,0.06)"
+                                  ? "rgba(var(--accent-rgb),0.06)"
                                   : "transparent";
                               }}
                             >
@@ -799,7 +803,7 @@ const PlayerBar: React.FC = () => {
                         padding: "24px 20px",
                         textAlign: "center",
                         color: "var(--text3)",
-                        fontFamily: "'DM Mono', monospace",
+                        fontFamily: "'Inter', sans-serif",
                         fontSize: "12px",
                       }}
                     >

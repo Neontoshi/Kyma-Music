@@ -17,11 +17,11 @@ import UpdatesSection from "./sections/UpdatesSection";
 
 const navItems: { id: NavSection; icon: string; label: string; sub: string }[] =
   [
-    { id: "playback", icon: "⊕", label: "Playback", sub: "Audio behavior" },
-    { id: "library", icon: "⊞", label: "Library", sub: "Folders & scan" },
+    { id: "playback", icon: "▶", label: "Playback", sub: "Audio behavior" },
+    { id: "library", icon: "◧", label: "Library", sub: "Folders & scanning" },
     {
       id: "downloads",
-      icon: "⊘",
+      icon: "↓",
       label: "Downloads",
       sub: "Quality & cleanup",
     },
@@ -29,19 +29,19 @@ const navItems: { id: NavSection; icon: string; label: string; sub: string }[] =
       id: "appearance",
       icon: "◈",
       label: "Appearance",
-      sub: "Theme & display",
+      sub: "Theme & typography",
     },
-    { id: "cast", icon: "⊛", label: "Kyma Cast", sub: "Remote control" },
+    { id: "cast", icon: "◉", label: "Kyma Cast", sub: "Remote control" },
     {
       id: "integrations",
-      icon: "⊗",
+      icon: "◎",
       label: "Integrations",
       sub: "Last.fm · ListenBrainz",
     },
-    { id: "logs", icon: "📋", label: "Logs", sub: "Debug & export" },
+    { id: "logs", icon: "▤", label: "Logs", sub: "Debug & export" },
     {
       id: "updates",
-      icon: "🔄",
+      icon: "↻",
       label: "Updates",
       sub: "Check for new version",
     },
@@ -60,7 +60,13 @@ const SettingsPage: React.FC = () => {
   const [defaultVolume, setDefaultVolume] = useState(playerVolume);
 
   // Font store
-  const { selectedFont, setFont, saveToBackend } = useFontStore();
+  const {
+    selectedFont,
+    fontSize,
+    setFont,
+    setFontSize,
+    saveToBackend,
+  } = useFontStore();
 
   // Updater
   const {
@@ -74,6 +80,7 @@ const SettingsPage: React.FC = () => {
     checkForUpdates,
     downloadAndInstall,
   } = useUpdater();
+
   // State for all sections
   const [listenbrainzToken, setListenbrainzToken] = useState("");
   const [listenbrainzUser, setListenbrainzUser] = useState("");
@@ -87,12 +94,14 @@ const SettingsPage: React.FC = () => {
   const [autoScanInterval, setAutoScanInterval] = useState(24);
   const [downloadFolder, setDownloadFolder] = useState("");
   const [downloadQuality, setDownloadQuality] = useState("medium");
+  const [downloadsEnabled, setDownloadsEnabled] = useState(false);
   const [autoCleanup, setAutoCleanup] = useState(false);
   const [cleanupDays, setCleanupDays] = useState(30);
   const { theme, setTheme: setThemeStore } = useThemeStore();
   const [localTheme, setLocalTheme] = useState(theme);
-  const [fontSize, setFontSize] = useState("medium");
   const [logFilePath, setLogFilePath] = useState("");
+
+  const activeMeta = navItems.find((item) => item.id === activeSection) ?? navItems[0];
 
   useEffect(() => {
     setDefaultVolume(playerVolume);
@@ -138,14 +147,14 @@ const SettingsPage: React.FC = () => {
     if (df) setDownloadFolder(df);
     const dq = await tauriCommands.getSetting("download_quality");
     if (dq) setDownloadQuality(dq);
+    const de = await tauriCommands.getSetting("enable_downloads");
+    setDownloadsEnabled(de === "true");
     const ac = await tauriCommands.getSetting("auto_cleanup");
     setAutoCleanup(ac === "true");
     const cd = await tauriCommands.getSetting("cleanup_days");
     if (cd) setCleanupDays(parseInt(cd));
     const t = await tauriCommands.getSetting("theme");
     if (t) setLocalTheme(t);
-    const fs = await tauriCommands.getSetting("font_size");
-    if (fs) setFontSize(fs);
     const logPath = await tauriCommands.getLogFilePath();
     setLogFilePath(logPath);
   };
@@ -189,11 +198,14 @@ const SettingsPage: React.FC = () => {
     );
     await tauriCommands.setSetting("download_folder", downloadFolder);
     await tauriCommands.setSetting("download_quality", downloadQuality);
+    await tauriCommands.setSetting(
+      "enable_downloads",
+      downloadsEnabled.toString(),
+    );
     await tauriCommands.setSetting("auto_cleanup", autoCleanup.toString());
     await tauriCommands.setSetting("cleanup_days", cleanupDays.toString());
     await tauriCommands.setSetting("theme", localTheme);
     setThemeStore(localTheme);
-    await tauriCommands.setSetting("font_size", fontSize);
     await saveToBackend();
 
     setSaved(true);
@@ -230,272 +242,188 @@ const SettingsPage: React.FC = () => {
     setDownloadFolder(folder);
   };
 
+  const handleDownloadsEnabledChange = async (enabled: boolean) => {
+    setDownloadsEnabled(enabled);
+    logger.logUI("SettingsPage", "downloads_enabled_change", { enabled });
+    try {
+      await tauriCommands.setSetting("enable_downloads", enabled.toString());
+      window.dispatchEvent(
+        new CustomEvent("kyma:downloads-enabled", { detail: enabled }),
+      );
+    } catch (error) {
+      logger.logError("SettingsPage downloads_enabled_save_failed", {
+        enabled,
+        error,
+      });
+    }
+  };
+
   return (
-    <div
-      className="song-list-pane"
-      style={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        padding: 0,
-        background: "transparent",
-      }}
-    >
-      {/* Top Header Bar */}
-      <div style={{ padding: "28px 32px 0", flexShrink: 0 }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "baseline",
-            gap: "10px",
-            marginBottom: "28px",
-          }}
-        >
-          <h1
-            style={{
-              fontSize: "24px",
-              fontWeight: 800,
-              letterSpacing: "-0.04em",
-              color: "var(--text)",
-              fontFamily: "'Syne', sans-serif",
-              margin: 0,
-              lineHeight: 1,
-            }}
-          >
-            Settings
-          </h1>
-          <span
-            style={{
-              fontSize: "10px",
-              fontFamily: "'DM Mono', monospace",
-              color: "var(--text3)",
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              paddingBottom: "2px",
-            }}
-          >
-            Kyma
-          </span>
-        </div>
-
-        {/* Pill Nav */}
-        <div
-          style={{
-            display: "flex",
-            gap: "4px",
-            padding: "4px",
-            background: "rgba(255,255,255,0.03)",
-            border: "1px solid rgba(255,255,255,0.06)",
-            borderRadius: "var(--radius-xl)",
-            marginBottom: "0",
-            overflowX: "auto",
-          }}
-        >
-          {navItems.map((item) => {
-            const isActive = activeSection === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleSectionChange(item.id)}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  gap: "1px",
-                  padding: "9px 14px",
-                  borderRadius: "var(--radius-md)",
-                  border: "none",
-                  background: isActive
-                    ? "rgba(124,106,245,0.18)"
-                    : "transparent",
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                  flexShrink: 0,
-                  outline: "none",
-                  boxShadow: isActive
-                    ? "inset 0 0 0 1px rgba(124,106,245,0.3)"
-                    : "none",
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: "13px",
-                    fontWeight: isActive ? 700 : 500,
-                    color: isActive ? "var(--accent2)" : "var(--text2)",
-                    fontFamily: "'Syne', sans-serif",
-                    letterSpacing: "-0.01em",
-                    lineHeight: 1,
-                  }}
-                >
-                  {item.label}
-                </span>
-                <span
-                  style={{
-                    fontSize: "9px",
-                    fontFamily: "'DM Mono', monospace",
-                    color: isActive ? "rgba(192,132,252,0.7)" : "var(--text3)",
-                    letterSpacing: "0.03em",
-                  }}
-                >
-                  {item.sub}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Divider */}
-      <div
-        style={{
-          height: "1px",
-          background: "rgba(255,255,255,0.05)",
-          margin: "0 32px",
-          marginTop: "20px",
-        }}
-      />
-
-      {/* Scrollable Content */}
-      <div
-        key={activeSection}
-        style={{
-          flex: 1,
-          overflowY: "auto",
-          padding: "20px 32px 0",
-        }}
-      >
-        {activeSection === "playback" && (
-          <PlaybackSection
-            defaultVolume={defaultVolume}
-            setDefaultVolume={setDefaultVolume}
-            setPlayerVolume={setPlayerVolume}
-            crossfade={crossfade}
-            setCrossfade={setCrossfade}
-            gapless={gapless}
-            setGapless={setGapless}
-            audioQuality={audioQuality}
-            setAudioQuality={setAudioQuality}
-          />
-        )}
-        {activeSection === "library" && (
-          <LibrarySection
-            autoScan={autoScan}
-            setAutoScan={setAutoScan}
-            autoScanInterval={autoScanInterval}
-            setAutoScanInterval={setAutoScanInterval}
-            scanFolders={scanFolders}
-            onAddScanFolder={handleScanFolderAdd}
-            onRemoveScanFolder={handleScanFolderRemove}
-          />
-        )}
-        {activeSection === "downloads" && (
-          <DownloadsSection
-            downloadFolder={downloadFolder}
-            onSelectDownloadFolder={handleDownloadFolderSelect}
-            downloadQuality={downloadQuality}
-            setDownloadQuality={setDownloadQuality}
-            autoCleanup={autoCleanup}
-            setAutoCleanup={setAutoCleanup}
-            cleanupDays={cleanupDays}
-            setCleanupDays={setCleanupDays}
-          />
-        )}
-        {activeSection === "appearance" && (
-          <AppearanceSection
-            selectedFont={selectedFont}
-            onFontChange={handleFontChange}
-            localTheme={localTheme}
-            setLocalTheme={setLocalTheme}
-            fontSize={fontSize}
-            setFontSize={setFontSize}
-          />
-        )}
-        {activeSection === "cast" && (
-          <CastSection
-            localIP={localIP}
-            qrDataUrl={qrDataUrl}
-            copyLabel={copyLabel}
-            setCopyLabel={setCopyLabel}
-          />
-        )}
-        {activeSection === "integrations" && (
-          <IntegrationsSection
-            listenbrainzToken={listenbrainzToken}
-            setListenbrainzToken={setListenbrainzToken}
-            listenbrainzUser={listenbrainzUser}
-            setListenbrainzUser={setListenbrainzUser}
-            lastfmKey={lastfmKey}
-            setLastfmKey={setLastfmKey}
-            lastfmUser={lastfmUser}
-            setLastfmUser={setLastfmUser}
-          />
-        )}
-        {activeSection === "logs" && <LogsSection logFilePath={logFilePath} />}
-        {activeSection === "updates" && (
-          <UpdatesSection
-            updateAvailable={updateAvailable}
-            updateVersion={updateVersion}
-            updateUrl={updateUrl}
-            updateNotes={updateNotes}
-            checking={checking}
-            downloading={downloading}
-            downloadProgress={downloadProgress}
-            checkForUpdates={checkForUpdates}
-            downloadAndInstall={downloadAndInstall}
-          />
-        )}
-
-        {/* Save Row - Only show for non-logs/updates sections */}
-        {activeSection !== "logs" && activeSection !== "updates" && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "14px",
-              padding: "24px 0 36px",
-              marginTop: "4px",
-            }}
-          >
-            <button
-              onClick={handleSave}
-              style={{
-                padding: "12px 32px",
-                background: saved
-                  ? "linear-gradient(135deg, rgba(74,222,128,0.2), rgba(74,222,128,0.1))"
-                  : "linear-gradient(135deg, #7c6af5, #c084fc)",
-                border: saved
-                  ? "1px solid rgba(74,222,128,0.35)"
-                  : "1px solid rgba(124,106,245,0.4)",
-                borderRadius: "var(--radius-lg)",
-                color: saved ? "#4ade80" : "#fff",
-                cursor: "pointer",
-                fontFamily: "'Syne', sans-serif",
-                fontSize: "14px",
-                fontWeight: 700,
-                letterSpacing: "-0.01em",
-                boxShadow: saved
-                  ? "0 0 20px rgba(74,222,128,0.15)"
-                  : "0 4px 20px rgba(124,106,245,0.35)",
-              }}
-            >
-              {saved ? "✓  Saved" : "Save settings"}
-            </button>
-            {saved && (
-              <span
-                style={{
-                  fontSize: "11px",
-                  color: "#4ade80",
-                  fontFamily: "'DM Mono', monospace",
-                  letterSpacing: "0.06em",
-                  opacity: 0.8,
-                }}
-              >
-                All changes persisted.
-              </span>
-            )}
+    <div className="settings-page">
+      <div className="settings-ambient" aria-hidden="true" />
+      <div className="settings-shell">
+        <aside className="settings-sidebar">
+          <div className="settings-brand">
+            <div className="settings-brand-mark">K</div>
+            <div>
+              <span className="settings-brand-eyebrow">Kyma</span>
+              <h1>Settings</h1>
+            </div>
           </div>
-        )}
+          <p className="settings-intro">
+            Tune how Kyma sounds, looks, and connects to the rest of your setup.
+          </p>
+
+          <nav className="settings-nav" aria-label="Settings sections">
+            {navItems.map((item) => {
+              const isActive = activeSection === item.id;
+              return (
+                <button
+                  key={item.id}
+                  className={`settings-nav-item ${isActive ? "active" : ""}`}
+                  onClick={() => handleSectionChange(item.id)}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  <span className="settings-nav-icon">{item.icon}</span>
+                  <span className="settings-nav-copy">
+                    <span className="settings-nav-label">{item.label}</span>
+                    <span className="settings-nav-sub">{item.sub}</span>
+                  </span>
+                  <span className="settings-nav-arrow">›</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          <div className="settings-sidebar-foot">
+            <span className="settings-dot" />
+            Preferences are stored locally
+          </div>
+        </aside>
+
+        <main className="settings-main">
+          <div className="settings-main-scroll">
+            <header className="settings-head">
+              <div>
+                <div className="settings-breadcrumb">
+                  Settings <span>/</span> {activeMeta.label}
+                </div>
+                <h2>{activeMeta.label}</h2>
+                <p>{activeMeta.sub}</p>
+              </div>
+              <div className="settings-head-badge">
+                <span className="settings-dot" />
+                Local preferences
+              </div>
+            </header>
+
+            <div className="settings-content" key={activeSection}>
+              {activeSection === "playback" && (
+                <PlaybackSection
+                  defaultVolume={defaultVolume}
+                  setDefaultVolume={setDefaultVolume}
+                  setPlayerVolume={setPlayerVolume}
+                  crossfade={crossfade}
+                  setCrossfade={setCrossfade}
+                  gapless={gapless}
+                  setGapless={setGapless}
+                  audioQuality={audioQuality}
+                  setAudioQuality={setAudioQuality}
+                />
+              )}
+              {activeSection === "library" && (
+                <LibrarySection
+                  autoScan={autoScan}
+                  setAutoScan={setAutoScan}
+                  autoScanInterval={autoScanInterval}
+                  setAutoScanInterval={setAutoScanInterval}
+                  scanFolders={scanFolders}
+                  onAddScanFolder={handleScanFolderAdd}
+                  onRemoveScanFolder={handleScanFolderRemove}
+                />
+              )}
+              {activeSection === "downloads" && (
+                <DownloadsSection
+                  downloadFolder={downloadFolder}
+                  onSelectDownloadFolder={handleDownloadFolderSelect}
+                  downloadQuality={downloadQuality}
+                  setDownloadQuality={setDownloadQuality}
+                  downloadsEnabled={downloadsEnabled}
+                  onDownloadsEnabledChange={handleDownloadsEnabledChange}
+                  autoCleanup={autoCleanup}
+                  setAutoCleanup={setAutoCleanup}
+                  cleanupDays={cleanupDays}
+                  setCleanupDays={setCleanupDays}
+                />
+              )}
+              {activeSection === "appearance" && (
+                <AppearanceSection
+                  selectedFont={selectedFont}
+                  onFontChange={handleFontChange}
+                  localTheme={localTheme}
+                  setLocalTheme={setLocalTheme}
+                  fontSize={fontSize}
+                  setFontSize={setFontSize}
+                />
+              )}
+              {activeSection === "cast" && (
+                <CastSection
+                  localIP={localIP}
+                  qrDataUrl={qrDataUrl}
+                  copyLabel={copyLabel}
+                  setCopyLabel={setCopyLabel}
+                />
+              )}
+              {activeSection === "integrations" && (
+                <IntegrationsSection
+                  listenbrainzToken={listenbrainzToken}
+                  setListenbrainzToken={setListenbrainzToken}
+                  listenbrainzUser={listenbrainzUser}
+                  setListenbrainzUser={setListenbrainzUser}
+                  lastfmKey={lastfmKey}
+                  setLastfmKey={setLastfmKey}
+                  lastfmUser={lastfmUser}
+                  setLastfmUser={setLastfmUser}
+                />
+              )}
+              {activeSection === "logs" && (
+                <LogsSection logFilePath={logFilePath} />
+              )}
+              {activeSection === "updates" && (
+                <UpdatesSection
+                  updateAvailable={updateAvailable}
+                  updateVersion={updateVersion}
+                  updateUrl={updateUrl}
+                  updateNotes={updateNotes}
+                  checking={checking}
+                  downloading={downloading}
+                  downloadProgress={downloadProgress}
+                  checkForUpdates={checkForUpdates}
+                  downloadAndInstall={downloadAndInstall}
+                />
+              )}
+
+              {activeSection !== "logs" && activeSection !== "updates" && (
+                <div className="settings-savebar">
+                  <div className="settings-save-copy">
+                    <strong>{saved ? "All changes saved" : "Ready to save"}</strong>
+                    <span>
+                      {saved
+                        ? "Your preferences have been persisted."
+                        : "Review your changes, then save them to this device."}
+                    </span>
+                  </div>
+                  <button
+                    className={`settings-save-btn ${saved ? "saved" : ""}`}
+                    onClick={handleSave}
+                  >
+                    {saved ? "✓ Saved" : "Save changes"}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   );

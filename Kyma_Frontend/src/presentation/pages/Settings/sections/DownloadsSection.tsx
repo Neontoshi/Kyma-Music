@@ -10,6 +10,8 @@ interface DownloadsSectionProps {
   onSelectDownloadFolder: (folder: string) => void;
   downloadQuality: string;
   setDownloadQuality: (v: string) => void;
+  downloadsEnabled: boolean;
+  onDownloadsEnabledChange: (v: boolean) => void;
   autoCleanup: boolean;
   setAutoCleanup: (v: boolean) => void;
   cleanupDays: number;
@@ -23,7 +25,7 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid rgba(255,255,255,0.08)",
   borderRadius: "var(--radius-md)",
   color: "var(--text)",
-  fontFamily: "'DM Mono', monospace",
+  fontFamily: "'Inter', sans-serif",
   fontSize: "12px",
   outline: "none",
   boxSizing: "border-box",
@@ -32,7 +34,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: "11px",
-  fontFamily: "'DM Mono', monospace",
+  fontFamily: "'Inter', sans-serif",
   color: "var(--text3)",
   letterSpacing: "0.08em",
   textTransform: "uppercase",
@@ -45,6 +47,8 @@ const DownloadsSection: React.FC<DownloadsSectionProps> = ({
   onSelectDownloadFolder,
   downloadQuality,
   setDownloadQuality,
+  downloadsEnabled,
+  onDownloadsEnabledChange,
   autoCleanup,
   setAutoCleanup,
   cleanupDays,
@@ -73,9 +77,21 @@ const DownloadsSection: React.FC<DownloadsSectionProps> = ({
           icon="↓"
           title="Downloads"
           desc="YouTube & SoundCloud quality"
-          accent="rgba(255,107,53,0.1)"
+          accent="rgba(255,77,77,0.1)"
         />
         <div style={{ padding: "16px 24px 20px" }}>
+          <SettingRow
+            label="Enable Download Buttons"
+            desc="Show the download action on YouTube and SoundCloud tracks"
+            control={
+              <Toggle
+                checked={downloadsEnabled}
+                onChange={onDownloadsEnabledChange}
+                setting="enable_downloads"
+              />
+            }
+          />
+
           <label style={labelStyle}>Download Folder</label>
           <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
             <div
@@ -86,7 +102,7 @@ const DownloadsSection: React.FC<DownloadsSectionProps> = ({
                 border: "1px solid rgba(255,255,255,0.07)",
                 borderRadius: "var(--radius-md)",
                 fontSize: "12px",
-                fontFamily: "'DM Mono', monospace",
+                fontFamily: "'Inter', sans-serif",
                 color: downloadFolder ? "var(--text2)" : "var(--text3)",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -105,7 +121,7 @@ const DownloadsSection: React.FC<DownloadsSectionProps> = ({
                 color: "var(--text2)",
                 cursor: "pointer",
                 fontSize: "12px",
-                fontFamily: "'Syne', sans-serif",
+                fontFamily: "'Inter', sans-serif",
                 fontWeight: 500,
               }}
             >
@@ -165,7 +181,7 @@ const DownloadsSection: React.FC<DownloadsSectionProps> = ({
                     style={{
                       fontSize: "11px",
                       color: "var(--text3)",
-                      fontFamily: "'DM Mono', monospace",
+                      fontFamily: "'Inter', sans-serif",
                     }}
                   >
                     days

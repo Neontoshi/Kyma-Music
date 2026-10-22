@@ -6,16 +6,7 @@ interface SectionCardProps {
 }
 
 const SectionCard: React.FC<SectionCardProps> = ({ children, style }) => (
-  <div
-    style={{
-      background: "rgba(255,255,255,0.025)",
-      border: "1px solid rgba(255,255,255,0.07)",
-      borderRadius: "var(--radius-xl)",
-      overflow: "hidden",
-      backdropFilter: "blur(12px)",
-      ...style,
-    }}
-  >
+  <div className="settings-card" style={style}>
     {children}
   </div>
 );

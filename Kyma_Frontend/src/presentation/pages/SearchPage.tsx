@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { usePlayerStore } from "../stores/playerStore";
 import { useQueueStore } from "../stores/queueStore";
 import { useYouTubeStore } from "../stores/youtubeStore";
@@ -39,12 +40,19 @@ const randomEmoji = () =>
   MUSIC_EMOJIS[Math.floor(Math.random() * MUSIC_EMOJIS.length)];
 
 const SearchPage: React.FC = () => {
-  const [query, setQuery] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const incomingQuery = (location.state as { query?: string } | null)?.query;
+  const [query, setQuery] = useState(incomingQuery || "");
   const [activeTab, setActiveTab] = useState<SearchTab>("youtube");
   const [scSongs, setScSongs] = useState<Song[]>([]);
   const [isScSearching, setIsScSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const searchStartTime = useRef<number>(0);
+
+  useEffect(() => {
+    if (incomingQuery) setQuery(incomingQuery);
+  }, [incomingQuery]);
 
   //  Search history state (lifted here so we control when to save)
   const [history, setHistory] = useState<string[]>(() => {
@@ -133,6 +141,7 @@ const SearchPage: React.FC = () => {
   useEffect(() => {
     if (!query.trim()) {
       setScSongs([]);
+      setIsScSearching(false);
       return;
     }
     if (!ytdlpAvailable) return;
@@ -241,6 +250,7 @@ const SearchPage: React.FC = () => {
     setQueue(allSongs, song, "search");
     setCurrentSong(song);
     setProgress(0);
+    navigate("/nowplaying");
   };
 
   const playAll = () => {
@@ -261,110 +271,96 @@ const SearchPage: React.FC = () => {
   const showHistory = showDropdown && !hasQuery && history.length > 0;
   const showSuggestions = showDropdown && hasQuery;
 
+  const exampleQueries = [
+    "Daft Punk",
+    "Lo-fi beats",
+    "Bohemian Rhapsody",
+    "Frank Ocean",
+    "Tame Impala",
+  ];
+
+  const tryExample = (value: string) => {
+    setQuery(value);
+    setShowDropdown(false);
+    addToHistory(value);
+    savedQueryRef.current = value;
+  };
+
   return (
-    <div
-      className="song-list-pane"
-      style={{
-        overflow: "visible",
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-      }}
-    >
-      {/*  Sticky block  */}
-      <div
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 10,
-          background: "var(--bg)",
-          flexShrink: 0,
-          borderBottom: "1px solid var(--border)",
-          paddingBottom: "8px",
-        }}
-      >
+    <div className="search-page">
+      <div className="search-page-ambient" aria-hidden="true" />
+      <div className="search-page-inner">
+        <section className="search-hero">
+          <div className="search-hero-copy">
+            <span className="search-eyebrow">Discover</span>
+            <h1>
+              Search the <span>soundscape</span>
+            </h1>
+            <p>
+              Pull tracks from YouTube and SoundCloud, preview the list, then
+              dive straight into the full song view.
+            </p>
+          </div>
+          <div className="search-hero-mark" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+        </section>
+
         {!ytdlpAvailable && (
-          <div
-            style={{
-              padding: "8px 16px",
-              marginBottom: 10,
-              borderRadius: "var(--radius-md)",
-              background: "rgba(255,170,50,0.08)",
-              border: "1px solid rgba(255,170,50,0.2)",
-              color: "#ffaa33",
-              fontFamily: "'DM Mono',monospace",
-              fontSize: 11,
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            <span>⚠️</span> yt-dlp not installed. Streaming search unavailable.
-            Run: pip install yt-dlp
+          <div className="search-warning">
+            <span className="search-warning-icon">⚠</span>
+            <div>
+              <strong>Streaming search is unavailable</strong>
+              <small>Install yt-dlp to search YouTube and SoundCloud. Run: pip install yt-dlp</small>
+            </div>
           </div>
         )}
 
-        {/* Search input + dropdown */}
-        <div
-          ref={searchWrapRef}
-          className="search-wrap"
-          style={{ maxWidth: "100%", position: "relative" }}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input
-            ref={inputRef}
-            className="search-input"
-            type="text"
-            placeholder="Search YouTube or SoundCloud…"
-            value={query}
-            onChange={(e) => handleSearchInput(e.target.value)}
-            onFocus={() => setShowDropdown(true)}
-            autoFocus
-            autoComplete="off"
-            spellCheck={false}
-          />
-          {query.length > 0 && (
-            <button
-              onClick={handleClearSearch}
-              style={{
-                position: "absolute",
-                right: 10,
-                top: "50%",
-                transform: "translateY(-50%)",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "var(--text3)",
-                fontSize: 14,
-                lineHeight: 1,
-                padding: "4px",
-                borderRadius: "var(--radius-xs)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "color 0.1s",
-              }}
-              onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLElement).style.color = "var(--text)")
-              }
-              onMouseLeave={(e) =>
-                ((e.currentTarget as HTMLElement).style.color = "var(--text3)")
-              }
-              title="Clear"
+        <div ref={searchWrapRef} className="search-box-wrap">
+          <div className="search-box">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
             >
-              ✕
-            </button>
-          )}
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              ref={inputRef}
+              className="search-box-input"
+              type="text"
+              placeholder="Search YouTube or SoundCloud…"
+              value={query}
+              onChange={(e) => handleSearchInput(e.target.value)}
+              onFocus={() => setShowDropdown(true)}
+              autoFocus
+              autoComplete="off"
+              spellCheck={false}
+            />
+            {query.length > 0 ? (
+              <button
+                className="search-box-clear"
+                onClick={handleClearSearch}
+                title="Clear"
+                type="button"
+              >
+                ✕
+              </button>
+            ) : (
+              <span className="search-box-hint">Enter to browse</span>
+            )}
+          </div>
 
-          {/* History dropdown — shown when focused with no query */}
           <SearchHistory
             history={history}
             onSelect={handleDropdownSelect}
@@ -374,7 +370,6 @@ const SearchPage: React.FC = () => {
             currentQuery={query}
           />
 
-          {/* Suggestions dropdown — shown when focused with query */}
           <SearchSuggestions
             query={query}
             onSelect={handleDropdownSelect}
@@ -382,156 +377,150 @@ const SearchPage: React.FC = () => {
           />
         </div>
 
-        {/* Title + result count + Play All */}
-        <div
-          className="section-header"
-          style={{ marginTop: "8px", marginBottom: 0, paddingBottom: 0 }}
-        >
-          <div>
-            <div className="section-title">Search Music</div>
-            <div className="section-sub">
-              {hasQuery
-                ? isLoading
-                  ? "Searching…"
-                  : `${displaySongs.length} result${displaySongs.length !== 1 ? "s" : ""}`
-                : "YouTube · SoundCloud"}
+        {hasQuery ? (
+          <>
+            <div className="search-controls">
+              <div className="search-tabs" role="tablist">
+                <button
+                  className={`search-tab ${activeTab === "youtube" ? "active" : ""}`}
+                  onClick={() => handleTabChange("youtube")}
+                  role="tab"
+                  aria-selected={activeTab === "youtube"}
+                >
+                  YouTube
+                  {ytSongs.length > 0 && (
+                    <span className="search-tab-count">{ytSongs.length}</span>
+                  )}
+                  {ytSearching && !ytSongs.length && (
+                    <span className="search-tab-loading" />
+                  )}
+                </button>
+                <button
+                  className={`search-tab ${activeTab === "soundcloud" ? "active" : ""}`}
+                  onClick={() => {
+                    if (!ytdlpAvailable) return;
+                    handleTabChange("soundcloud");
+                  }}
+                  disabled={!ytdlpAvailable}
+                  role="tab"
+                  aria-selected={activeTab === "soundcloud"}
+                >
+                  SoundCloud
+                  {scSongs.length > 0 && (
+                    <span className="search-tab-count">{scSongs.length}</span>
+                  )}
+                  {isScSearching && !scSongs.length && (
+                    <span className="search-tab-loading" />
+                  )}
+                </button>
+              </div>
+
+              <div className="search-result-meta">
+                <span>
+                  {isLoading
+                    ? "Searching…"
+                    : `${displaySongs.length} result${displaySongs.length !== 1 ? "s" : ""}`}
+                </span>
+                {displaySongs.length > 0 && (
+                  <button className="search-play-all" onClick={playAll}>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="5,3 19,12 5,21" />
+                    </svg>
+                    Play all
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-          {hasQuery && displaySongs.length > 0 && (
-            <button
-              onClick={playAll}
-              style={{
-                fontSize: "12px",
-                background: "none",
-                border: "none",
-                color: "var(--accent)",
-                cursor: "pointer",
-                fontFamily: "'Syne', sans-serif",
-                fontWeight: 600,
-              }}
-            >
-              Play All
-            </button>
-          )}
-        </div>
-      </div>
 
-      {/*  Scrollable results  */}
-      <div style={{ overflowY: "auto", flex: 1, paddingTop: "8px" }}>
-        {/* Tabs */}
-        {hasQuery && (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginBottom: "8px",
-              borderBottom: "1px solid var(--border)",
-            }}
-          >
-            <button
-              onClick={() => handleTabChange("youtube")}
-              style={{
-                padding: "6px 24px",
-                background: "transparent",
-                border: "none",
-                borderBottom:
-                  activeTab === "youtube"
-                    ? "2px solid var(--accent)"
-                    : "2px solid transparent",
-                color: activeTab === "youtube" ? "var(--text)" : "var(--text3)",
-                cursor: ytdlpAvailable ? "pointer" : "not-allowed",
-                fontFamily: "'Syne', sans-serif",
-                fontSize: "13px",
-                fontWeight: activeTab === "youtube" ? 600 : 400,
-                opacity: ytdlpAvailable ? 1 : 0.5,
-              }}
-            >
-              YouTube{ytSongs.length > 0 ? ` (${ytSongs.length})` : ""}
-              {ytSearching && !ytSongs.length && " ···"}
-            </button>
-            <button
-              onClick={() => {
-                if (!ytdlpAvailable) return;
-                handleTabChange("soundcloud");
-              }}
-              style={{
-                padding: "6px 24px",
-                background: "transparent",
-                border: "none",
-                borderBottom:
-                  activeTab === "soundcloud"
-                    ? "2px solid var(--accent)"
-                    : "2px solid transparent",
-                color:
-                  activeTab === "soundcloud" ? "var(--text)" : "var(--text3)",
-                cursor: ytdlpAvailable ? "pointer" : "not-allowed",
-                fontFamily: "'Syne', sans-serif",
-                fontSize: "13px",
-                fontWeight: activeTab === "soundcloud" ? 600 : 400,
-                opacity: ytdlpAvailable ? 1 : 0.5,
-              }}
-            >
-              SoundCloud{scSongs.length > 0 ? ` (${scSongs.length})` : ""}
-              {isScSearching && !scSongs.length && " ···"}
-            </button>
-          </div>
-        )}
+            <section className="search-results-panel">
+              <div className="search-list-head" aria-hidden="true">
+                <span>#</span>
+                <span />
+                <span>Track</span>
+                <span>Album</span>
+                <span>Time</span>
+                <span />
+              </div>
 
-        {/* Spinner */}
-        {hasQuery && isLoading && displaySongs.length === 0 && (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              padding: "40px 0",
-            }}
-          >
-            <div className="ap-spinner ap-spinner--sm" />
-          </div>
-        )}
+              {isLoading && displaySongs.length === 0 && (
+                <div className="search-skeletons">
+                  {[0, 1, 2, 3, 4].map((row) => (
+                    <div className="search-skeleton" key={row}>
+                      <span className="search-skeleton-art" />
+                      <span className="search-skeleton-lines">
+                        <span />
+                        <span />
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
 
-        {/* Results */}
-        {displaySongs.map((song, idx) => (
-          <SongRow
-            key={song.id}
-            song={song}
-            index={idx}
-            isCurrent={currentSong?.id === song.id}
-            onPlay={() => handlePlaySong(song)}
-          />
-        ))}
+              {displaySongs.map((song, idx) => (
+                <SongRow
+                  key={song.id}
+                  song={song}
+                  index={idx}
+                  isCurrent={currentSong?.id === song.id}
+                  onPlay={() => handlePlaySong(song)}
+                />
+              ))}
 
-        {/* No results */}
-        {hasQuery &&
-          !isLoading &&
-          displaySongs.length === 0 &&
-          !ytSearching &&
-          !isScSearching && (
-            <div
-              style={{
-                padding: "40px",
-                textAlign: "center",
-                color: "var(--text3)",
-                fontFamily: "'DM Mono', monospace",
-              }}
-            >
-              No results for "{query}" on{" "}
-              {activeTab === "youtube" ? "YouTube" : "SoundCloud"}
+              {hasQuery &&
+                !isLoading &&
+                displaySongs.length === 0 &&
+                !ytSearching &&
+                !isScSearching && (
+                  <div className="search-empty">
+                    <div className="search-empty-icon">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                      >
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="20" y1="20" x2="16" y2="16" />
+                      </svg>
+                    </div>
+                    <h3>No results for "{query}"</h3>
+                    <p>
+                      Nothing matched on{" "}
+                      {activeTab === "youtube" ? "YouTube" : "SoundCloud"}. Try
+                      a different spelling or switch tabs.
+                    </p>
+                  </div>
+                )}
+            </section>
+          </>
+        ) : (
+          <section className="search-idle">
+            <div className="search-idle-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
+                <path d="M9 18V5l12-2v13" />
+                <circle cx="6" cy="18" r="3" />
+                <circle cx="18" cy="16" r="3" />
+              </svg>
             </div>
-          )}
-
-        {/* Empty state */}
-        {!hasQuery && (
-          <div
-            style={{
-              padding: "40px",
-              textAlign: "center",
-              color: "var(--text3)",
-              fontFamily: "'DM Mono', monospace",
-            }}
-          >
-            Try "Bohemian Rhapsody", "Daft Punk", or "Lo-fi beats"
-          </div>
+            <h2>What do you want to hear?</h2>
+            <p>Start with an artist, track, or mood — then pick a result.</p>
+            <div className="search-examples">
+              {exampleQueries.map((example) => (
+                <button key={example} onClick={() => tryExample(example)}>
+                  {example}
+                </button>
+              ))}
+            </div>
+            <div className="search-idle-tips">
+              <span>YouTube & SoundCloud results</span>
+              <span>Click a track to open the song view</span>
+            </div>
+          </section>
         )}
       </div>
     </div>

@@ -69,7 +69,7 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
           icon="🔄"
           title="Software Updates"
           desc="Check for new versions"
-          accent="rgba(74,222,128,0.1)"
+          accent="rgba(var(--accent3-rgb),0.1)"
           badge={
             downloading
               ? "Downloading..."
@@ -84,11 +84,11 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
               marginBottom: "20px",
               padding: "12px 16px",
               background: updateAvailable
-                ? "rgba(74,222,128,0.08)"
-                : "rgba(124,106,245,0.05)",
+                ? "rgba(var(--accent3-rgb),0.08)"
+                : "rgba(var(--accent-rgb),0.05)",
               border: updateAvailable
-                ? "1px solid rgba(74,222,128,0.25)"
-                : "1px solid rgba(124,106,245,0.12)",
+                ? "1px solid rgba(var(--accent3-rgb),0.25)"
+                : "1px solid rgba(var(--accent-rgb),0.12)",
               borderRadius: "var(--radius-lg)",
             }}
           >
@@ -119,10 +119,10 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                   style={{
                     marginTop: "12px",
                     padding: "8px 12px",
-                    background: "rgba(74,222,128,0.12)",
+                    background: "rgba(var(--accent3-rgb),0.12)",
                     borderRadius: "var(--radius-md)",
                     fontSize: "12px",
-                    color: "#4ade80",
+                    color: "var(--accent3)",
                     fontFamily: "var(--font-family-mono)",
                   }}
                 >
@@ -157,8 +157,8 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
               style={{
                 marginBottom: "16px",
                 padding: "12px 16px",
-                background: "rgba(124,106,245,0.08)",
-                border: "1px solid rgba(124,106,245,0.2)",
+                background: "rgba(var(--accent-rgb),0.08)",
+                border: "1px solid rgba(var(--accent-rgb),0.2)",
                 borderRadius: "var(--radius-lg)",
               }}
             >
@@ -204,12 +204,12 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
               style={{
                 marginBottom: "16px",
                 padding: "10px 14px",
-                background: "rgba(255,107,53,0.1)",
-                border: "1px solid rgba(255,107,53,0.25)",
+                background: "rgba(255,77,77,0.1)",
+                border: "1px solid rgba(255,77,77,0.25)",
                 borderRadius: "var(--radius-md)",
                 fontSize: "11px",
                 fontFamily: "var(--font-family-mono)",
-                color: "#ff6b35",
+                color: "#ff4d4d",
               }}
             >
               ⚠️ {error}
@@ -229,7 +229,7 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                 padding: "14px 18px",
                 background: downloading
                   ? "rgba(255,255,255,0.05)"
-                  : "linear-gradient(135deg, #4ade80, #22c55e)",
+                  : "linear-gradient(135deg, var(--accent3), var(--accent3))",
                 border: "none",
                 borderRadius: "var(--radius-lg)",
                 cursor: downloading ? "wait" : "pointer",
@@ -323,8 +323,8 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
             style={{
               marginTop: "20px",
               padding: "12px 16px",
-              background: "rgba(255,107,53,0.05)",
-              border: "1px solid rgba(255,107,53,0.15)",
+              background: "rgba(255,77,77,0.05)",
+              border: "1px solid rgba(255,77,77,0.15)",
               borderRadius: "var(--radius-md)",
             }}
           >
@@ -332,7 +332,7 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
               style={{
                 fontSize: "10px",
                 fontFamily: "var(--font-family-mono)",
-                color: "#ff6b35",
+                color: "#ff4d4d",
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
                 marginBottom: "6px",

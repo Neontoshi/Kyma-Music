@@ -23,7 +23,7 @@
 .stat-lbl {
     font-size: 10px;
     color: var(--text3);
-    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-family: var(--font-family-base, "Inter", sans-serif);
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-top: 4px;

@@ -5,19 +5,23 @@
 @import "./layout.css";
 @import "./components/Sidebar.css";
 @import "./components/Library.css";
+@import "./components/PlayingBars.css";
 @import "./components/NowPlaying.css";
 @import "./components/PlayerBar.css";
 @import "./components/Queue.css";
 @import "./components/Stats.css";
-@import "./components/Visualizer.css";
 @import "./components/Modal.css";
 @import "./components/Toast.css";
 @import "./pages/SharedPage.css";
 @import "./pages/HomePage.css";
 @import "./pages/ArtistsPage.css";
+@import "./pages/RadioPage.css";
 @import "./pages/ExplorePage.css";
 @import "./pages/AudiobooksPage.css";
 @import "./pages/PodcastPage.css";
+@import "./pages/LocalSongs.css";
+@import "./pages/SearchPage.css";
+@import "./pages/SettingsPage.css";
 @import "./pages/OnboardingPage.css";
 
 *,
@@ -29,23 +33,26 @@
 }
 
 :root {
-    --bg: #020617;
-    --surface: #0a0f1e;
-    --surface2: #111827;
-    --surface3: #1a2332;
-    --font-family-base: "Syne", sans-serif; /* ← ADD THIS */
-    --font-family-mono: "DM Mono", monospace; /* ADD THIS */
-    --border: rgba(255, 255, 255, 0.04);
-    --border2: rgba(255, 255, 255, 0.08);
-    --text: #e2e8f0;
-    --text2: #94a3b8;
-    --text3: #475569;
-    --accent: #6366f1;
-    --accent2: #818cf8;
-    --accent3: #22d3ee;
-    --green: #34d399;
+    --bg: #080808;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --surface3: #262626;
+    --font-family-base: "Inter", "Helvetica Neue", Arial, sans-serif;
+    --font-family-mono: "Inter", "Helvetica Neue", Arial, sans-serif;
+    --border: rgba(255,255,255, 0.07);
+    --border2: rgba(255,255,255, 0.14);
+    --text: #ffffff;
+    --text2: #b3b3b3;
+    --text3: #6f6f6f;
+    --accent: #9dff3a;
+    --accent2: #b8ff66;
+    --accent3: #1ed760;
+    --accent-rgb: 157, 255, 58;
+    --accent2-rgb: 184, 255, 102;
+    --accent3-rgb: 30, 215, 96;
+    --green: #1ed760;
     --red: #f87171;
-    --amber: #fbbf24;
+    --amber: #ff4d4d;
     --radius: 12px;
     --radius-sm: 8px;
     --space-xs: 8px;
@@ -53,7 +60,7 @@
     --space-md: 16px;
     --space-lg: 24px;
     --space-xl: 32px;
-    --sidebar-w: 260px;
+    --sidebar-w: 250px;
     --player-h: 80px;
     /* Responsive spacing tokens */
     --space-xs: 8px;
@@ -65,7 +72,7 @@
     --space-3xs: 2px;
 
     /* Sidebar width token — overridden at breakpoints */
-    --sidebar-w: 260px;
+    --sidebar-w: 250px;
 
     /* Player bar height token */
     --player-h: 80px;
@@ -77,19 +84,19 @@
     --radius-pill: 99px;
     --radius-circle: 50%;
     /* ── Shadow tokens ── */
-    --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.12);
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.25);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
-    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.5);
-    --shadow-2xl: 0 30px 80px rgba(0, 0, 0, 0.6);
-    --shadow-glow: 0 0 20px rgba(124, 106, 245, 0.4);
-    --shadow-glow-lg: 0 0 28px rgba(124, 106, 245, 0.6);
-    --shadow-glow-xl: 0 0 40px 8px rgba(124, 106, 245, 0.18);
-    --shadow-glow-2xl: 0 0 70px 18px rgba(129, 140, 248, 0.32);
-    --shadow-btn: 0 4px 24px rgba(124, 106, 245, 0.4);
-    --shadow-btn-hover: 0 8px 36px rgba(124, 106, 245, 0.55);
-    --shadow-focus: 0 0 0 3px rgba(124, 106, 245, 0.15);
+    --shadow-xs: 0 1px 3px rgba(0,0,0, 0.12);
+    --shadow-sm: 0 2px 8px rgba(0,0,0, 0.2);
+    --shadow-md: 0 4px 16px rgba(0,0,0, 0.25);
+    --shadow-lg: 0 8px 32px rgba(0,0,0, 0.4);
+    --shadow-xl: 0 16px 48px rgba(0,0,0, 0.5);
+    --shadow-2xl: 0 30px 80px rgba(0,0,0, 0.6);
+    --shadow-glow: 0 0 20px rgba(var(--accent-rgb), 0.4);
+    --shadow-glow-lg: 0 0 28px rgba(var(--accent-rgb), 0.6);
+    --shadow-glow-xl: 0 0 40px 8px rgba(var(--accent-rgb), 0.18);
+    --shadow-glow-2xl: 0 0 70px 18px rgba(var(--accent2-rgb), 0.32);
+    --shadow-btn: 0 4px 24px rgba(var(--accent-rgb), 0.4);
+    --shadow-btn-hover: 0 8px 36px rgba(var(--accent-rgb), 0.55);
+    --shadow-focus: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
     --shadow-thumb: 0 0 0 2px var(--accent);
 
     /* ── Animation/Transition tokens ── */
@@ -103,21 +110,21 @@
 }
 
 [data-theme="light"] {
-    --bg: #f8f9fa;
+    --bg: #ffffff;
     --surface: #ffffff;
-    --surface2: #e9ecef;
-    --surface3: #dee2e6;
-    --border: rgba(0, 0, 0, 0.06);
-    --border2: rgba(0, 0, 0, 0.12);
-    --text: #1a1a2e;
-    --text2: #495057;
-    --text3: #adb5bd;
-    --accent: #6741d9;
-    --accent2: #845ef7;
-    --accent3: #0ea5e9;
-    --green: #2f9e44;
-    --red: #e03131;
-    --amber: #e8590c;
+    --surface2: #d9d9d9;
+    --surface3: #cccccc;
+    --border: rgba(0,0,0, 0.06);
+    --border2: rgba(0,0,0, 0.12);
+    --text: #111111;
+    --text2: #666666;
+    --text3: #b3b3b3;
+    --accent: #4da3ff;
+    --accent2: #4da3ff;
+    --accent3: #4da3ff;
+    --green: #1ed760;
+    --red: #ff4d4d;
+    --amber: #ff4d4d;
 }
 
 [data-theme="flat"] {
@@ -130,7 +137,7 @@
 body {
     background: var(--bg);
     color: var(--text);
-    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-family: var(--font-family-base, "Inter", sans-serif);
     height: 100vh;
     height: 100dvh; /* dynamic viewport for mobile browsers */
     overflow: hidden;
@@ -167,7 +174,7 @@ body {
 
 .tag {
     font-size: 11px;
-    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-family: var(--font-family-base, "Inter", sans-serif);
     background: var(--surface2);
     color: var(--text2);
     padding: var(--space-2xs) 10px;
@@ -175,7 +182,7 @@ body {
 }
 
 .tag.genre {
-    background: rgba(124, 106, 245, 0.12);
+    background: rgba(var(--accent-rgb), 0.12);
     color: var(--accent2);
 }
 

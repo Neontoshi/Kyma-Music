@@ -35,17 +35,17 @@ const Toast: React.FC = () => {
         transform: "translateX(-50%)",
         zIndex: 9999,
         background: isError
-          ? "rgba(248, 113, 113, 0.15)"
-          : "rgba(74, 222, 128, 0.15)",
+          ? "rgba(248,113,113, 0.15)"
+          : "rgba(var(--accent3-rgb), 0.15)",
         border: `1px solid ${isError ? "var(--red)" : "var(--green)"}`,
         borderRadius: "var(--radius-sm)",
         padding: "12px 24px",
         color: isError ? "var(--red)" : "var(--green)",
         fontSize: "13px",
-        fontFamily: "'Syne', sans-serif",
+        fontFamily: "'Inter', sans-serif",
         fontWeight: 500,
         backdropFilter: "blur(12px)",
-        boxShadow: `0 4px 24px ${isError ? "rgba(248, 113, 113, 0.2)" : "rgba(74, 222, 128, 0.2)"}`,
+        boxShadow: `0 4px 24px ${isError ? "rgba(248,113,113, 0.2)" : "rgba(var(--accent3-rgb), 0.2)"}`,
         display: "flex",
         alignItems: "center",
         gap: "10px",

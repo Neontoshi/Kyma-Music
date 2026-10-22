@@ -53,7 +53,7 @@ class ErrorBoundary extends React.Component<Props, State> {
           </div>
           <div
             style={{
-              fontFamily: "'DM Mono', monospace",
+              fontFamily: "'Inter', sans-serif",
               fontSize: 12,
               color: "var(--text3)",
               maxWidth: 500,
@@ -74,7 +74,7 @@ class ErrorBoundary extends React.Component<Props, State> {
                 "linear-gradient(135deg, var(--accent), var(--accent2))",
               border: "none",
               color: "#fff",
-              fontFamily: "'Syne', sans-serif",
+              fontFamily: "'Inter', sans-serif",
               fontSize: 13,
               fontWeight: 700,
               cursor: "pointer",

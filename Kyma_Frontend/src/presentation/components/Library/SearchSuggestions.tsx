@@ -64,7 +64,7 @@ const SearchSuggestions: React.FC<Props> = ({ query, onSelect, visible }) => {
       <div style={{ padding: "8px 12px 4px" }}>
         <span
           style={{
-            fontFamily: "'DM Mono', monospace",
+            fontFamily: "'Inter', sans-serif",
             fontSize: "9px",
             letterSpacing: "0.12em",
             color: "var(--text3)",
@@ -139,7 +139,7 @@ const SearchSuggestions: React.FC<Props> = ({ query, onSelect, visible }) => {
               style={{
                 fontSize: "11px",
                 color: "var(--text3)",
-                fontFamily: "'DM Mono', monospace",
+                fontFamily: "'Inter', sans-serif",
                 marginTop: "2px",
                 letterSpacing: "0.02em",
               }}

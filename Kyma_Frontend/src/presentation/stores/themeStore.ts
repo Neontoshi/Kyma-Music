@@ -28,8 +28,13 @@ function applyTheme(themeId: string) {
   }
 }
 
+const storedTheme = localStorage.getItem("kyma_theme");
+const initialTheme = themes.some((t) => t.id === storedTheme)
+  ? (storedTheme as string)
+  : defaultTheme.id;
+
 export const useThemeStore = create<ThemeStore>((set, get) => ({
-  theme: localStorage.getItem("kyma_theme") || defaultTheme.id,
+  theme: initialTheme,
 
   setTheme: (themeId: Theme) => {
     localStorage.setItem("kyma_theme", themeId);
@@ -52,7 +57,7 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
 
 // Apply on first load
 const _applyInitialTheme = () => {
-  applyTheme(localStorage.getItem("kyma_theme") || defaultTheme.id);
+  applyTheme(initialTheme);
 };
 
 if (document.readyState === "loading") {

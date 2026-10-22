@@ -95,180 +95,206 @@ const PodcastPage: React.FC = () => {
   };
 
   const currentSongId = currentSong?.id;
+  const category = CATEGORIES[activeCategory];
+  const heroArt = episodes.find((episode) => episode.artwork)?.artwork;
+  const heading = searchQuery.trim()
+    ? `Results for “${searchQuery.trim()}”`
+    : `${category.label} episodes`;
 
   return (
-    <div
-      style={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-      }}
-    >
-      <div className="pod-header">
-        <div className="pod-eyebrow">Listen</div>
-        <h1 className="pod-title">Podcasts</h1>
-        <div className="pod-search">
-          <svg
-            viewBox="0 0 24 24"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="var(--text3)"
-            strokeWidth="2"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input
-            type="text"
-            placeholder={
-              ytdlpAvailable ? "Search podcasts..." : "yt-dlp required..."
-            }
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            disabled={!ytdlpAvailable}
-          />
-        </div>
-        <div className="pod-tape">
-          {CATEGORIES.map((cat, i) => (
-            <button
-              key={cat.label}
-              className={`pod-chip${activeCategory === i ? " active" : ""}`}
-              onClick={() => {
-                if (!ytdlpAvailable) return;
-                setActiveCategory(i);
-                setSearchQuery("");
-              }}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-        {ytdlpChecked && !ytdlpAvailable && (
-          <div
-            style={{
-              padding: "10px 16px",
-              margin: "0.5rem 0",
-              borderRadius: "var(--radius-md)",
-              background: "rgba(255,170,50,0.08)",
-              border: "1px solid rgba(255,170,50,0.2)",
-              color: "#ffaa33",
-              fontFamily: "'DM Mono',monospace",
-              fontSize: 11,
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            <span>⚠️</span> yt-dlp not installed. Podcasts unavailable. Run: pip
-            install yt-dlp
+    <div className="podcast-page">
+      <div className="podcast-header-wrap">
+        <div className="podcast-header-inner">
+          {ytdlpChecked && !ytdlpAvailable && (
+            <div className="podcast-warning">
+              <span>⚠️</span> yt-dlp not installed. Podcasts are unavailable.
+              Run: <code>pip install yt-dlp</code>
+            </div>
+          )}
+
+          <header className="artist-collection-header podcast-collection-header">
+            <div className="artist-collection-copy">
+              <div className="artist-collection-eyebrow">
+                <span className="artist-collection-dot" />
+                Listen
+              </div>
+              <h1 className="artist-collection-title">Podcasts</h1>
+              <p className="artist-collection-subtitle">
+                {searchQuery.trim()
+                  ? `Search results for “${searchQuery.trim()}”`
+                  : `${category.label} · ${episodes.length} episodes`}
+              </p>
+            </div>
+            <div className="artist-collection-controls">
+              <div className="ap-search-wrap podcast-search">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="13"
+                  height="13"
+                  fill="none"
+                  stroke="var(--text3)"
+                  strokeWidth="2"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input
+                  type="text"
+                  placeholder={
+                    ytdlpAvailable ? "Search podcasts…" : "yt-dlp required…"
+                  }
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  disabled={!ytdlpAvailable}
+                />
+              </div>
+            </div>
+          </header>
+
+          <div className="podcast-categories">
+            {CATEGORIES.map((item, i) => (
+              <button
+                key={item.label}
+                type="button"
+                className={`podcast-chip${activeCategory === i && !searchQuery.trim() ? " active" : ""}`}
+                onClick={() => {
+                  if (!ytdlpAvailable) return;
+                  setActiveCategory(i);
+                  setSearchQuery("");
+                }}
+                disabled={!ytdlpAvailable}
+              >
+                {item.label}
+              </button>
+            ))}
           </div>
-        )}
+        </div>
       </div>
 
-      <div className="pod-content">
-        {!ytdlpAvailable && ytdlpChecked ? (
-          <div
-            style={{
-              textAlign: "center",
-              padding: "3rem 0",
-              color: "var(--text3)",
-              fontFamily: "'DM Mono',monospace",
-              fontSize: 11,
-            }}
-          >
-            Install yt-dlp to browse podcasts
-          </div>
-        ) : loading ? (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "2rem 0",
-              color: "var(--text3)",
-              fontFamily: "'DM Mono',monospace",
-              fontSize: 11,
-            }}
-          >
-            <div className="ap-spinner ap-spinner--sm" />
-            Loading episodes...
-          </div>
-        ) : episodes.length === 0 ? (
-          <div
-            style={{
-              textAlign: "center",
-              padding: "3rem 0",
-              color: "var(--text3)",
-              fontFamily: "'DM Mono',monospace",
-              fontSize: 11,
-            }}
-          >
-            No episodes found
-          </div>
-        ) : (
-          <div>
-            <div className="pod-track-header">
-              <span className="pod-track-num">#</span>
-              <span></span>
-              <span>Episode</span>
-              <span className="pod-track-dur">Duration</span>
+      <div className="podcast-scroll">
+        <div className="podcast-inner">
+          {!ytdlpAvailable && ytdlpChecked ? (
+            <div className="podcast-empty">
+              <div className="podcast-empty-icon">🎙️</div>
+              <h2>Podcasts need yt-dlp</h2>
+              <p>Install yt-dlp to browse and listen to podcast episodes.</p>
             </div>
-            {episodes.map((ep, i) => {
-              const isActive = currentSongId === ep.id;
-              return (
-                <div
-                  key={ep.id}
-                  className={`pod-track-row${isActive ? " active" : ""}`}
-                  onClick={() => handlePlay(ep, i)}
-                  onMouseEnter={(e) => {
-                    if (!isActive)
-                      e.currentTarget.style.background = "var(--surface)";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive)
-                      e.currentTarget.style.background = "transparent";
-                  }}
-                >
-                  <div className="pod-track-num">
-                    {isActive && isPlaying ? "▶" : i + 1}
-                  </div>
-                  <div
-                    className="pod-track-thumb"
-                    style={{ background: ep.grad || randomGradient(ep.title) }}
-                  >
-                    {ep.artwork ? (
-                      <img src={ep.artwork} alt="" />
-                    ) : ep.videoId ? (
-                      <img
-                        src={`https://i.ytimg.com/vi/${ep.videoId}/default.jpg`}
-                        alt=""
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = "none";
-                        }}
-                      />
+          ) : loading ? (
+            <div className="podcast-loading">
+              <div className="ap-spinner ap-spinner--sm" />
+              <span>Loading episodes…</span>
+            </div>
+          ) : episodes.length === 0 ? (
+            <div className="podcast-empty">
+              <div className="podcast-empty-icon">🎧</div>
+              <h2>No episodes found</h2>
+              <p>Try another category or search for a different show.</p>
+            </div>
+          ) : (
+            <>
+              {!searchQuery.trim() && (
+                <section className="podcast-hero">
+                  <div className="podcast-hero-art">
+                    {heroArt ? (
+                      <img src={heroArt} alt="" />
                     ) : (
-                      "🎙️"
+                      <span>🎙️</span>
                     )}
                   </div>
-                  <div className="pod-track-info">
-                    <div
-                      className="pod-track-title"
-                      style={{
-                        color: isActive ? "var(--accent2)" : "var(--text)",
-                      }}
-                    >
-                      {ep.title}
+                  <div className="podcast-hero-copy">
+                    <div className="podcast-hero-eyebrow">
+                      Featured category
                     </div>
-                    <div className="pod-track-artist">{ep.artist}</div>
+                    <h2>{category.label}</h2>
+                    <p>
+                      {episodes.length} episodes · Conversations worth your time
+                    </p>
+                    <button
+                      type="button"
+                      className="podcast-hero-play"
+                      onClick={() => handlePlay(episodes[0], 0)}
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        width="13"
+                        height="13"
+                      >
+                        <polygon points="5,3 19,12 5,21" />
+                      </svg>
+                      Play latest
+                    </button>
                   </div>
-                  <div className="pod-track-dur">{ep.dur}</div>
+                </section>
+              )}
+
+              <section className="artist-all-songs podcast-tracks-panel">
+                <div className="artist-section-head">
+                  <h2>{heading}</h2>
+                  <span>{episodes.length}</span>
                 </div>
-              );
-            })}
-          </div>
-        )}
+                <div className="podcast-episode-list">
+                  {episodes.map((episode, i) => {
+                    const isActive = currentSongId === episode.id;
+                    return (
+                      <div
+                        key={episode.id}
+                        className={`podcast-episode-row${isActive ? " active" : ""}`}
+                        onClick={() => handlePlay(episode, i)}
+                      >
+                        <div className="podcast-episode-num">
+                          {isActive && isPlaying ? (
+                            <span className="podcast-playing-bars">
+                              <span />
+                              <span />
+                              <span />
+                            </span>
+                          ) : (
+                            i + 1
+                          )}
+                        </div>
+                        <div
+                          className="podcast-episode-thumb"
+                          style={{
+                            background:
+                              episode.grad ||
+                              randomGradient(episode.title),
+                          }}
+                        >
+                          {episode.artwork ? (
+                            <img src={episode.artwork} alt="" />
+                          ) : episode.videoId ? (
+                            <img
+                              src={`https://i.ytimg.com/vi/${episode.videoId}/default.jpg`}
+                              alt=""
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display =
+                                  "none";
+                              }}
+                            />
+                          ) : (
+                            "🎙️"
+                          )}
+                        </div>
+                        <div className="podcast-episode-info">
+                          <div className="podcast-episode-title">
+                            {episode.title}
+                          </div>
+                          <div className="podcast-episode-artist">
+                            {episode.artist}
+                          </div>
+                        </div>
+                        <div className="podcast-episode-dur">
+                          {episode.dur}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

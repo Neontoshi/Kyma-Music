@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState, useEffect } from "react";
+import React, { useRef, useCallback, useState } from "react";
 import { usePlayerContext as usePlayer } from "../../hooks/PlayerContext";
 
 const IconMuted = () => (
@@ -24,15 +24,11 @@ const IconHigh = () => (
 const VolumeControl: React.FC = () => {
   const { volume, setVolume, toggleMute } = usePlayer();
 
-  const [open, setOpen] = useState(false);
   const [, forceUpdate] = useState(0);
-
-  const wrapperRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const dragValue = useRef<number | null>(null);
 
-  // Same derived pattern as ProgressSlider
   const displayVolume =
     isDragging.current && dragValue.current !== null
       ? dragValue.current
@@ -42,14 +38,11 @@ const VolumeControl: React.FC = () => {
     (e: MouseEvent | React.MouseEvent): number => {
       if (!trackRef.current) return -1;
       const rect = trackRef.current.getBoundingClientRect();
-      // Top = 100, bottom = 0
-      const ratio = 1 - (e.clientY - rect.top) / rect.height;
+      const ratio = (e.clientX - rect.left) / rect.width;
       return Math.round(Math.min(100, Math.max(0, ratio * 100)));
     },
     [],
   );
-
-  // In VolumeControl.tsx, replace the handleTrackMouseDown function:
 
   const handleTrackMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -58,7 +51,7 @@ const VolumeControl: React.FC = () => {
       const val = getValueFromEvent(e);
       if (val >= 0) {
         dragValue.current = val;
-        setVolume(val); // This already updates store immediately
+        setVolume(val);
         forceUpdate((n) => n + 1);
       }
 
@@ -67,7 +60,7 @@ const VolumeControl: React.FC = () => {
         const val = getValueFromEvent(e);
         if (val >= 0) {
           dragValue.current = val;
-          setVolume(val); // Immediate update on each move
+          setVolume(val);
           forceUpdate((n) => n + 1);
         }
       };
@@ -85,22 +78,7 @@ const VolumeControl: React.FC = () => {
     },
     [getValueFromEvent, setVolume],
   );
-  // Close on outside click
-  useEffect(() => {
-    if (!open) return;
-    const onOutside = (e: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(e.target as Node)
-      ) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", onOutside);
-    return () => document.removeEventListener("mousedown", onOutside);
-  }, [open]);
 
-  // Scroll wheel nudge
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
     setVolume(Math.min(100, Math.max(0, volume + (e.deltaY < 0 ? 5 : -5))));
@@ -113,44 +91,28 @@ const VolumeControl: React.FC = () => {
   };
 
   return (
-    <div ref={wrapperRef} className="vol-wrap" onWheel={handleWheel}>
-      {/* Speaker icon */}
-      <div
+    <div className="vol-wrap" onWheel={handleWheel}>
+      <button
         className="vol-icon"
-        onClick={() => setOpen((o) => !o)}
+        onClick={toggleMute}
         onContextMenu={(e) => {
           e.preventDefault();
           toggleMute();
         }}
-        title={`Volume: ${displayVolume}% — right-click to mute`}
+        title={`Volume: ${displayVolume}%`}
+        aria-label={volume === 0 ? "Unmute" : "Mute"}
       >
         {getIcon()}
+      </button>
+
+      <div
+        ref={trackRef}
+        className="vol-track"
+        onMouseDown={handleTrackMouseDown}
+        title={`${displayVolume}%`}
+      >
+        <div className="vol-fill" style={{ width: `${displayVolume}%` }} />
       </div>
-
-      {/* Popover */}
-      {open && (
-        <div className="vol-popover">
-          {/* % label */}
-          <span className="vol-popover-label">{displayVolume}</span>
-
-          {/* Vertical track */}
-          <div
-            ref={trackRef}
-            className="vol-track-v"
-            onMouseDown={handleTrackMouseDown}
-          >
-            {/* Fill — grows upward from bottom */}
-            <div className="vol-fill-v" style={{ height: `${displayVolume}%` }}>
-              <div className="vol-thumb-v" />
-            </div>
-          </div>
-
-          {/* Mute label */}
-          <button className="vol-mute-label" onClick={toggleMute}>
-            {volume === 0 ? "UNMUTE" : "MUTE"}
-          </button>
-        </div>
-      )}
     </div>
   );
 };

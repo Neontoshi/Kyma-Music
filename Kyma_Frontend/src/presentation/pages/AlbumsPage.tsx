@@ -11,103 +11,6 @@ import { formatDuration } from "../../lib/formatTime";
 import { albumGradient } from "../../lib/gradients";
 import { makeSong } from "../../lib/song";
 
-// Animated wave background
-const WaveCanvas: React.FC<{ seed: string; isPlaying: boolean }> = ({
-  seed,
-  isPlaying,
-}) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rafRef = useRef<number>(0);
-  const isPlayingRef = useRef(isPlaying);
-
-  useEffect(() => {
-    isPlayingRef.current = isPlaying;
-  }, [isPlaying]);
-
-  const hash = seed.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  const hues = [280, 200, 340, 40, 160, 100, 10, 260, 320, 180];
-  const h1 = hues[hash % hues.length];
-  const h2 = hues[(hash + 3) % hues.length];
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let t = 0;
-
-    const waves = [
-      { amp: 10, freq: 0.042, speed: 0.005, alpha: 0.18, hue: h1 },
-      { amp: 7, freq: 0.037, speed: 0.007, alpha: 0.14, hue: h2 },
-      { amp: 5, freq: 0.039, speed: 0.009, alpha: 0.1, hue: h1 + 20 },
-      { amp: 4, freq: 0.044, speed: 0.004, alpha: 0.08, hue: h2 + 15 },
-    ];
-
-    const resize = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
-    resize();
-    const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
-
-    const draw = () => {
-      if (isPlayingRef.current) {
-        const { width, height } = canvas;
-        ctx.clearRect(0, 0, width, height);
-
-        waves.forEach((w) => {
-          ctx.beginPath();
-          const baseline = height * 0.62;
-          ctx.moveTo(0, baseline);
-
-          for (let x = 0; x <= width; x += 3) {
-            const y =
-              baseline +
-              Math.sin(x * w.freq + t * w.speed * 60) * w.amp +
-              Math.sin(x * w.freq * 1.7 + t * w.speed * 40) * (w.amp * 0.4);
-            ctx.lineTo(x, y);
-          }
-
-          ctx.lineTo(width, height);
-          ctx.lineTo(0, height);
-          ctx.closePath();
-
-          const grad = ctx.createLinearGradient(0, baseline - w.amp, 0, height);
-          grad.addColorStop(0, `hsla(${w.hue}, 70%, 60%, ${w.alpha})`);
-          grad.addColorStop(1, `hsla(${w.hue}, 50%, 30%, 0)`);
-          ctx.fillStyle = grad;
-          ctx.fill();
-        });
-
-        t += 1;
-      }
-      rafRef.current = requestAnimationFrame(draw);
-    };
-
-    rafRef.current = requestAnimationFrame(draw);
-    return () => {
-      cancelAnimationFrame(rafRef.current);
-      ro.disconnect();
-    };
-  }, [h1, h2]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "absolute",
-        inset: 0,
-        width: "100%",
-        height: "100%",
-        pointerEvents: "none",
-        zIndex: 1,
-      }}
-    />
-  );
-};
-
 const CACHE_KEY = (albumId: string | number) => `kyma_album_${albumId}`;
 const RECENTLY_VIEWED_KEY = "kyma_recently_viewed_albums";
 const MAX_RECENT = 12;
@@ -332,7 +235,7 @@ const highlightMatch = (text: string, query: string): React.ReactNode => {
 };
 
 const AlbumsPage: React.FC = () => {
-  const { currentSong, isPlaying } = usePlayerStore();
+  const { currentSong } = usePlayerStore();
   const { setQueue } = useQueueStore();
   const location = useLocation();
 
@@ -720,9 +623,9 @@ const AlbumsPage: React.FC = () => {
 
   if (selectedAlbum) {
     return (
-      <div className="ap-detail" ref={scrollRef}>
-        <div className="ap-detail-inner">
-          <button className="ap-back" onClick={handleBackToAlbums}>
+      <div className="ap-detail album-detail" ref={scrollRef}>
+        <div className="ap-detail-inner album-detail-inner">
+          <button className="album-detail-back" onClick={handleBackToAlbums}>
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -735,96 +638,60 @@ const AlbumsPage: React.FC = () => {
             </svg>
             Albums
           </button>
-          <div
-            className="ap-hero"
-            style={{
-              background: albumGradient(selectedAlbum.title),
-              position: "relative",
-              overflow: "hidden",
-            }}
-          >
-            <WaveCanvas seed={selectedAlbum.title} isPlaying={isPlaying} />
-            <div
-              className="ap-hero-noise"
-              style={{ position: "relative", zIndex: 2 }}
-            />
-            <div
-              className="ap-hero-content"
-              style={{ position: "relative", zIndex: 2 }}
-            >
-              <div
-                className="ap-hero-avatar"
-                style={{
-                  background: albumGradient(selectedAlbum.title + "_inner"),
-                }}
-              >
-                {selectedAlbum.cover_url ? (
-                  <img
-                    src={selectedAlbum.cover_url}
-                    alt=""
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      borderRadius: "var(--radius-circle)",
-                    }}
-                  />
-                ) : (
-                  <span>💿</span>
-                )}
-              </div>
-              <div className="ap-hero-meta">
-                <div className="ap-hero-eyebrow">Album</div>
-                <h1 className="ap-hero-name">{selectedAlbum.title}</h1>
-                <div
-                  style={{
-                    color: "rgba(255,255,255,0.6)",
-                    fontSize: 14,
-                    marginTop: 4,
-                  }}
-                >
-                  {selectedAlbum.artist}
-                </div>
-                <div className="ap-hero-stats">
-                  <div className="ap-stat">
-                    <span className="ap-stat-val">{tracks.length}</span>
-                    <span className="ap-stat-lbl">Tracks</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              className="ap-hero-actions"
-              style={{ position: "relative", zIndex: 2 }}
-            >
-              {tracks.filter((t) => t.videoId).length > 0 && allResolved && (
-                <button className="ap-play-all" onClick={handlePlayAll}>
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    width="14"
-                    height="14"
-                  >
-                    <polygon points="5,3 19,12 5,21" />
-                  </svg>
-                  Play All
-                </button>
+
+          <section className="album-detail-hero">
+            <div className="album-detail-art">
+              {selectedAlbum.cover_url ? (
+                <img src={selectedAlbum.cover_url} alt="" />
+              ) : (
+                <span>💿</span>
               )}
             </div>
-          </div>
-          <div className="ap-tracks-section">
+            <div className="album-detail-copy">
+              <div className="album-detail-eyebrow">Album</div>
+              <h1>{selectedAlbum.title}</h1>
+              <p className="album-detail-artist">{selectedAlbum.artist}</p>
+              <div className="album-detail-meta">
+                <span>
+                  {tracks.length} track{tracks.length === 1 ? "" : "s"}
+                </span>
+                <span className="album-detail-dot" />
+                <span>{allResolved ? "Ready to play" : "Preparing tracks"}</span>
+              </div>
+              <div className="album-detail-actions">
+                {tracks.filter((t) => t.videoId).length > 0 && allResolved && (
+                  <button className="album-detail-play" onClick={handlePlayAll}>
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      width="13"
+                      height="13"
+                    >
+                      <polygon points="5,3 19,12 5,21" />
+                    </svg>
+                    Play album
+                  </button>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <section className="artist-all-songs album-tracks-panel">
+            <div className="artist-section-head">
+              <h2>Tracklist</h2>
+              <span>{tracks.length} tracks</span>
+            </div>
             {loadingTracks || !allResolved ? (
-              <div className="ap-loading">
+              <div className="album-detail-loading">
                 <div className="ap-spinner ap-spinner--sm" />
-                <p>
+                <span>
                   {loadingTracks
-                    ? "Loading tracks..."
-                    : `Resolving ${tracks.length} tracks...`}
-                </p>
+                    ? "Loading tracks…"
+                    : `Resolving ${tracks.length} tracks…`}
+                </span>
               </div>
             ) : (
-              <>
-                <div className="ap-tracks-header"></div>
+              <div className="album-detail-tracks">
                 {tracks.map((song, i) => (
                   <SongRow
                     key={song.id}
@@ -834,9 +701,9 @@ const AlbumsPage: React.FC = () => {
                     onPlay={() => song.videoId && handlePlayTrack(song)}
                   />
                 ))}
-              </>
+              </div>
             )}
-          </div>
+          </section>
         </div>
       </div>
     );
@@ -845,24 +712,28 @@ const AlbumsPage: React.FC = () => {
   const showRecentlyViewed = !searchQuery && recentlyViewed.length > 0;
 
   return (
-    <div className="ap-page">
+    <div className="ap-page albums-page">
       <div className="ap-container">
-        <div className="ap-page-header">
-          <div className="ap-page-header-top">
-            <div>
-              <div className="ap-page-eyebrow">Browse</div>
-              <h1 className="ap-page-title">Albums</h1>
+        <header className="artist-collection-header album-collection-header">
+          <div className="artist-collection-copy">
+            <div className="artist-collection-eyebrow">
+              <span className="artist-collection-dot" />
+              Browse
             </div>
+            <h1 className="artist-collection-title">Albums</h1>
+            <p className="artist-collection-subtitle">
+              {searchQuery
+                ? "Search results from Deezer"
+                : `${recentlyViewed.length} recently viewed · Search any album`}
+            </p>
           </div>
-        </div>
-
-        {/* Search with suggestions */}
-        <div
-          ref={searchWrapRef}
-          className="ap-search-wrap"
-          style={{ marginBottom: 20, position: "relative" }}
-          onKeyDown={handleSuggestionKeyDown}
-        >
+          <div className="artist-collection-controls">
+            <div
+              ref={searchWrapRef}
+              className="ap-search-wrap album-collection-search"
+              style={{ position: "relative" }}
+              onKeyDown={handleSuggestionKeyDown}
+            >
           <svg
             viewBox="0 0 24 24"
             width="14"
@@ -910,7 +781,7 @@ const AlbumsPage: React.FC = () => {
               <div
                 style={{
                   padding: "6px 12px",
-                  fontFamily: "'DM Mono', monospace",
+                  fontFamily: "'Inter', sans-serif",
                   fontSize: 9,
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
@@ -930,7 +801,7 @@ const AlbumsPage: React.FC = () => {
                     padding: "20px",
                     textAlign: "center",
                     color: "var(--text3)",
-                    fontFamily: "'DM Mono', monospace",
+                    fontFamily: "'Inter', sans-serif",
                     fontSize: 11,
                   }}
                 >
@@ -946,7 +817,7 @@ const AlbumsPage: React.FC = () => {
                     padding: "20px",
                     textAlign: "center",
                     color: "var(--text3)",
-                    fontFamily: "'DM Mono', monospace",
+                    fontFamily: "'Inter', sans-serif",
                     fontSize: 11,
                   }}
                 >
@@ -1022,7 +893,7 @@ const AlbumsPage: React.FC = () => {
                         style={{
                           fontSize: 10,
                           color: "var(--text3)",
-                          fontFamily: "'DM Mono', monospace",
+                          fontFamily: "'Inter', sans-serif",
                           marginTop: 2,
                         }}
                       >
@@ -1037,23 +908,60 @@ const AlbumsPage: React.FC = () => {
           )}
         </div>
 
-        {/* Recently Viewed */}
+          </div>
+        </header>
+
         {showRecentlyViewed && (
-          <div style={{ marginBottom: 32 }}>
-            <div
-              style={{
-                fontFamily: "'DM Mono', monospace",
-                fontSize: 10,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "var(--text3)",
-                marginBottom: 12,
-              }}
+          <section className="album-showcase">
+            <button
+              type="button"
+              className="album-showcase-art"
+              onClick={() => handleAlbumClick(recentlyViewed[0])}
+              aria-label={`Open ${recentlyViewed[0].title}`}
             >
-              Recently Viewed
+              {recentlyViewed[0].cover_url ? (
+                <img src={recentlyViewed[0].cover_url} alt="" />
+              ) : (
+                <span>💿</span>
+              )}
+            </button>
+            <div className="album-showcase-copy">
+              <div className="album-showcase-eyebrow">Jump back in</div>
+              <h2>{recentlyViewed[0].title}</h2>
+              <p>{recentlyViewed[0].artist}</p>
+              <div className="album-showcase-meta">
+                <span>{recentlyViewed[0].track_count} tracks</span>
+                <span className="album-showcase-dot" />
+                <span>Album</span>
+              </div>
+              <button
+                type="button"
+                className="album-showcase-btn"
+                onClick={() => handleAlbumClick(recentlyViewed[0])}
+              >
+                Open album
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  width="13"
+                  height="13"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </button>
             </div>
+          </section>
+        )}
+
+        {/* Recently Viewed */}
+        {showRecentlyViewed && recentlyViewed.length > 1 && (
+          <div className="album-recent-section">
+            <div className="album-section-title">More recently viewed</div>
             <div className="ap-grid">
-              {recentlyViewed.map((album: any, idx: number) => (
+              {recentlyViewed.slice(1).map((album: any, idx: number) => (
                 <div
                   key={album.id}
                   className="ap-card"
@@ -1062,19 +970,11 @@ const AlbumsPage: React.FC = () => {
                 >
                   <div
                     className="ap-card-avatar"
-                    style={{ background: albumGradient(album.title) }}
-                  >
+                                      >
                     {album.cover_url ? (
                       <img
                         src={album.cover_url}
                         alt=""
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          position: "absolute",
-                          inset: 0,
-                        }}
                       />
                     ) : (
                       <span>💿</span>
@@ -1105,15 +1005,21 @@ const AlbumsPage: React.FC = () => {
         {/* Search Results */}
         {searchQuery && (
           <>
+            <div className="album-results-head">
+              <div>
+                <div className="album-section-title">Search results</div>
+                <h2 className="album-results-query">{searchQuery}</h2>
+              </div>
+              {!loading && albums.length > 0 && (
+                <span className="album-results-count">
+                  {albums.length} album{albums.length === 1 ? "" : "s"}
+                </span>
+              )}
+            </div>
             {loading ? (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "2rem",
-                  color: "var(--text3)",
-                }}
-              >
-                Searching albums...
+              <div className="album-loading">
+                <div className="ap-spinner ap-spinner--sm" />
+                <span>Searching albums…</span>
               </div>
             ) : albums.length === 0 ? (
               <div className="ap-empty">
@@ -1135,8 +1041,7 @@ const AlbumsPage: React.FC = () => {
                     >
                       <div
                         className="ap-card-avatar"
-                        style={{ background: albumGradient(album.title) }}
-                      >
+                                              >
                         {album.cover_url ? (
                           <img
                             src={album.cover_url}
@@ -1190,12 +1095,16 @@ const AlbumsPage: React.FC = () => {
 
         {/* Empty state when no search and no recent */}
         {!searchQuery && !showRecentlyViewed && (
-          <div className="ap-empty">
-            <div className="ap-empty-icon">🔍</div>
-            <div className="ap-empty-text">Search for an artist or album</div>
-            <div className="ap-empty-sub">
-              Type an artist name to see their albums
+          <div className="albums-empty">
+            <div className="albums-empty-disc">
+              <span>💿</span>
             </div>
+            <div className="albums-empty-eyebrow">Your shelf is waiting</div>
+            <h2>Find your next favorite album</h2>
+            <p>
+              Search any artist or album above to start building your
+              collection.
+            </p>
           </div>
         )}
       </div>

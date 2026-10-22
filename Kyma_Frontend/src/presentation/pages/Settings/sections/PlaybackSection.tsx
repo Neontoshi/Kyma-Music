@@ -37,7 +37,7 @@ const PlaybackSection: React.FC<PlaybackSectionProps> = ({
           icon="▶"
           title="Playback"
           desc="Audio engine & behavior"
-          accent="rgba(124,106,245,0.1)"
+          accent="rgba(var(--accent-rgb),0.1)"
         />
         <div style={{ padding: "4px 24px 12px" }}>
           <div

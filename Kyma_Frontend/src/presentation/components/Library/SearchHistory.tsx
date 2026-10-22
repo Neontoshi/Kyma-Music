@@ -58,7 +58,7 @@ const SearchHistory: React.FC<SearchHistoryProps> = ({
       >
         <span
           style={{
-            fontFamily: "'DM Mono', monospace",
+            fontFamily: "'Inter', sans-serif",
             fontSize: "9px",
             letterSpacing: "0.12em",
             color: "var(--text3)",
@@ -74,7 +74,7 @@ const SearchHistory: React.FC<SearchHistoryProps> = ({
             border: "none",
             color: "var(--text3)",
             cursor: "pointer",
-            fontFamily: "'DM Mono', monospace",
+            fontFamily: "'Inter', sans-serif",
             fontSize: "9px",
             letterSpacing: "0.08em",
             textTransform: "uppercase",

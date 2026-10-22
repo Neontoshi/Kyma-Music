@@ -1,0 +1,116 @@
+/* Animated "now playing" equalizer */
+
+.playing-bars {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;
+    min-height: 10px;
+    filter: drop-shadow(0 0 5px color-mix(in srgb, currentColor 32%, transparent));
+}
+
+.playing-bars::before {
+    content: "";
+    position: absolute;
+    inset: -70% -45%;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        color-mix(in srgb, currentColor 20%, transparent),
+        transparent 68%
+    );
+    opacity: 0.7;
+    animation: playingBarsHalo 2.4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.playing-bar {
+    width: 2.5px;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, currentColor 60%, #fff) 0%,
+        currentColor 46%,
+        color-mix(in srgb, currentColor 88%, transparent) 100%
+    );
+    transform-origin: center bottom;
+    animation: playingBarDance var(--bar-duration) cubic-bezier(0.45, 0, 0.25, 1)
+        infinite alternate;
+    animation-delay: calc(var(--bar-index) * -0.23s);
+    will-change: transform, opacity;
+}
+
+.playing-bar:nth-child(1) {
+    --bar-duration: 0.86s;
+    --bar-low: 0.2;
+    --bar-peak: 0.58;
+}
+
+.playing-bar:nth-child(2) {
+    --bar-duration: 1.12s;
+    --bar-low: 0.36;
+    --bar-peak: 1;
+}
+
+.playing-bar:nth-child(3) {
+    --bar-duration: 0.94s;
+    --bar-low: 0.24;
+    --bar-peak: 0.78;
+}
+
+.playing-bar:nth-child(4) {
+    --bar-duration: 1.26s;
+    --bar-low: 0.14;
+    --bar-peak: 0.48;
+}
+
+.playing-bar:nth-child(2) {
+    animation-delay: -0.42s;
+}
+
+.playing-bar:nth-child(4) {
+    animation-delay: -0.67s;
+}
+
+@keyframes playingBarDance {
+    0% {
+        opacity: 0.52;
+        transform: scaleY(var(--bar-low));
+    }
+    38% {
+        opacity: 1;
+        transform: scaleY(var(--bar-peak));
+    }
+    100% {
+        opacity: 0.82;
+        transform: scaleY(calc(var(--bar-peak) * 0.72));
+    }
+}
+
+@keyframes playingBarsHalo {
+    0%,
+    100% {
+        opacity: 0.35;
+        transform: scale(0.82);
+    }
+    50% {
+        opacity: 0.75;
+        transform: scale(1.08);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .playing-bar {
+        animation: none;
+        opacity: 0.9;
+        transform: scaleY(0.7);
+    }
+
+    .playing-bars::before {
+        animation: none;
+    }
+}

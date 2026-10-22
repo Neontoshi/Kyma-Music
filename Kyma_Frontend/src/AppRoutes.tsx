@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./presentation/components/Layout/Layout";
 import PlaylistsPage from "./presentation/pages/PlaylistsPage";
+import LibraryPage from "./presentation/pages/LibraryPage";
 import SettingsPage from "./presentation/pages/Settings";
 import HomePage from "./presentation/pages/Home/HomePage";
 import SongsPage from "./presentation/pages/SongsPage";
@@ -47,6 +48,7 @@ function AppRoutes() {
           <Route path="/artists/:artistName" element={<ArtistsPage />} />
           <Route path="/liked" element={<LikedPage />} />
           <Route path="/nowplaying" element={<NowPlayingPage />} />
+          <Route path="/library" element={<LibraryPage />} />
           <Route path="/playlists" element={<PlaylistsPage />} />
           <Route path="/playlists/:id" element={<PlaylistDetailPage />} />
           <Route path="/settings" element={<SettingsPage />} />

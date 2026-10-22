@@ -3,7 +3,6 @@ import { usePlayerContext as usePlayer } from "../../hooks/PlayerContext";
 import { useLibraryStore } from "../../stores/libraryStore";
 import { usePlayerStore } from "../../stores/playerStore";
 import { Song } from "../../../core/entities/Song";
-import AudioVisualizer from "../AudioVisualizer";
 import { useQueueStore } from "../../stores/queueStore";
 import { logger } from "../../../services/logger";
 
@@ -268,7 +267,30 @@ const NowPlayingPanel: React.FC<NowPlayingPanelProps> = ({
   //  Empty state
 
   if (!currentSong) {
-    return null;
+    if (!showLyrics) return null;
+    return (
+      <div className="np-fullscreen np-fullscreen--empty">
+        <div className="np-empty-lyrics">
+          <div className="np-empty-lyrics-mark">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M4 5h16M4 10h10M4 15h13M4 20h7" />
+              <path d="M19 14v5.5a2.5 2.5 0 11-2.5-2.5H19" />
+            </svg>
+          </div>
+          <div className="np-lyrics-eyebrow">Lyrics</div>
+          <h2>Lyrics live here</h2>
+          <p>Play a song and Kyma will bring its words to life.</p>
+        </div>
+      </div>
+    );
   }
   //  Queue
 
@@ -343,53 +365,42 @@ const NowPlayingPanel: React.FC<NowPlayingPanelProps> = ({
 
       {/* Queue */}
       <div className="queue-next">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "4px",
-          }}
-        >
-          <div className="queue-label">Up Next</div>
+        <div className="queue-head">
+          <div className="queue-label">
+            Up Next
+            {queueSongs.length > 0 && (
+              <span className="queue-count">{queueSongs.length}</span>
+            )}
+          </div>
           {queueSongs.length > 0 && (
             <button
+              className="queue-clear-btn"
               onClick={() => handleClearQueue(queueSongs.length)}
-              style={{
-                fontSize: "11px",
-                fontFamily: "'DM Mono', monospace",
-                background: "none",
-                border: "none",
-                color: "var(--text3)",
-                cursor: "pointer",
-                padding: "4px 8px",
-                borderRadius: "var(--radius-xs)",
-                transition: "all 0.15s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = "var(--error)";
-                e.currentTarget.style.background = "rgba(255,107,53,0.1)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = "var(--text3)";
-                e.currentTarget.style.background = "none";
-              }}
             >
-              Clear All
+              Clear all
             </button>
           )}
         </div>
         <hr className="divider" />
         {queueSongs.length === 0 ? (
-          <div
-            style={{
-              padding: "20px",
-              textAlign: "center",
-              color: "var(--text3)",
-              fontSize: "12px",
-              fontFamily: "'DM Mono', monospace",
-            }}
-          >
+          <div className="queue-empty">
+            <span className="queue-empty-icon" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                width="18"
+                height="18"
+              >
+                <line x1="8" y1="6" x2="21" y2="6" />
+                <line x1="8" y1="12" x2="21" y2="12" />
+                <line x1="8" y1="18" x2="21" y2="18" />
+                <circle cx="4" cy="6" r="1" fill="currentColor" stroke="none" />
+                <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none" />
+                <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            </span>
             Queue is empty
           </div>
         ) : (
@@ -409,27 +420,117 @@ const NowPlayingPanel: React.FC<NowPlayingPanelProps> = ({
   //  Narrow panel mode (no lyrics)
 
   if (!showLyrics) {
-    return <div className="now-playing-panel">{songInfoCol}</div>;
+    return (
+      <div className="now-playing-panel">
+        <div className="np-panel-head">
+          <div className="np-panel-eyebrow">
+            <span
+              className={`np-panel-pulse ${isPlaying ? "playing" : ""}`}
+              aria-hidden="true"
+            />
+            Now playing
+          </div>
+          <span className="np-panel-status">
+            {isPlaying ? "Playing" : "Paused"}
+          </span>
+        </div>
+        {songInfoCol}
+      </div>
+    );
   }
 
   //  Full-screen mode (with lyrics)
 
   return (
     <div className="np-fullscreen">
+      <div className="np-lyrics-ambient" aria-hidden="true">
+        {currentSong.artwork ? (
+          <img src={currentSong.artwork} alt="" />
+        ) : currentSong.videoId ? (
+          <img
+            src={`https://i.ytimg.com/vi/${currentSong.videoId}/hqdefault.jpg`}
+            alt=""
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = "none";
+            }}
+          />
+        ) : (
+          <span className="np-lyrics-ambient-emoji">{currentSong.emoji}</span>
+        )}
+        <div className="np-lyrics-ambient-veil" />
+        <div className="np-lyrics-ambient-grid" />
+      </div>
+
       {/* Left: Lyrics */}
       <div className="np-lyrics-col">
         <div className="np-lyrics-header">
-          <span className="np-lyrics-label">
-            {lyricsStatus === "not_found" ? "Visualizer" : "Lyrics"}
-          </span>
-          {lyricsStatus === "found" && (
-            <span className="np-lyrics-badge">lrclib.net</span>
+          <div className="np-lyrics-head-copy">
+            <div className="np-lyrics-eyebrow">Now singing</div>
+            <div className="np-lyrics-trackline">
+              <span className="np-lyrics-label">Lyrics</span>
+              <span className="np-lyrics-track">
+                {currentSong.title}
+                <i>·</i>
+                {currentSong.artist}
+              </span>
+            </div>
+          </div>
+          <div className="np-lyrics-head-meta">
+            {lyricsStatus === "loading" && (
+              <span className="np-lyrics-badge muted">Syncing…</span>
+            )}
+            {lyricsStatus === "found" && (
+              <span className="np-lyrics-badge">Synced · lrclib.net</span>
+            )}
+            {lyricsStatus === "found" && lyrics && lyrics.length > 0 && (
+              <span className="np-lyrics-position">
+                {activeIdx + 1}
+                <i>/</i>
+                {lyrics.length}
+              </span>
+            )}
+          </div>
+          {lyricsStatus === "found" && lyrics && lyrics.length > 0 && (
+            <div className="np-lyrics-progress" aria-hidden="true">
+              <span
+                style={{
+                  width: `${((activeIdx + 1) / lyrics.length) * 100}%`,
+                }}
+              />
+            </div>
           )}
         </div>
 
         {lyricsStatus === "not_found" && (
-          <div style={{ flex: "1 1 auto", minHeight: 0 }}>
-            <AudioVisualizer isPlaying={isPlaying} />
+          <div className="np-lyrics-fallback">
+            <div className="np-lyrics-fallback-stage">
+              <div className="np-lyrics-vinyl" aria-hidden="true">
+                <div className="np-lyrics-vinyl-art">
+                  {currentSong.artwork ? (
+                    <img src={currentSong.artwork} alt="" />
+                  ) : currentSong.videoId ? (
+                    <img
+                      src={`https://i.ytimg.com/vi/${currentSong.videoId}/hqdefault.jpg`}
+                      alt=""
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                  ) : (
+                    <span>{currentSong.emoji}</span>
+                  )}
+                </div>
+              </div>
+              <span className="np-lyrics-vinyl-glow" aria-hidden="true" />
+            </div>
+            <div className="np-lyrics-fallback-copy">
+              <div className="np-lyrics-eyebrow">Now playing</div>
+              <h3>{currentSong.title}</h3>
+              <p>
+                No synced lyrics found for this track. Sit back and enjoy the
+                music.
+              </p>
+            </div>
           </div>
         )}
 
@@ -459,6 +560,8 @@ const NowPlayingPanel: React.FC<NowPlayingPanelProps> = ({
                         ? "past"
                         : "upcoming"
                   }`}
+                  onClick={() => setProgress(line.time)}
+                  title="Jump to this line"
                 >
                   {line.text}
                 </div>
@@ -594,7 +697,7 @@ const QueueItem: React.FC<{
         <div
           style={{
             fontSize: "11px",
-            fontFamily: "'DM Mono', monospace",
+            fontFamily: "'Inter', sans-serif",
             color: "var(--text3)",
           }}
         >
@@ -620,7 +723,7 @@ const QueueItem: React.FC<{
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.color = "var(--accent)";
-            e.currentTarget.style.background = "rgba(124,106,245,0.1)";
+            e.currentTarget.style.background = "rgba(var(--accent-rgb),0.1)";
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.color = "var(--text3)";
