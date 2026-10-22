@@ -123,7 +123,13 @@ const SettingsPage: React.FC = () => {
     const aq = await tauriCommands.getSetting("audio_quality");
     if (aq) setAudioQuality(aq);
     const sf = await tauriCommands.getSetting("scan_folders");
-    if (sf) setScanFolders(JSON.parse(sf));
+    if (sf) {
+      try {
+        setScanFolders(JSON.parse(sf));
+      } catch {
+        setScanFolders([]);
+      }
+    }
     const asc = await tauriCommands.getSetting("auto_scan");
     setAutoScan(asc === "true");
     const asi = await tauriCommands.getSetting("auto_scan_interval");

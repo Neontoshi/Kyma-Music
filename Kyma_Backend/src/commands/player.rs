@@ -77,11 +77,11 @@ pub async fn get_resume_state() -> Result<ResumeState, KymaError> {
     })
 }
 
-/// Helper: check prefetch cache for a song, returning the URL if fresh (< 90s old)
+/// Helper: check prefetch cache for a song, returning the URL if fresh.
 fn check_prefetch_cache(state: &AppState, song: &FrontendSong) -> Option<String> {
     let prefetch_cache = state.prefetched_urls.lock();
     if let Some((url, timestamp)) = prefetch_cache.get(&song.id) {
-        if timestamp.elapsed().as_secs() < 90 {
+        if timestamp.elapsed().as_secs() < crate::commands::prefetch::PREFETCH_TTL_SECS {
             return Some(url.clone());
         }
     }

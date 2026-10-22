@@ -4,6 +4,7 @@ import { useQueueStore } from "../stores/queueStore";
 import { useSystemStore } from "../stores/systemStore";
 import { tauriCommands } from "../../services/tauriBridge";
 import { Song } from "../../core/entities/Song";
+import { makeSong } from "../../lib/song";
 
 const GENRES = [
   "pop",
@@ -187,27 +188,17 @@ const RadioPage: React.FC = () => {
 
   const handlePlayStation = (station: any) => {
     if (!ytdlpAvailable) return;
-    const radioSong: Song = {
+    const radioSong: Song = makeSong({
       id: `radio-${station.id}`,
       path: station.url,
       title: station.name,
       artist: `${station.genre || "Radio"} · ${station.bitrate || ""}`,
       album: station.country || "Internet Radio",
-      duration: 0,
       genre: station.genre || null,
-      year: null,
-      track_number: null,
-      artwork: null,
-      source: "local" as any,
-      videoId: undefined,
+      source: "local",
       dur: "Live",
       emoji: "📻",
-      grad: "linear-gradient(135deg, var(--accent), var(--accent2))",
-      bpm: 0,
-      key: "—",
-      plays: 0,
-      liked: false,
-    };
+    });
     setQueue([radioSong], radioSong, "library");
     setCurrentSong(radioSong);
     setProgress(0);

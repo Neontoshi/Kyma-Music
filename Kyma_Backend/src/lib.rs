@@ -8,6 +8,7 @@ mod models;
 mod remote_server;
 mod state;
 mod stream_server;
+#[cfg(test)]
 mod tests;
 mod tray;
 

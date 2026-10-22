@@ -3,6 +3,7 @@ pub mod history;
 pub mod library;
 pub mod likes;
 pub mod logs;
+pub(crate) mod media;
 pub mod metadata;
 pub mod metadata_providers;
 pub mod notifications;
@@ -12,6 +13,7 @@ pub mod prefetch;
 pub mod radio;
 pub mod settings;
 pub mod soundcloud;
+pub(crate) mod stream_cache;
 pub mod updates;
 pub mod youtube;
 

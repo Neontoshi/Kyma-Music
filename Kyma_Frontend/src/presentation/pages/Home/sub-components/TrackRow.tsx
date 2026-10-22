@@ -1,7 +1,7 @@
 // Kyma_Frontend/src/presentation/pages/Home/sub-components/TrackRow.tsx
 import React from "react";
 import { Song } from "../../../../core/entities/Song";
-import PlayingBars from "./PlayingBars";
+import PlayingBars from "../../../components/PlayingBars";
 import SongArt from "./SongArt";
 
 interface TrackRowProps {
@@ -55,7 +55,7 @@ const TrackRow: React.FC<TrackRowProps> = ({
           textAlign: "center",
         }}
       >
-        {isActive && isPlaying ? <PlayingBars /> : index}
+        {isActive && isPlaying ? <PlayingBars height={12} color="var(--accent2)" /> : index}
       </div>
     )}
     <SongArt

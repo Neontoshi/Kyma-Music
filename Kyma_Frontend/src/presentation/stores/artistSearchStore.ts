@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { tauriCommands } from "../../services/tauriBridge";
+import { makeSong } from "../../lib/song";
 
 const YT_SEARCH_QUERIES = [
   (artist: string) => artist,
@@ -91,27 +92,20 @@ async function searchArtistSongs(
       });
 
       allSongs.push(
-        ...newSongs.map((r: any) => ({
-          id: `yt-${r.id}`,
-          path: "",
-          title: r.title,
-          artist: r.artist,
-          album: "YouTube",
-          duration: r.duration_secs,
-          genre: null,
-          year: null,
-          track_number: null,
-          artwork: r.thumbnail,
-          source: "youtube",
-          videoId: r.id,
-          dur: r.duration_str,
-          emoji: "▶️",
-          grad: "linear-gradient(135deg, var(--accent), var(--accent2))",
-          bpm: 0,
-          key: "—",
-          plays: 0,
-          liked: false,
-        })),
+        ...newSongs.map((r: any) =>
+          makeSong({
+            id: `yt-${r.id}`,
+            title: r.title,
+            artist: r.artist,
+            album: "YouTube",
+            duration: r.duration_secs,
+            artwork: r.thumbnail,
+            source: "youtube",
+            videoId: r.id,
+            dur: r.duration_str,
+            emoji: "▶️",
+          }),
+        ),
       );
     }
   } catch (err) {

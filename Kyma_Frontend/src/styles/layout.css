@@ -1,0 +1,185 @@
+/* App shell: main content, top bar, search, content area
+   Auto-split from globals.css. Edit this file for App shell: main content, top bar, search, content area only. */
+
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    padding: 0 0 16px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+    gap: var(--space-md);
+    flex-shrink: 0;
+    background: var(--bg);
+
+    /* REMOVE THESE */
+    /* position: sticky; */
+    /* top: 0; */
+    /* z-index: 10; */
+}
+
+.search-wrap {
+    flex: 1;
+    max-width: 480px;
+    position: relative;
+}
+
+.search-wrap svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text3);
+    width: 16px;
+    height: 16px;
+}
+
+.search-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm) 12px 10px 36px;
+    color: var(--text);
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
+    font-size: 13px;
+    outline: none;
+    transition: border-color var(--anim-normal) var(--anim-easing);
+}
+
+.search-input::placeholder {
+    color: var(--text3);
+}
+
+.search-input:focus {
+    border-color: var(--accent);
+}
+
+.top-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text2);
+    transition: all var(--anim-normal) var(--anim-easing);
+    position: relative;
+}
+
+.icon-btn:hover {
+    background: var(--surface3);
+    color: var(--text);
+}
+
+.icon-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.menu-toggle {
+    display: none;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text2);
+    flex-shrink: 0;
+}
+
+.menu-toggle svg {
+    width: 18px;
+    height: 18px;
+}
+
+.content-area {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    min-height: 0;
+    position: relative;
+}
+
+@media (min-width: 2560px) {
+.top-bar {
+        padding: var(--space-lg) 40px;
+    }
+}
+
+@media (max-width: 1024px) {
+.top-bar {
+        padding: var(--space-sm) 16px;
+        gap: var(--space-sm);
+    }
+}
+
+@media (max-width: 768px) {
+.top-bar {
+        padding: var(--space-sm) 12px;
+    }
+.search-wrap {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+.top-actions {
+        gap: var(--space-2xs);
+    }
+.icon-btn {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+.menu-toggle {
+        display: flex;
+    }
+.main {
+        width: 100%;
+    }
+.top-bar {
+        padding: var(--space-xs) 12px;
+        gap: var(--space-xs);
+        flex-wrap: nowrap;
+    }
+.search-wrap {
+        flex: 1;
+        max-width: none;
+    }
+}
+
+@media (hover: none) and (pointer: coarse) {
+.icon-btn {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+.top-bar {
+        padding: var(--space-xs) 12px;
+    }
+}

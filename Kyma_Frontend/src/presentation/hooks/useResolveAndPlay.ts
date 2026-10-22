@@ -3,12 +3,7 @@ import { usePlayerStore } from "../stores/playerStore";
 import { useQueueStore } from "../stores/queueStore";
 import { tauriCommands } from "../../services/tauriBridge";
 import { Song } from "../../core/entities/Song";
-
-const formatDuration = (secs: number) => {
-  const m = Math.floor(secs / 60);
-  const s = Math.floor(secs % 60);
-  return `${m}:${s.toString().padStart(2, "0")}`;
-};
+import { formatDuration } from "../../lib/formatTime";
 
 export const resolveAndPlaySong = async (song: Song) => {
   const { setCurrentSong, setProgress } = usePlayerStore.getState();

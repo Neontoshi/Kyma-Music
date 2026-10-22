@@ -7,6 +7,7 @@ import { tauriCommands } from "../../services/tauriBridge";
 import { Song } from "../../core/entities/Song";
 import { useArtistSearchStore } from "../stores/artistSearchStore";
 import SongRow from "../components/Library/SongRow";
+import { randomGradient } from "../../lib/gradients";
 
 const WaveCanvas: React.FC<{ seed: string; isPlaying: boolean }> = ({
   seed,
@@ -102,20 +103,6 @@ const WaveCanvas: React.FC<{ seed: string; isPlaying: boolean }> = ({
       }}
     />
   );
-};
-
-const randomGradient = (seed: string) => {
-  const hash = seed.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  const hues = [280, 200, 340, 40, 160, 100, 10, 260, 320, 180];
-  const h = hues[hash % hues.length];
-  return `linear-gradient(135deg, hsl(${h}, 45%, 32%), hsl(${h + 30}, 38%, 18%))`;
-};
-
-//@ts-ignore
-const formatDuration = (secs: number) => {
-  const m = Math.floor(secs / 60);
-  const s = Math.floor(secs % 60);
-  return `${m}:${s.toString().padStart(2, "0")}`;
 };
 
 const splitArtists = (name: string): string[] => {

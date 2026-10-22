@@ -13,6 +13,7 @@ import { useLibraryStore } from "../stores/libraryStore";
 import { Song } from "../../core/entities/Song";
 import { tauriCommands } from "../../services/tauriBridge";
 import SongRow from "../components/Library/SongRow";
+import { makeSong } from "../../lib/song";
 import SearchSuggestions from "../components/Library/SearchSuggestions";
 import SearchHistory from "../components/Library/SearchHistory";
 import { logger } from "../../services/logger";
@@ -149,27 +150,20 @@ const SearchPage: React.FC = () => {
             searchTimeMs: searchTime,
           });
           setScSongs(
-            (results || []).map((r: any) => ({
-              id: `sc-${r.id}`,
-              path: "",
-              title: r.title,
-              artist: r.artist,
-              album: "SoundCloud",
-              duration: r.duration_secs,
-              genre: null,
-              year: null,
-              track_number: null,
-              artwork: r.thumbnail,
-              source: "soundcloud" as const,
-              videoId: r.id,
-              dur: r.duration_str,
-              emoji: randomEmoji(),
-              grad: "linear-gradient(135deg, var(--accent), var(--accent2))",
-              bpm: 0,
-              key: "—",
-              plays: 0,
-              liked: false,
-            })),
+            (results || []).map((r: any) =>
+              makeSong({
+                id: `sc-${r.id}`,
+                title: r.title,
+                artist: r.artist,
+                album: "SoundCloud",
+                duration: r.duration_secs,
+                artwork: r.thumbnail,
+                source: "soundcloud",
+                videoId: r.id,
+                dur: r.duration_str,
+                emoji: randomEmoji(),
+              }),
+            ),
           );
           setIsScSearching(false);
         })

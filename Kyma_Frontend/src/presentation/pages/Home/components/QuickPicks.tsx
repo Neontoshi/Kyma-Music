@@ -5,6 +5,7 @@ import SectionHeader from "../sub-components/SectionHeader";
 import TrackRow from "../sub-components/TrackRow";
 import SongArt from "../sub-components/SongArt";
 import getTimeAgo from "../helpers/timeAgo";
+import { makeSong } from "../../../../lib/song";
 
 interface QuickPicksProps {
   quickPicks: Song[];
@@ -110,7 +111,7 @@ const QuickPicks: React.FC<QuickPicksProps> = ({
         <SectionHeader label="Recently Played" sub="History" />
         <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
           {recentlyPlayed.slice(0, 5).map((entry, i) => {
-            const songObj: Song = {
+            const songObj: Song = makeSong({
               id: entry.track_id || entry.id,
               title: entry.title,
               artist: entry.artist,
@@ -121,16 +122,7 @@ const QuickPicks: React.FC<QuickPicksProps> = ({
               path: entry.path || "",
               videoId: entry.video_id,
               dur: "",
-              emoji: "🎵",
-              grad: "linear-gradient(135deg, var(--accent), var(--accent2))",
-              bpm: 0,
-              key: "—",
-              plays: 0,
-              liked: false,
-              genre: null,
-              year: null,
-              track_number: null,
-            };
+            });
             return (
               <div
                 key={entry.id || `${entry.track_id}-${i}`}

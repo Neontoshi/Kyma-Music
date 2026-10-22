@@ -1,0 +1,30 @@
+/* Stat cards used by Home / Artists / Albums
+   Auto-split from globals.css. Edit this file for Stat cards used by Home only. */
+
+.stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+}
+
+.stat-card {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
+    text-align: center;
+    border: 1px solid var(--border);
+}
+
+.stat-val {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.stat-lbl {
+    font-size: 10px;
+    color: var(--text3);
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}

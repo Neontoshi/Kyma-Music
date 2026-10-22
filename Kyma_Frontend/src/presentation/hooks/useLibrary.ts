@@ -4,6 +4,7 @@ import { getSongRepository } from "../../infrastructure/ServiceProvider";
 import { tauriCommands } from "../../services/tauriBridge";
 import { usePlayerStore } from "../stores/playerStore";
 import { logger } from "../../services/logger";
+import { makeSong } from "../../lib/song";
 
 export const useLibrary = () => {
   const {
@@ -50,24 +51,21 @@ export const useLibrary = () => {
         const existingIds = new Set(currentSongs.map((s: any) => s.id));
         const newSongs = likedFull
           .filter((s: any) => !existingIds.has(s.id))
-          .map((s: any) => ({
-            id: s.id,
-            title: s.title,
-            artist: s.artist,
-            album: s.album,
-            duration: s.duration_secs,
-            artwork: s.thumbnail,
-            videoId: s.video_id,
-            source: s.source,
-            path: s.path,
-            liked: likedIds.has(s.id),
-            dur: "",
-            emoji: "🎵",
-            grad: "linear-gradient(135deg, var(--accent), var(--accent2))",
-            bpm: 0,
-            key: "—",
-            plays: 0,
-          }));
+          .map((s: any) =>
+            makeSong({
+              id: s.id,
+              title: s.title,
+              artist: s.artist,
+              album: s.album,
+              duration: s.duration_secs,
+              artwork: s.thumbnail,
+              videoId: s.video_id,
+              source: s.source,
+              path: s.path,
+              liked: likedIds.has(s.id),
+              dur: "",
+            }),
+          );
         const updated = currentSongs.map((s: any) => ({
           ...s,
           liked: likedIds.has(s.id),
@@ -107,24 +105,22 @@ export const useLibrary = () => {
       const existingIds = new Set(updated.map((s: any) => s.id));
       const newSongs = likedFull
         .filter((s: any) => !existingIds.has(s.id))
-        .map((s: any) => ({
-          id: s.id,
-          title: s.title,
-          artist: s.artist,
-          album: s.album,
-          duration: s.duration_secs,
-          artwork: s.thumbnail,
-          videoId: s.video_id,
-          source: s.source,
-          path: s.path,
-          liked: likedIds.has(s.id),
-          dur: "",
-          emoji: "🎵",
-          grad: "linear-gradient(135deg, #7c6af5, #4a3fd4)",
-          bpm: 0,
-          key: "—",
-          plays: 0,
-        }));
+        .map((s: any) =>
+          makeSong({
+            id: s.id,
+            title: s.title,
+            artist: s.artist,
+            album: s.album,
+            duration: s.duration_secs,
+            artwork: s.thumbnail,
+            videoId: s.video_id,
+            source: s.source,
+            path: s.path,
+            liked: likedIds.has(s.id),
+            dur: "",
+            grad: "linear-gradient(135deg, #7c6af5, #4a3fd4)",
+          }),
+        );
 
       setSongs([...updated, ...newSongs]);
 

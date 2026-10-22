@@ -12,6 +12,7 @@ import { useQueueStore } from "../../stores/queueStore";
 import { logger } from "../../../services/logger";
 import { useUpdater } from "../../hooks/useUpdater";
 import { useSystemStore } from "../../stores/systemStore";
+import { makeSong } from "../../../lib/song";
 
 // Section components
 import HeroSection from "./components/HeroSection";
@@ -73,8 +74,7 @@ const HomePage: React.FC = () => {
     loadRecentPlays();
   }, [songs, currentSong?.id]);
 
-  //@ts-ignore
-  const playSong = (song: Song, source: string, context?: any) => {
+  const playSong = (song: Song, source: string) => {
     logger.logUI("HomePage", "play_song", {
       songId: song.id,
       title: song.title.slice(0, 50),
@@ -94,7 +94,7 @@ const HomePage: React.FC = () => {
       useQueueStore.getState().setQueue(queue, song, "library");
     }
 
-    playSong(song, "trending", { trackId: track.id });
+    playSong(song, "trending");
   };
 
   const handleSetQueue = (songs: Song[], startSong: Song) => {
@@ -233,27 +233,20 @@ const HomePage: React.FC = () => {
 
   const recentlyPlayedAsSongs: Song[] = useMemo(
     () =>
-      recentlyPlayed.slice(0, 10).map((e) => ({
-        id: e.track_id || e.id,
-        path: e.path || "",
-        title: e.title,
-        artist: e.artist,
-        album: e.album,
-        duration: e.duration_secs || 0,
-        genre: null,
-        year: null,
-        track_number: null,
-        artwork: e.thumbnail,
-        source: e.source as any,
-        videoId: e.video_id,
-        dur: "",
-        emoji: "🎵",
-        grad: "linear-gradient(135deg, var(--accent), var(--accent2))",
-        bpm: 0,
-        key: "—",
-        plays: 0,
-        liked: false,
-      })),
+      recentlyPlayed.slice(0, 10).map((e) =>
+        makeSong({
+          id: e.track_id || e.id,
+          path: e.path || "",
+          title: e.title,
+          artist: e.artist,
+          album: e.album,
+          duration: e.duration_secs || 0,
+          artwork: e.thumbnail,
+          source: e.source as any,
+          videoId: e.video_id,
+          dur: "",
+        }),
+      ),
     [recentlyPlayed],
   );
 

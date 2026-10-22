@@ -2,6 +2,7 @@
 import React from "react";
 import SectionHeader from "../sub-components/SectionHeader";
 import TrackRow from "../sub-components/TrackRow";
+import { makeSong } from "../../../../lib/song";
 
 interface WeeklyChartProps {
   weeklyChart: any[];
@@ -31,25 +32,14 @@ const WeeklyChart: React.FC<WeeklyChartProps> = ({
           <TrackRow
             key={`${t.artist}-${t.title}`}
             index={String(t.rank).padStart(2, "0")}
-            song={{
+            song={makeSong({
               id: `lfm-${t.rank}`,
               title: t.title,
               artist: t.artist,
-              artwork: null,
-              videoId: null,
+              videoId: undefined,
               dur: "",
-              emoji: "🎵",
-              grad: "linear-gradient(135deg, var(--accent), var(--accent2))",
-              bpm: 0,
-              key: "—",
-              plays: 0,
-              liked: false,
-              genre: null,
-              year: null,
-              track_number: null,
               source: "youtube",
-              path: "",
-            }}
+            })}
             onClick={() => onPlayTrending(t, weeklyChart)}
             showPlays={false}
             showTime={false}

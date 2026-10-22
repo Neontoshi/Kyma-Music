@@ -4,6 +4,9 @@ import { useQueueStore } from "../stores/queueStore";
 import { useSystemStore } from "../stores/systemStore";
 import { tauriCommands } from "../../services/tauriBridge";
 import { Song } from "../../core/entities/Song";
+import { formatTotalDuration as formatDuration } from "../../lib/formatTime";
+import { randomGradient } from "../../lib/gradients";
+import { makeSong } from "../../lib/song";
 
 const CATEGORIES = [
   { label: "Fiction", query: "fiction audiobook full" },
@@ -19,20 +22,6 @@ const CATEGORIES = [
   { label: "Biography", query: "biography audiobook full" },
   { label: "Classics", query: "classic literature audiobook full" },
 ];
-
-const randomGradient = (seed: string) => {
-  const hash = seed.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  const hues = [280, 200, 340, 40, 160, 100, 10, 260, 320, 180];
-  const h = hues[hash % hues.length];
-  return `linear-gradient(135deg, hsl(${h}, 45%, 32%), hsl(${h + 30}, 38%, 18%))`;
-};
-
-const formatDuration = (secs: number) => {
-  const h = Math.floor(secs / 3600);
-  const m = Math.floor((secs % 3600) / 60);
-  if (h > 0) return `${h}h ${m}m`;
-  return `${m} min`;
-};
 
 const AudiobooksPage: React.FC = () => {
   const { currentSong, setCurrentSong, setProgress, isPlaying } =
@@ -67,27 +56,20 @@ const AudiobooksPage: React.FC = () => {
               const dur = r.duration_secs;
               return dur && dur > 1800;
             })
-            .map((r: any) => ({
-              id: `yt-${r.id}`,
-              path: "",
-              title: r.title,
-              artist: r.artist,
-              album: "Audiobook",
-              duration: r.duration_secs,
-              genre: null,
-              year: null,
-              track_number: null,
-              artwork: r.thumbnail,
-              source: "youtube" as any,
-              videoId: r.id,
-              dur: formatDuration(r.duration_secs),
-              emoji: "📖",
-              grad: "linear-gradient(135deg, var(--accent), var(--accent2))",
-              bpm: 0,
-              key: "—",
-              plays: 0,
-              liked: false,
-            }));
+            .map((r: any) =>
+              makeSong({
+                id: `yt-${r.id}`,
+                title: r.title,
+                artist: r.artist,
+                album: "Audiobook",
+                duration: r.duration_secs,
+                artwork: r.thumbnail,
+                source: "youtube",
+                videoId: r.id,
+                dur: formatDuration(r.duration_secs),
+                emoji: "📖",
+              }),
+            );
           setBooks(filtered);
           setLoading(false);
         })

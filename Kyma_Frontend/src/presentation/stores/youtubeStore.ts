@@ -1,5 +1,8 @@
 import { create } from "zustand";
 import { Song } from "../../core/entities/Song";
+import { tauriCommands } from "../../services/tauriBridge";
+import { randomGradient } from "../../lib/gradients";
+import { makeSong } from "../../lib/song";
 
 interface YouTubeSearchResult {
   id: string;
@@ -25,39 +28,24 @@ interface YouTubeStore {
   downloadAudio: (videoId: string, title: string) => Promise<string | null>;
 }
 
-function randomGradient(): string {
-  const hues = [280, 200, 340, 40, 160, 100, 10, 260];
-  const h = hues[Math.floor(Math.random() * hues.length)];
-  return `linear-gradient(135deg, hsl(${h}, 50%, 35%), hsl(${h + 30}, 40%, 20%))`;
-}
-
 function randomEmoji(): string {
   const emojis = ["🎵", "🎶", "🎧", "🎤", "🎼", "🎹", "🎸", "🥁", "🎺", "🎷"];
   return emojis[Math.floor(Math.random() * emojis.length)];
 }
 
 function toSong(r: YouTubeSearchResult): Song {
-  return {
+  return makeSong({
     id: `yt-${r.id}`,
-    path: "",
     title: r.title,
     artist: r.artist || "YouTube",
     album: "YouTube",
     duration: r.duration_secs,
-    genre: null,
-    year: null,
-    track_number: null,
-    artwork: null,
-    source: "youtube" as const,
+    source: "youtube",
     videoId: r.id,
     dur: r.duration_str,
     emoji: randomEmoji(),
     grad: randomGradient(),
-    bpm: 0,
-    key: "—",
-    plays: 0,
-    liked: false,
-  };
+  });
 }
 
 export const useYouTubeStore = create<YouTubeStore>((set, get) => ({
@@ -86,11 +74,8 @@ export const useYouTubeStore = create<YouTubeStore>((set, get) => ({
     });
 
     try {
-      const { invoke } = await import("@tauri-apps/api/core");
-
-      const raw: YouTubeSearchResult[] = await invoke("youtube_search", {
-        query: trimmed,
-      });
+      const raw: YouTubeSearchResult[] =
+        await tauriCommands.searchYoutube(trimmed);
 
       // Ignore stale searches
       if (get().requestId !== requestId) {
@@ -116,11 +101,11 @@ export const useYouTubeStore = create<YouTubeStore>((set, get) => ({
     if (!lastQuery) return;
     set({ isLoadingMore: true });
     try {
-      const { invoke } = await import("@tauri-apps/api/core");
-      const raw: YouTubeSearchResult[] = await invoke("youtube_search", {
-        query: lastQuery,
+      const raw: YouTubeSearchResult[] = await tauriCommands.searchYoutube(
+        lastQuery,
+        undefined,
         offset,
-      });
+      );
       set({
         results: [...results, ...raw.map(toSong)],
         isLoadingMore: false,
@@ -139,11 +124,7 @@ export const useYouTubeStore = create<YouTubeStore>((set, get) => ({
     title: string,
   ): Promise<string | null> => {
     try {
-      const { invoke } = await import("@tauri-apps/api/core");
-      const msg: string = await invoke("youtube_download", {
-        videoId,
-        title,
-      });
+      const msg: string = await tauriCommands.downloadYoutube(videoId, title);
       return msg;
     } catch (e) {
       console.error("Download failed:", e);

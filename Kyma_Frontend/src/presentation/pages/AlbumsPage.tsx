@@ -7,6 +7,9 @@ import { tauriCommands } from "../../services/tauriBridge";
 import { Song } from "../../core/entities/Song";
 import SongRow from "../components/Library/SongRow";
 import { logger } from "../../services/logger";
+import { formatDuration } from "../../lib/formatTime";
+import { albumGradient } from "../../lib/gradients";
+import { makeSong } from "../../lib/song";
 
 // Animated wave background
 const WaveCanvas: React.FC<{ seed: string; isPlaying: boolean }> = ({
@@ -103,19 +106,6 @@ const WaveCanvas: React.FC<{ seed: string; isPlaying: boolean }> = ({
       }}
     />
   );
-};
-
-const randomGradient = (seed: string) => {
-  const hash = seed.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  const hues = [280, 200, 340, 40, 160, 100, 10, 260, 320, 180];
-  const h = hues[hash % hues.length];
-  return `linear-gradient(135deg, hsl(${h}, 40%, 22%), hsl(${h + 30}, 35%, 10%))`;
-};
-
-const formatDuration = (secs: number) => {
-  const m = Math.floor(secs / 60);
-  const s = Math.floor(secs % 60);
-  return `${m}:${s.toString().padStart(2, "0")}`;
 };
 
 const CACHE_KEY = (albumId: string | number) => `kyma_album_${albumId}`;
@@ -361,12 +351,6 @@ const AlbumsPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [loadingTracks, setLoadingTracks] = useState(false);
   const [allResolved, setAllResolved] = useState(false);
-  //@ts-ignore
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-  //@ts-ignore
-  const [failedTracks, setFailedTracks] = useState<Set<string>>(new Set());
-  //@ts-ignore
-  const [retryingTrackId, setRetryingTrackId] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIdx, setSelectedSuggestionIdx] = useState(-1);
@@ -377,7 +361,6 @@ const AlbumsPage: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const searchTimeout = useRef<number | null>(null);
-  const toastTimeout = useRef<number | null>(null);
   const searchRequestId = useRef(0);
   const suggestionRequestId = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -387,14 +370,6 @@ const AlbumsPage: React.FC = () => {
   const resolvedTracksRef = useRef<Song[]>([]);
   const gridRef = useRef<HTMLDivElement>(null);
   const lastQueryRef = useRef("");
-
-  const showToast = (message: string) => {
-    setToastMessage(message);
-    if (toastTimeout.current) clearTimeout(toastTimeout.current);
-    toastTimeout.current = window.setTimeout(() => {
-      setToastMessage(null);
-    }, 6000);
-  };
 
   // Close suggestions on outside click
   useEffect(() => {
@@ -435,7 +410,6 @@ const AlbumsPage: React.FC = () => {
 
   const loadAlbums = async (
     query: string,
-    //@ts-ignore
     pageNum: number,
     append: boolean,
   ) => {
@@ -447,11 +421,17 @@ const AlbumsPage: React.FC = () => {
       setLoadingMore(true);
     }
     try {
-      const results = await tauriCommands.searchAlbumsDeezer(query);
+      const results = await tauriCommands.searchAlbumsDeezer(
+        query,
+        pageNum * ALBUMS_PER_PAGE,
+      );
       if (requestId === searchRequestId.current) {
         const data = results || [];
         if (append) {
-          setAlbums((prev) => [...prev, ...data]);
+          setAlbums((prev) => {
+            const seen = new Set(prev.map((a) => a.id));
+            return [...prev, ...data.filter((a) => !seen.has(a.id))];
+          });
         } else {
           setAlbums(data);
         }
@@ -566,7 +546,6 @@ const AlbumsPage: React.FC = () => {
     setSelectedAlbum(album);
     setTracks([]);
     setAllResolved(false);
-    setFailedTracks(new Set());
     setLoadingTracks(true);
     setShowSuggestions(false);
 
@@ -574,27 +553,22 @@ const AlbumsPage: React.FC = () => {
 
     try {
       const result = await tauriCommands.getAlbumTracksDeezer(albumId);
-      const mapped = (result || []).map((t: any, i: number) => ({
-        id: `dz-${albumId}-${i}`,
-        path: "",
-        title: t.title,
-        artist: t.artist || album.artist,
-        album: album.title,
-        duration: t.duration_secs,
-        genre: null,
-        year: null,
-        track_number: t.track_number || i + 1,
-        artwork: album.cover_url,
-        source: "youtube" as any,
-        videoId: undefined,
-        dur: formatDuration(t.duration_secs),
-        emoji: "💿",
-        grad: randomGradient(album.title),
-        bpm: 0,
-        key: "—",
-        plays: 0,
-        liked: false,
-      }));
+      const mapped = (result || []).map((t: any, i: number) =>
+        makeSong({
+          id: `dz-${albumId}-${i}`,
+          title: t.title,
+          artist: t.artist || album.artist,
+          album: album.title,
+          duration: t.duration_secs,
+          track_number: t.track_number || i + 1,
+          artwork: album.cover_url,
+          source: "youtube",
+          videoId: undefined,
+          dur: formatDuration(t.duration_secs),
+          emoji: "💿",
+          grad: albumGradient(album.title),
+        }),
+      );
 
       setTracks(mapped);
       setLoadingTracks(false);
@@ -645,11 +619,9 @@ const AlbumsPage: React.FC = () => {
                 const cacheKey =
                   `${track.artist}__${track.title}`.toLowerCase();
                 newCache[cacheKey] = resolved.videoId;
-              } else {
-                setFailedTracks((prev) => new Set(prev).add(track.id));
               }
             } catch {
-              setFailedTracks((prev) => new Set(prev).add(track.id));
+              // Resolution failed; track stays unavailable.
             }
           };
           queue.push(task);
@@ -704,10 +676,7 @@ const AlbumsPage: React.FC = () => {
   };
 
   const handlePlayTrack = async (song: Song) => {
-    if (!song.videoId) {
-      showToast("Track unavailable, try again");
-      return;
-    }
+    if (!song.videoId) return;
     logger.logUI("AlbumsPage", "play_track", {
       songId: song.id,
       title: song.title.slice(0, 50),
@@ -721,51 +690,6 @@ const AlbumsPage: React.FC = () => {
     setQueue(playableTracks, song, "search");
     player.setCurrentSong(song);
     player.setProgress(0);
-  };
-
-  //@ts-ignore
-  const handleRetry = async (song: Song) => {
-    logger.logUI("AlbumsPage", "retry_track", {
-      songId: song.id,
-      title: song.title.slice(0, 50),
-    });
-    setRetryingTrackId(song.id);
-    setFailedTracks((prev) => {
-      const next = new Set(prev);
-      next.delete(song.id);
-      return next;
-    });
-
-    const resolved = await resolveTrack(song.artist, song.title, song.duration);
-    if (resolved) {
-      const updated = resolvedTracksRef.current.map((t) =>
-        t.id === song.id
-          ? {
-              ...t,
-              videoId: resolved.videoId,
-              duration: resolved.duration_secs || t.duration,
-              dur: resolved.duration_secs
-                ? formatDuration(resolved.duration_secs)
-                : t.dur,
-            }
-          : t,
-      );
-      resolvedTracksRef.current = updated;
-      setTracks([...updated]);
-
-      const albumId = activeAlbumIdRef.current;
-      if (albumId) {
-        const cached = loadCachedVideoIds(albumId);
-        const cacheKey = `${song.artist}__${song.title}`.toLowerCase();
-        saveCachedVideoIds(albumId, {
-          ...cached,
-          [cacheKey]: resolved.videoId,
-        });
-      }
-    } else {
-      setFailedTracks((prev) => new Set(prev).add(song.id));
-    }
-    setRetryingTrackId(null);
   };
 
   const handlePlayAll = () => {
@@ -814,7 +738,7 @@ const AlbumsPage: React.FC = () => {
           <div
             className="ap-hero"
             style={{
-              background: randomGradient(selectedAlbum.title),
+              background: albumGradient(selectedAlbum.title),
               position: "relative",
               overflow: "hidden",
             }}
@@ -831,7 +755,7 @@ const AlbumsPage: React.FC = () => {
               <div
                 className="ap-hero-avatar"
                 style={{
-                  background: randomGradient(selectedAlbum.title + "_inner"),
+                  background: albumGradient(selectedAlbum.title + "_inner"),
                 }}
               >
                 {selectedAlbum.cover_url ? (
@@ -1064,7 +988,7 @@ const AlbumsPage: React.FC = () => {
                         alignItems: "center",
                         justifyContent: "center",
                         fontSize: 18,
-                        background: randomGradient(album.title),
+                        background: albumGradient(album.title),
                         overflow: "hidden",
                       }}
                     >
@@ -1138,7 +1062,7 @@ const AlbumsPage: React.FC = () => {
                 >
                   <div
                     className="ap-card-avatar"
-                    style={{ background: randomGradient(album.title) }}
+                    style={{ background: albumGradient(album.title) }}
                   >
                     {album.cover_url ? (
                       <img
@@ -1211,7 +1135,7 @@ const AlbumsPage: React.FC = () => {
                     >
                       <div
                         className="ap-card-avatar"
-                        style={{ background: randomGradient(album.title) }}
+                        style={{ background: albumGradient(album.title) }}
                       >
                         {album.cover_url ? (
                           <img

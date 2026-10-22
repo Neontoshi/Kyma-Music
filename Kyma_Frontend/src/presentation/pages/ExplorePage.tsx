@@ -9,6 +9,9 @@ import { tauriCommands } from "../../services/tauriBridge";
 import { Song } from "../../core/entities/Song";
 import { resolveAndPlaySong } from "../hooks/useResolveAndPlay";
 import { useExplorePrefetch } from "../hooks/useExplorePrefetch";
+import { formatDuration } from "../../lib/formatTime";
+import { randomGradient } from "../../lib/gradients";
+import { makeSong } from "../../lib/song";
 
 const EXPLORE_CATEGORIES = [
   { label: "Trending", type: "chart" as const },
@@ -22,19 +25,6 @@ const EXPLORE_CATEGORIES = [
   { label: "Country", type: "playlist" as const, query: "country hits" },
   { label: "Jazz", type: "playlist" as const, query: "jazz classics" },
 ];
-
-const randomGradient = (seed: string) => {
-  const hash = seed.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  const hues = [280, 200, 340, 40, 160, 100, 10, 260, 320, 180];
-  const h = hues[hash % hues.length];
-  return `linear-gradient(135deg, hsl(${h}, 45%, 32%), hsl(${h + 40}, 38%, 18%))`;
-};
-
-const formatDuration = (secs: number) => {
-  const m = Math.floor(secs / 60);
-  const s = Math.floor(secs % 60);
-  return `${m}:${s.toString().padStart(2, "0")}`;
-};
 
 const SkeletonCard = ({ index }: { index: number }) => (
   <div className="ex-skeleton" style={{ animationDelay: `${index * 0.04}s` }}>
@@ -90,27 +80,22 @@ const ExplorePage: React.FC = () => {
         .songs.filter((s) => s.liked)
         .map((s) => s.id);
 
-      const mapped: Song[] = (deezerTracks || []).map((t: any, i: number) => ({
-        id: `dz-${t.id || i}`,
-        path: "",
-        title: t.title,
-        artist: t.artist,
-        album: t.album || category.label,
-        duration: t.duration_secs,
-        genre: null,
-        year: null,
-        track_number: t.position || i + 1,
-        artwork: t.artwork_url,
-        source: "youtube" as any,
-        videoId: undefined,
-        dur: formatDuration(t.duration_secs),
-        emoji: "🎵",
-        grad: randomGradient(t.title),
-        bpm: 0,
-        key: "—",
-        plays: 0,
-        liked: likedIds.includes(`dz-${t.id || i}`), // Check if liked
-      }));
+      const mapped: Song[] = (deezerTracks || []).map((t: any, i: number) =>
+        makeSong({
+          id: `dz-${t.id || i}`,
+          title: t.title,
+          artist: t.artist,
+          album: t.album || category.label,
+          duration: t.duration_secs,
+          track_number: t.position || i + 1,
+          artwork: t.artwork_url,
+          source: "youtube",
+          videoId: undefined,
+          dur: formatDuration(t.duration_secs),
+          grad: randomGradient(t.title),
+          liked: likedIds.includes(`dz-${t.id || i}`),
+        }),
+      );
 
       setTracks(mapped);
     } catch (err) {

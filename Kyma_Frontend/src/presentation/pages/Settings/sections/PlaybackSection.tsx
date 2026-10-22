@@ -1,5 +1,5 @@
 import React from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { tauriCommands } from "../../../../services/tauriBridge";
 import SectionCard from "../components/SectionCard";
 import SectionHeader from "../components/SectionHeader";
 import Slider from "../components/Slider";
@@ -56,7 +56,7 @@ const PlaybackSection: React.FC<PlaybackSectionProps> = ({
               onChange={(v) => {
                 setDefaultVolume(v);
                 setPlayerVolume(v);
-                invoke("set_volume", { level: v / 100 }).catch(console.error);
+                tauriCommands.setVolume(v / 100).catch(console.error);
               }}
             />
           </div>

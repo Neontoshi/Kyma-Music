@@ -1,14 +1,7 @@
 import { ISongRepository } from "../core/repositories/ISongRepository";
 import { Song } from "../core/entities/Song";
 import { tauriCommands } from "../services/tauriBridge";
-
-const formatDuration = (seconds: number): string => {
-  const m = Math.floor(seconds / 60);
-  const s = Math.floor(seconds % 60)
-    .toString()
-    .padStart(2, "0");
-  return `${m}:${s}`;
-};
+import { makeSong } from "../lib/song";
 
 export class TauriSongRepository implements ISongRepository {
   private cachedSongs: Song[] = [];
@@ -118,7 +111,7 @@ export class TauriSongRepository implements ISongRepository {
       artworkUrl = URL.createObjectURL(blob);
     }
 
-    return {
+    return makeSong({
       id: raw.id,
       path: raw.path,
       title: raw.title || "Unknown",
@@ -129,13 +122,7 @@ export class TauriSongRepository implements ISongRepository {
       year: raw.year || null,
       track_number: raw.track_number || null,
       artwork: artworkUrl,
-      dur: formatDuration(raw.duration || 0),
-      emoji: "🎵",
-      grad: "linear-gradient(135deg, var(--accent), var(--accent2))",
-      bpm: 0,
       key: "",
-      plays: 0,
-      liked: false,
-    };
+    });
   };
 }

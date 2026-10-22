@@ -4,10 +4,10 @@ import { useQueueStore } from "../stores/queueStore";
 import { getPlayerRepository } from "../../infrastructure/ServiceProvider";
 import { tauriCommands } from "../../services/tauriBridge";
 import { useLibraryStore } from "../stores/libraryStore";
-import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../services/logger";
 import { usePrefetchQueue } from "../hooks/usePrefetchQueue";
 import { resolveAndPlaySong } from "../hooks/useResolveAndPlay";
+import { formatDuration } from "../../lib/formatTime";
 
 const pendingPlayId = { current: null as string | null };
 
@@ -414,13 +414,6 @@ export const usePlayer = () => {
           // Update the song in library with correct duration
           const current = store.currentSong;
           if (current && current.duration === 0) {
-            const formatDuration = (secs: number): string => {
-              const m = Math.floor(secs / 60);
-              const s = Math.floor(secs % 60)
-                .toString()
-                .padStart(2, "0");
-              return `${m}:${s}`;
-            };
             const updatedSong = {
               ...current,
               duration: duration,
@@ -512,7 +505,7 @@ export const usePlayer = () => {
 
   useEffect(() => {
     const effectiveVolume = isMuted ? 0 : volume;
-    invoke("set_volume", { level: effectiveVolume / 100 }).catch(console.error);
+    tauriCommands.setVolume(effectiveVolume / 100).catch(console.error);
   }, [volume, isMuted]);
 
   useEffect(() => {

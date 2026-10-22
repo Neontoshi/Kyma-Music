@@ -1,6 +1,6 @@
 // Kyma_Frontend/src/presentation/pages/Home/sub-components/MediaCard.tsx
 import React from "react";
-import PlayingBars from "./PlayingBars";
+import PlayingBars from "../../../components/PlayingBars";
 
 interface MediaCardProps {
   title: string;
@@ -129,7 +129,7 @@ const MediaCard: React.FC<MediaCardProps> = ({
           className="card-play-btn"
         >
           {isActive && isPlaying ? (
-            <PlayingBars />
+            <PlayingBars height={12} color="var(--accent2)" />
           ) : (
             <svg viewBox="0 0 24 24" fill="#fff" width="12" height="12">
               <polygon points="5,3 19,12 5,21" />

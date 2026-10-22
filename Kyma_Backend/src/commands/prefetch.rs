@@ -4,7 +4,7 @@ use crate::user_action;
 use crate::user_error;
 use std::time::Instant;
 
-const PREFETCH_TTL_SECS: u64 = 120; // 2 minutes
+pub(crate) const PREFETCH_TTL_SECS: u64 = 70; // keep short to avoid stale CDN URLs
 const MAX_CACHE_SIZE: usize = 50;
 
 #[tauri::command]

@@ -183,14 +183,21 @@ pub fn decode_and_push(
 
     if let Err(e) = result {
         user_error!("DECODE", "Failed: {} - {}", url, e);
-        // Check if this is a stream expiry (YouTube CDN URL expired mid-playback)
-        if e.contains("end of stream") || e.contains("Persistent network error") {
+        // Check if this is a stream expiry or probe failure (stale/invalid CDN URL)
+        let err = e.to_lowercase();
+        if err.contains("end of stream")
+            || err.contains("persistent network error")
+            || err.contains("probe failed")
+            || err.contains("no suitable format reader")
+        {
             if url.contains("googlevideo.com") {
                 let pos = shared.get_position();
-                user_action!("STREAM", "Expired at {:.2}s for {}", pos, url);
-                tracing::warn!("[DECODER] Stream expired at {:.2}s, signalling engine", pos);
+                user_action!("STREAM", "Expired/Invalid at {:.2}s for {}", pos, url);
+                tracing::warn!(
+                    "[DECODER] Stream expired/invalid at {:.2}s, signalling engine",
+                    pos
+                );
                 *shared.stream_expired_at.lock().unwrap() = Some(pos);
-                // Don't drain the ring — engine will restart the track
                 return;
             }
         }

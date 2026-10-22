@@ -5,38 +5,12 @@ import { useLibraryStore } from "../../stores/libraryStore";
 import { tauriCommands } from "../../../services/tauriBridge";
 import { useQueueStore } from "../../stores/queueStore";
 import { logger } from "../../../services/logger";
+import PlayingBars from "../PlayingBars";
 
 interface Playlist {
   id: string;
   name: string;
 }
-
-const PlayingBars = () => (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "flex-end",
-      justifyContent: "center",
-      gap: "2px",
-      height: "14px",
-      width: "14px",
-    }}
-  >
-    {[0, 0.2, 0.4].map((delay, i) => (
-      <div
-        key={i}
-        style={{
-          width: "3px",
-          background: "var(--accent)",
-          borderRadius: "var(--radius-xs)",
-          height: "14px",
-          animation: "barBounce 0.8s ease-in-out infinite",
-          animationDelay: `${delay}s`,
-        }}
-      />
-    ))}
-  </div>
-);
 
 interface SongRowProps {
   song: Song;

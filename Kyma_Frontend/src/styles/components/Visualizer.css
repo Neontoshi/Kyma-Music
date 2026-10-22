@@ -1,0 +1,21 @@
+/* Audio visualizer
+   Auto-split from globals.css. Edit this file for Audio visualizer only. */
+
+.audio-visualizer {
+    width: 100%;
+    height: 120px;
+    margin: 20px 0;
+}
+
+.audio-visualizer canvas {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius);
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+.audio-visualizer {
+        height: 80px;
+        margin: 10px 0;
+    }
+}

@@ -1,0 +1,355 @@
+/* Artists page legacy classes
+   Auto-split from globals.css. Edit this file for Artists page legacy classes only. */
+
+.artists-page {
+    overflow-y: auto;
+    height: 100%;
+}
+
+.artists-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 8rem;
+}
+
+.artists-header {
+    padding: 3rem 0 2rem;
+}
+
+.artists-eyebrow {
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.artists-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.artists-title {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    margin: 0;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+}
+
+.artists-title span {
+    color: var(--accent2);
+}
+
+.artists-search-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.artists-search {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.artists-search input {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 12px;
+    outline: none;
+    width: 180px;
+}
+
+.artists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--space-md);
+}
+
+.artist-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: var(--space-md);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all var(--anim-slow) var(--anim-easing);
+    text-align: center;
+}
+
+.artist-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border2);
+}
+
+.artist-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-circle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    margin: 0 auto 12px;
+}
+
+.artist-name {
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.artist-sub {
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 10px;
+    color: var(--text3);
+    margin-top: 4px;
+}
+
+.artist-detail {
+    overflow-y: auto;
+    height: 100%;
+}
+
+.artist-detail-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 2rem 8rem;
+}
+
+.artist-back-btn {
+    padding: var(--space-xs) 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    color: var(--text2);
+    cursor: pointer;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.artist-profile {
+    padding: 2rem 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+}
+
+.artist-avatar-lg {
+    width: 160px;
+    height: 160px;
+    border-radius: var(--radius-circle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    flex-shrink: 0;
+}
+
+.artist-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.artist-label {
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.artist-name-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.artist-name-lg {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin: 0;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+}
+
+.artist-stats {
+    display: flex;
+    gap: var(--space-lg);
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.artist-stat-val {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.artist-stat-lbl {
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.artist-play-all {
+    padding: var(--space-sm) 28px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: var(--radius-pill);
+    color: #fff;
+    cursor: pointer;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-bottom: 2rem;
+}
+
+.artist-song-row {
+    display: grid;
+    grid-template-columns: 40px 48px 1fr 1fr 80px 60px;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.artist-song-row:hover {
+    background: var(--surface2);
+}
+
+.artist-song-row.active {
+    background: rgba(124, 106, 245, 0.08);
+    border-color: rgba(124, 106, 245, 0.2);
+}
+
+.artist-song-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    overflow: hidden;
+}
+
+.artist-song-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.artist-song-title {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.artist-song-album {
+    font-size: 12px;
+    color: var(--text3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.artist-song-dur {
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 12px;
+    color: var(--text3);
+    text-align: right;
+}
+
+.artist-song-source {
+    text-align: center;
+}
+
+.artist-song-badge {
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 8px;
+    letter-spacing: 0.05em;
+    padding: var(--space-3xs) 6px;
+    border-radius: var(--radius-pill);
+}
+
+.artist-song-badge.yt {
+    background: rgba(255, 0, 0, 0.1);
+    color: #ff3333;
+}
+
+.artist-song-badge.sc {
+    background: rgba(255, 85, 0, 0.15);
+    color: #ff5500;
+}
+
+.artist-song-badge.local {
+    background: var(--surface2);
+    color: var(--text3);
+}
+
+.artist-loading {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text3);
+    font-family: var(--font-family-base, "Syne", sans-serif);
+}
+
+.artist-loading-more {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.artist-no-more {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--text3);
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 10px;
+}
+
+.artist-empty {
+    padding: 60px;
+    text-align: center;
+    color: var(--text3);
+    font-family: var(--font-family-base, "Syne", sans-serif);
+}
+
+.artist-unfollow-btn {
+    padding: var(--space-xs) 14px;
+    border-radius: var(--radius-pill);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text3);
+    cursor: pointer;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
+    font-size: 11px;
+    font-weight: 600;
+}

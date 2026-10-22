@@ -1,0 +1,355 @@
+/* Now Playing panel (np-*)
+   Auto-split from globals.css. Edit this file for Now Playing panel (np-*) only. */
+
+.now-playing-panel {
+    width: 300px;
+    min-width: 300px;
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: var(--space-lg);
+    gap: var(--space-lg);
+    background: var(--surface);
+}
+
+.np-fullscreen {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--surface);
+}
+
+.np-info-col {
+    width: 300px;
+    min-width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-lg) 20px;
+    overflow-y: auto;
+    border-left: 1px solid var(--border);
+    height: 100%;
+}
+
+.np-info-col-inline {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    width: 100%;
+}
+
+.np-art-wrap {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.np-art {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 72px;
+    border-radius: var(--radius);
+    position: relative;
+}
+
+.np-art-glow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.6));
+    border-radius: var(--radius);
+}
+
+.np-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+}
+
+.np-song-title {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.np-song-artist {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.np-like-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text3);
+    transition: all var(--anim-normal) var(--anim-easing);
+    flex-shrink: 0;
+    background: var(--surface2);
+    border: none;
+}
+
+.np-like-btn:hover {
+    color: var(--accent2);
+    background: var(--surface3);
+}
+
+.np-like-btn.liked {
+    color: var(--accent2);
+}
+
+.np-like-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.np-tags {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+}
+
+.np-empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.np-lyrics-col {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100%;
+}
+
+.np-lyrics-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-lg) 36px 16px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.np-lyrics-label {
+    font-size: 10px;
+    color: var(--text3);
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.np-lyrics-badge {
+    font-size: 10px;
+    color: var(--text3);
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    background: var(--surface2);
+    padding: var(--space-3xs) 10px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+}
+
+.np-lyrics-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.np-lyrics-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.np-lyrics-lines {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-lg) 36px 0;
+}
+
+.np-lyrics-spacer {
+    height: 0;
+    flex-shrink: 0;
+}
+
+.np-lyrics-spacer:last-child {
+    height: 40vh;
+}
+
+.np-lyric-line {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.65;
+    padding: var(--space-2xs) 0;
+    color: var(--text3);
+    transition:
+        color 0.3s ease,
+        font-size 0.3s ease,
+        opacity 0.3s ease,
+        transform 0.3s ease;
+    transform-origin: left center;
+    cursor: default;
+    user-select: none;
+}
+
+.np-lyric-line.past {
+    opacity: 0.35;
+}
+
+.np-lyric-line.upcoming {
+    opacity: 0.65;
+}
+
+.np-lyric-line.active {
+    color: var(--text);
+    font-size: 24px;
+    opacity: 1;
+    transform: translateX(6px);
+    text-shadow: 0 0 40px rgba(124, 106, 245, 0.45);
+}
+
+.np-lyrics-status {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    color: var(--text3);
+    font-size: 13px;
+    padding: 60px 36px;
+    text-align: center;
+}
+
+@media (min-width: 2560px) {
+.np-lyric-line {
+        font-size: 22px;
+    }
+.np-lyric-line.active {
+        font-size: 30px;
+    }
+.now-playing-panel {
+        width: 380px;
+        min-width: 380px;
+    }
+.np-info-col {
+        width: 380px;
+        min-width: 360px;
+    }
+}
+
+@media (min-width: 1440px) and (max-width: 2559px) {
+.now-playing-panel {
+        width: 320px;
+        min-width: 320px;
+    }
+}
+
+@media (max-width: 1200px) {
+.now-playing-panel {
+        width: 280px;
+        min-width: 280px;
+    }
+}
+
+@media (max-width: 1024px) {
+.now-playing-panel,
+    .np-lyrics-col {
+        display: none;
+    }
+.np-info-col {
+        width: 260px;
+        min-width: 240px;
+    }
+}
+
+@media (max-width: 900px) {
+.now-playing-panel,
+    .np-lyrics-col {
+        display: none;
+    }
+.np-fullscreen {
+        flex-direction: column;
+    }
+.np-info-col {
+        width: 100%;
+        min-width: 0;
+        border-left: none;
+        border-bottom: 1px solid var(--border);
+        height: auto;
+        padding: var(--space-lg);
+    }
+.np-lyrics-col {
+        height: 60vh;
+    }
+}
+
+@media (max-width: 600px) {
+.np-lyric-line {
+        font-size: 15px;
+    }
+.np-lyric-line.active {
+        font-size: 19px;
+    }
+.np-lyrics-lines {
+        padding: var(--space-lg) 20px 0;
+    }
+.np-lyrics-header {
+        padding: var(--space-md) 20px 12px;
+    }
+}
+
+@media (max-width: 390px) {
+.np-lyric-line {
+        font-size: 13px;
+    }
+.np-lyric-line.active {
+        font-size: 16px;
+    }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+.np-lyrics-spacer:last-child {
+        height: 20vh;
+    }
+.np-lyric-line {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+.np-lyric-line.active {
+        font-size: 18px;
+    }
+}
+
+.buffering-text {
+    font-size: 10px;
+    color: var(--accent);
+    font-family: "'DM Mono', monospace";
+    animation: pulse 1s ease-in-out infinite;
+}

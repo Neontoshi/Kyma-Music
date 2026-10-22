@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { Song } from "../../core/entities/Song";
 import { useYouTubeStore } from "./youtubeStore";
+import { tauriCommands } from "../../services/tauriBridge";
 
 interface LibraryStore {
   songs: Song[];
@@ -85,9 +86,9 @@ export const useLibraryStore = create<LibraryStore>((set, get) => ({
       songData ??
       useYouTubeStore.getState().results.find((s: Song) => s.id === songId);
 
-    import("@tauri-apps/api/core").then(({ invoke }) => {
-      if (song?.source === "soundcloud") {
-        invoke("toggle_like_soundcloud", {
+    if (song?.source === "soundcloud") {
+      tauriCommands
+        .toggleLikeSoundcloud({
           trackId: songId,
           title: song.title,
           artist: song.artist,
@@ -96,19 +97,20 @@ export const useLibraryStore = create<LibraryStore>((set, get) => ({
           thumbnail: song.artwork || "",
           videoId: song.videoId || null,
           path: song.path || "",
-        }).catch((err) => console.error("[LIKE] soundcloud error:", err));
-      } else {
-        const resolvedSource =
-          song?.source ||
-          (songId.startsWith("yt-")
-            ? "youtube"
-            : songId.startsWith("sc-")
-              ? "soundcloud"
-              : "local");
+        })
+        .catch((err) => console.error("[LIKE] soundcloud error:", err));
+    } else {
+      const resolvedSource =
+        song?.source ||
+        (songId.startsWith("yt-")
+          ? "youtube"
+          : songId.startsWith("sc-")
+            ? "soundcloud"
+            : "local");
 
-        if (resolvedSource === "youtube" && song) {
-          invoke("toggle_like", {
-            input: {
+      const input =
+        resolvedSource === "youtube" && song
+          ? {
               trackId: songId,
               title: song.title,
               artist: song.artist,
@@ -118,22 +120,15 @@ export const useLibraryStore = create<LibraryStore>((set, get) => ({
               videoId: song.videoId || null,
               source: "youtube",
               path: song.path || "",
-            },
-          }).catch((err) =>
-            console.error(
-              "[LIKE] youtube-fallback error:",
-              JSON.stringify(err),
-            ),
-          );
-        } else {
-          invoke("toggle_like", {
-            input: { trackId: songId },
-          }).catch((err) =>
-            console.error("[LIKE] local error:", JSON.stringify(err)),
-          );
-        }
-      }
-    });
+            }
+          : { trackId: songId };
+
+      tauriCommands
+        .toggleLike(input)
+        .catch((err) =>
+          console.error("[LIKE] toggle error:", JSON.stringify(err)),
+        );
+    }
   },
 
   filterAndSort: () => {

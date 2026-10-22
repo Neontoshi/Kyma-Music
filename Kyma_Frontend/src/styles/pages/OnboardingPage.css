@@ -1,0 +1,510 @@
+/* Onboarding page (onb-*)
+   Auto-split from globals.css. Edit this file for Onboarding page (onb-*) only. */
+
+.onb-root {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
+    padding: 40px;
+    overflow: hidden;
+    position: relative;
+}
+
+.onb-ambient {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.onb-ambient-dot {
+    position: absolute;
+    border-radius: var(--radius-circle);
+    background: radial-gradient(
+        circle,
+        rgba(124, 106, 245, 0.08) 0%,
+        transparent 70%
+    );
+    transform: translate(-50%, -50%);
+}
+
+.onb-icon-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+}
+
+.onb-icon-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-circle);
+    animation: onbGlow 2.8s ease-in-out infinite;
+    background: radial-gradient(
+        circle,
+        rgba(124, 106, 245, 0.2) 0%,
+        transparent 70%
+    );
+}
+
+.onb-icon-emoji {
+    font-size: 64px;
+    position: relative;
+    z-index: 1;
+    animation: onbFloat 3.2s ease-in-out infinite;
+    display: block;
+}
+
+.onb-orbit-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-circle);
+    background: var(--accent2);
+    top: 50%;
+    left: 50%;
+    margin: -3px 0 0 -3px;
+    animation: onbOrbit 4s linear infinite;
+}
+
+.onb-orbit-dot-2 {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: var(--radius-circle);
+    background: var(--accent);
+    top: 50%;
+    left: 50%;
+    margin: -2px 0 0 -2px;
+    animation: onbOrbit2 6s linear infinite;
+}
+
+.onb-form-icon {
+    font-size: 48px;
+    line-height: 1;
+    animation: onbFloat 3.2s ease-in-out infinite;
+}
+
+.onb-hero-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin: 0 0 4px;
+    line-height: 1.1;
+}
+
+.onb-shimmer-text {
+    background: linear-gradient(
+        90deg,
+        var(--accent) 0%,
+        var(--accent2) 30%,
+        #c4b5fd 50%,
+        var(--accent2) 70%,
+        var(--accent) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: onbShimmer 3.5s linear infinite;
+}
+
+.onb-hero-sub {
+    color: var(--text2);
+    font-size: 15px;
+    max-width: 380px;
+    line-height: 1.6;
+    margin: 0;
+    text-align: center;
+}
+
+.onb-form-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0 0 6px;
+    letter-spacing: -0.03em;
+}
+
+.onb-form-sub {
+    color: var(--text3);
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.onb-fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    width: 100%;
+    max-width: 340px;
+}
+
+.onb-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.onb-label {
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+}
+
+.onb-input-field {
+    width: 100%;
+    padding: var(--space-sm) 14px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text);
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
+    font-size: 14px;
+    outline: none;
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s,
+        background 0.2s;
+}
+
+.onb-input-field:focus {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-focus);
+    background: var(--surface3);
+}
+
+.onb-input-mono {
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 13px;
+}
+
+.onb-ytdlp-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.onb-ytdlp-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.onb-ytdlp-title {
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+}
+
+.onb-ytdlp-status {
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    padding: var(--space-2xs) 10px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 170, 50, 0.1);
+    color: #ffaa33;
+    border: 1px solid rgba(255, 170, 50, 0.2);
+}
+
+.onb-ytdlp-status.detected {
+    background: rgba(74, 222, 128, 0.1);
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.2);
+}
+
+.onb-ytdlp-desc {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.onb-ytdlp-cmd-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm) 14px;
+}
+
+.onb-ytdlp-cmd {
+    flex: 1;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 12px;
+    color: var(--accent2);
+    user-select: all;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.onb-ytdlp-copy {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    color: var(--text3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all var(--anim-normal) var(--anim-easing);
+}
+
+.onb-ytdlp-copy:hover {
+    color: var(--text);
+    border-color: var(--border2);
+}
+
+.onb-ytdlp-retry {
+    padding: var(--space-xs) 16px;
+    border-radius: var(--radius-md);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all var(--anim-normal) var(--anim-easing);
+    align-self: flex-start;
+}
+
+.onb-ytdlp-retry:hover {
+    border-color: var(--border2);
+    color: var(--text);
+}
+
+.onb-form-actions {
+    width: 100%;
+    max-width: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    align-items: center;
+}
+
+.onb-main-btn {
+    padding: var(--space-md) 48px;
+    border-radius: var(--radius-lg);
+    border: none;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-family: var(--font-family-base, "Syne", sans-serif);
+
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: -0.01em;
+    box-shadow: var(--shadow-btn);
+    transition:
+        transform 0.15s,
+        box-shadow 0.15s,
+        background 0.4s,
+        opacity 0.4s;
+    position: relative;
+    overflow: hidden;
+}
+
+.onb-main-btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent);
+    opacity: 0;
+    transition: opacity var(--anim-slow) var(--anim-easing);
+}
+
+.onb-main-btn:hover::after {
+    opacity: 1;
+}
+
+.onb-main-btn:hover {
+    transform: scale(1.03) translateY(-1px);
+    box-shadow: var(--shadow-btn-hover);
+}
+
+.onb-main-btn:active {
+    transform: scale(0.98);
+}
+
+.onb-main-btn.submitting {
+    animation: onbBtnPulse 0.42s ease forwards;
+}
+
+.onb-main-btn-disabled {
+    background: var(--surface3) !important;
+    color: var(--text3) !important;
+    cursor: not-allowed;
+    box-shadow: none !important;
+    opacity: 0.5;
+}
+
+.onb-main-btn-disabled:hover {
+    transform: none !important;
+}
+
+.onb-main-btn-ready {
+    animation: onbFadeUp 0.3s ease both;
+}
+
+.onb-back-btn {
+    background: none;
+    border: none;
+    color: var(--text3);
+    font-family: var(--font-family-base, "Syne", sans-serif);
+    font-size: 11px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: color var(--anim-normal) var(--anim-easing);
+    padding: var(--space-2xs) 8px;
+}
+
+.onb-back-btn:hover {
+    color: var(--text2);
+}
+
+.onb-item-1 {
+    animation: onbFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+}
+
+.onb-item-2 {
+    animation: onbFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.onb-item-3 {
+    animation: onbFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+
+.onb-item-4 {
+    animation: onbFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+}
+
+.onb-item-5 {
+    animation: onbFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+.onb-icon-emoji,
+    .onb-form-icon {
+        animation: none;
+    }
+.onb-orbit-dot,
+    .onb-orbit-dot-2 {
+        animation: none;
+    }
+.onb-shimmer-text {
+        animation: none;
+    }
+.onb-item-1,
+    .onb-item-2,
+    .onb-item-3,
+    .onb-item-4,
+    .onb-item-5 {
+        animation: none;
+    }
+}
+
+
+/* Keyframes moved from globals.css */
+@keyframes onbFloat {
+    0%,
+    100% {
+        transform: translateY(0px) rotate(-2deg);
+    }
+    50% {
+        transform: translateY(-10px) rotate(2deg);
+    }
+}
+
+@keyframes onbGlow {
+    0%,
+    100% {
+        box-shadow: var(--shadow-glow-xl);
+    }
+    50% {
+        box-shadow: var(--shadow-glow-2xl);
+    }
+}
+
+@keyframes onbShimmer {
+    0% {
+        background-position: -200% center;
+    }
+    100% {
+        background-position: 200% center;
+    }
+}
+
+@keyframes onbBtnPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: var(--shadow-btn);
+    }
+    40% {
+        transform: scale(1.06);
+        box-shadow: var(--shadow-glow-lg);
+    }
+    100% {
+        transform: scale(0.97);
+        box-shadow: var(--shadow-glow);
+    }
+}
+
+@keyframes onbOrbit {
+    0% {
+        transform: rotate(0deg) translateX(110px) rotate(0deg);
+        opacity: 0.5;
+    }
+    100% {
+        transform: rotate(360deg) translateX(110px) rotate(-360deg);
+        opacity: 0.5;
+    }
+}
+
+@keyframes onbOrbit2 {
+    0% {
+        transform: rotate(180deg) translateX(80px) rotate(-180deg);
+        opacity: 0.3;
+    }
+    100% {
+        transform: rotate(540deg) translateX(80px) rotate(-540deg);
+        opacity: 0.3;
+    }
+}
+
+@keyframes onbFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

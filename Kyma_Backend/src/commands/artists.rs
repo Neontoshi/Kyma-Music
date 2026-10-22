@@ -86,7 +86,7 @@ pub async fn get_saved_artists(
 
 #[tauri::command]
 pub async fn search_artist_for_save(query: String) -> Result<Vec<SavedArtist>, String> {
-    let yt = crate::commands::youtube::youtube_search(query, None)
+    let yt = crate::commands::youtube::youtube_search(query, None, None)
         .await
         .map_err(|e| e.to_string())?;
 

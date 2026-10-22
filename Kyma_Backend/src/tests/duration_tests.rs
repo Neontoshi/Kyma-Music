@@ -1,5 +1,5 @@
 // Kyma_Backend/src/tests/duration_tests.rs
-use crate::commands::youtube::secs_to_duration_str;
+use crate::commands::media::secs_to_duration_str;
 
 #[test]
 fn test_seconds_only() {

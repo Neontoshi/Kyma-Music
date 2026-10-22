@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useUIStore } from "../../stores/uiStore";
 import { useUserStore } from "../../stores/userStore";
 import { logger } from "../../../services/logger.ts";
+import { tauriCommands } from "../../../services/tauriBridge.ts";
 
 const HomeIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -156,15 +157,17 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onOpen, onClose }) => {
   ];
 
   React.useEffect(() => {
-    import("@tauri-apps/api/core").then(({ invoke }) => {
-      invoke("get_playlists").then((data: any) => setPlaylists(data || []));
-    });
+    tauriCommands
+      .getPlaylists()
+      .then((data) => setPlaylists(data || []))
+      .catch(() => {});
   }, [location.pathname]);
 
   const refreshPlaylists = () => {
-    import("@tauri-apps/api/core").then(({ invoke }) => {
-      invoke("get_playlists").then((data: any) => setPlaylists(data || []));
-    });
+    tauriCommands
+      .getPlaylists()
+      .then((data) => setPlaylists(data || []))
+      .catch(() => {});
   };
 
   const canCreate = newName.trim().length > 0;
@@ -177,14 +180,13 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onOpen, onClose }) => {
       mood: newMood,
     });
     try {
-      const { invoke } = await import("@tauri-apps/api/core");
-      await invoke("create_playlist", {
-        name: newName.trim(),
-        description: newDesc.trim() || undefined,
-        emoji: newEmoji,
-        mood: newMood || undefined,
-        privacy: newPrivacy,
-      });
+      await tauriCommands.createPlaylist(
+        newName.trim(),
+        newDesc.trim() || undefined,
+        newEmoji,
+        newMood || undefined,
+        newPrivacy,
+      );
       logger.logUI("Sidebar", "create_playlist_success", {
         name: newName.trim(),
       });

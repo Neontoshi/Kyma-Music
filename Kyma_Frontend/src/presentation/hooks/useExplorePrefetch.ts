@@ -4,21 +4,17 @@ import { usePlayerStore } from "../stores/playerStore";
 import { Song } from "../../core/entities/Song";
 import { tauriCommands } from "../../services/tauriBridge";
 import { logger } from "../../services/logger";
+import { formatDuration } from "../../lib/formatTime";
 
 const PREFETCH_COUNT = 4;
 const CONCURRENCY = 2; // Resolve 2 at a time
-
-const formatDuration = (secs: number) => {
-  const m = Math.floor(secs / 60);
-  const s = Math.floor(secs % 60);
-  return `${m}:${s.toString().padStart(2, "0")}`;
-};
 
 export const useExplorePrefetch = (tracks: Song[]) => {
   const prefetchedRef = useRef<Set<string>>(new Set());
   const lastPrefetchedForId = useRef<string | null>(null);
   const tracksRef = useRef<Song[]>(tracks);
   const isResolvingRef = useRef(false);
+  const prefetchTimerRef = useRef<number | null>(null);
 
   tracksRef.current = tracks;
 
@@ -104,11 +100,23 @@ export const useExplorePrefetch = (tracks: Song[]) => {
 
       if (lastPrefetchedForId.current !== currentSong.id) {
         lastPrefetchedForId.current = currentSong.id;
-        setTimeout(() => prefetchNextBatch(), 1000);
+        if (prefetchTimerRef.current !== null) {
+          clearTimeout(prefetchTimerRef.current);
+        }
+        prefetchTimerRef.current = window.setTimeout(() => {
+          prefetchTimerRef.current = null;
+          prefetchNextBatch();
+        }, 1000);
       }
     }, 2000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (prefetchTimerRef.current !== null) {
+        clearTimeout(prefetchTimerRef.current);
+        prefetchTimerRef.current = null;
+      }
+    };
   }, []);
 
   return null;

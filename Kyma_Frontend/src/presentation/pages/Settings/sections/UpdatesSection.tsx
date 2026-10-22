@@ -18,8 +18,6 @@ interface UpdatesSectionProps {
 const UpdatesSection: React.FC<UpdatesSectionProps> = ({
   updateAvailable,
   updateVersion,
-  //@ts-ignore
-  updateUrl,
   updateNotes,
   checking,
   downloading,
@@ -300,7 +298,6 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                 </>
               ) : (
                 <>
-                  <span>✅</span>
                   <span>Check for Updates</span>
                 </>
               )}
@@ -341,7 +338,7 @@ const UpdatesSection: React.FC<UpdatesSectionProps> = ({
                 marginBottom: "6px",
               }}
             >
-              📌 About Updates
+              About Updates
             </div>
             <div
               style={{

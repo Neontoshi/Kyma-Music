@@ -4,14 +4,7 @@ import { usePlayerStore } from "../stores/playerStore";
 import { useQueueStore } from "../stores/queueStore";
 import { Song } from "../../core/entities/Song";
 import SongRow from "../components/Library/SongRow";
-
-const formatTotalDuration = (songs: Song[]) => {
-  const total = songs.reduce((acc, s) => acc + (s.duration || 0), 0);
-  const h = Math.floor(total / 3600);
-  const m = Math.floor((total % 3600) / 60);
-  if (h > 0) return `${h}h ${m}m`;
-  return `${m} min`;
-};
+import { formatTotalDuration } from "../../lib/formatTime";
 
 const LikedPage: React.FC = () => {
   const { songs } = useLibraryStore();
@@ -24,7 +17,7 @@ const LikedPage: React.FC = () => {
   const likedSongs = useMemo(() => songs.filter((s) => s.liked), [songs]);
 
   const getSorted = () => {
-    let list = [...likedSongs];
+    const list = [...likedSongs];
     if (sortMode === 1) list.sort((a, b) => a.title.localeCompare(b.title));
     else if (sortMode === 2)
       list.sort((a, b) => a.artist.localeCompare(b.artist));
@@ -44,8 +37,7 @@ const LikedPage: React.FC = () => {
     );
   }, [likedSongs, query, sortMode]);
 
-  //@ts-ignore
-  const handlePlay = (song: Song, index: number) => {
+  const handlePlay = (_song: Song, index: number) => {
     setQueue(filtered, filtered[index], "library");
     setCurrentSong(filtered[index]);
     setProgress(0);
@@ -137,7 +129,7 @@ const LikedPage: React.FC = () => {
                   lineHeight: 1,
                 }}
               >
-                {formatTotalDuration(filtered)}
+                {formatTotalDuration(filtered.reduce((acc, s) => acc + (s.duration || 0), 0))}
               </div>
               <div
                 style={{

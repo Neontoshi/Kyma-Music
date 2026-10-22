@@ -835,12 +835,17 @@ pub struct DeezerAlbumTrack {
 }
 
 #[tauri::command]
-pub async fn search_albums_deezer(query: String) -> Result<Vec<DeezerAlbumInfo>, String> {
+pub async fn search_albums_deezer(
+    query: String,
+    index: Option<u32>,
+) -> Result<Vec<DeezerAlbumInfo>, String> {
     user_action!("DEEZER", "Searching albums: {}", query);
 
+    let offset = index.unwrap_or(0);
     let url = format!(
-        "https://api.deezer.com/search/album?q={}&limit=25",
-        query.replace(' ', "%20")
+        "https://api.deezer.com/search/album?q={}&limit=25&index={}",
+        query.replace(' ', "%20"),
+        offset
     );
     let client = reqwest::Client::new();
     let resp = client.get(&url).send().await.map_err(|e| e.to_string())?;

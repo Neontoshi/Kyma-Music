@@ -4,60 +4,10 @@ import { usePlayerStore } from "../stores/playerStore";
 import { useQueueStore } from "../stores/queueStore";
 import { tauriCommands } from "../../services/tauriBridge";
 import { Song } from "../../core/entities/Song";
-
-const formatDuration = (secs: number) => {
-  const m = Math.floor(secs / 60);
-  const s = Math.floor(secs % 60);
-  return `${m}:${s.toString().padStart(2, "0")}`;
-};
-
-const formatTotalDuration = (songs: any[]) => {
-  const total = songs.reduce((acc, s) => acc + (s.duration_secs || 0), 0);
-  const h = Math.floor(total / 3600);
-  const m = Math.floor((total % 3600) / 60);
-  if (h > 0) return `${h}h ${m}m`;
-  return `${m} min`;
-};
-
-const randomGradient = () => {
-  const hues = [280, 200, 340, 40, 160, 100, 10, 260];
-  const h = hues[Math.floor(Math.random() * hues.length)];
-  return `linear-gradient(135deg, hsl(${h}, 45%, 32%), hsl(${h + 30}, 38%, 18%))`;
-};
-
-const PlayingBars = () => (
-  <div style={{ display: "flex", alignItems: "flex-end", gap: 2, height: 14 }}>
-    <div
-      style={{
-        width: 3,
-        background: "var(--accent)",
-        borderRadius: "var(--radius-xs)",
-        animation: "barBounce 0.8s ease-in-out infinite",
-        height: 14,
-      }}
-    />
-    <div
-      style={{
-        width: 3,
-        background: "var(--accent)",
-        borderRadius: "var(--radius-xs)",
-        animation: "barBounce 0.8s ease-in-out infinite",
-        animationDelay: "0.15s",
-        height: 14,
-      }}
-    />
-    <div
-      style={{
-        width: 3,
-        background: "var(--accent)",
-        borderRadius: "var(--radius-xs)",
-        animation: "barBounce 0.8s ease-in-out infinite",
-        animationDelay: "0.3s",
-        height: 14,
-      }}
-    />
-  </div>
-);
+import { formatDuration, formatTotalDuration } from "../../lib/formatTime";
+import { randomGradient } from "../../lib/gradients";
+import PlayingBars from "../components/PlayingBars";
+import { makeSong } from "../../lib/song";
 
 const PlaylistDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -88,27 +38,22 @@ const PlaylistDetailPage: React.FC = () => {
   };
 
   const handlePlay = (_song: any, index: number) => {
-    const songList: Song[] = songs.map((s) => ({
-      id: s.song_id,
-      path: s.path,
-      title: s.title,
-      artist: s.artist,
-      album: s.album,
-      duration: s.duration_secs,
-      genre: null,
-      year: null,
-      track_number: null,
-      artwork: s.thumbnail,
-      source: s.source as any,
-      videoId: s.video_id || undefined,
-      dur: formatDuration(s.duration_secs),
-      emoji: "🎵",
-      grad: randomGradient(),
-      bpm: 0,
-      key: "—",
-      plays: 0,
-      liked: likedSongs.has(s.song_id),
-    }));
+    const songList: Song[] = songs.map((s) =>
+      makeSong({
+        id: s.song_id,
+        path: s.path,
+        title: s.title,
+        artist: s.artist,
+        album: s.album,
+        duration: s.duration_secs,
+        artwork: s.thumbnail,
+        source: s.source as any,
+        videoId: s.video_id || undefined,
+        dur: formatDuration(s.duration_secs),
+        grad: randomGradient(),
+        liked: likedSongs.has(s.song_id),
+      }),
+    );
     setQueue(songList, songList[index], "playlist");
     setCurrentSong(songList[index]);
     setProgress(0);
@@ -251,7 +196,7 @@ const PlaylistDetailPage: React.FC = () => {
                   lineHeight: 1,
                 }}
               >
-                {formatTotalDuration(songs)}
+                {formatTotalDuration(songs.reduce((acc, s) => acc + (s.duration_secs || 0), 0))}
               </div>
               <div
                 style={{

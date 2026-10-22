@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSystemStore } from "../stores/systemStore";
 import { tauriCommands } from "../../services/tauriBridge";
 import { usePlayerStore } from "../stores/playerStore";
+import { randomGradient } from "../../lib/gradients";
 
 const ALL_GENRES = [
   "pop",
@@ -37,13 +38,6 @@ const ALL_GENRES = [
   "indie",
   "alternative",
 ];
-
-const randomGradient = (seed: string) => {
-  const hash = seed.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  const hues = [280, 200, 340, 40, 160, 100, 10, 260, 320, 180];
-  const h = hues[hash % hues.length];
-  return `linear-gradient(135deg, hsl(${h}, 45%, 32%), hsl(${h + 30}, 38%, 18%))`;
-};
 
 const ForYouPage: React.FC = () => {
   const navigate = useNavigate();

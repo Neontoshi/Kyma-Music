@@ -9,13 +9,18 @@ interface UserStore {
 
 export const useUserStore = create<UserStore>((set) => {
   // Load from localStorage on init
-  const stored = localStorage.getItem("kyma_user");
-  const defaults = stored
-    ? JSON.parse(stored)
-    : { displayName: "", username: "", hasCompletedOnboarding: false };
+  const defaults = { displayName: "", username: "", hasCompletedOnboarding: false };
+  let stored: Partial<typeof defaults> = {};
+  try {
+    const raw = localStorage.getItem("kyma_user");
+    if (raw) stored = JSON.parse(raw);
+  } catch {
+    localStorage.removeItem("kyma_user");
+  }
 
   return {
     ...defaults,
+    ...stored,
     setUser: (displayName: string, username: string) => {
       const data = { displayName, username, hasCompletedOnboarding: true };
       localStorage.setItem("kyma_user", JSON.stringify(data));
