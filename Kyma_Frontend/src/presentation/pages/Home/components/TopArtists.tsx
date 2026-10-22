@@ -16,7 +16,7 @@ const TopArtists: React.FC<TopArtistsProps> = ({
   return (
     <div
       className="hp-section"
-      style={{ marginBottom: "2rem", animationDelay: "0.45s" }}
+      style={{ marginBottom: 0, animationDelay: "0.45s" }}
     >
       <SectionHeader label="Top Artists" sub="this week" />
       <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>

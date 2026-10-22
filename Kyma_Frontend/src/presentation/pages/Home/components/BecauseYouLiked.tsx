@@ -25,7 +25,7 @@ const BecauseYouLiked: React.FC<BecauseYouLikedProps> = ({
   return (
     <div
       className="hp-section"
-      style={{ marginBottom: "2rem", animationDelay: "0.4s" }}
+      style={{ marginBottom: 0, animationDelay: "0.4s" }}
     >
       <SectionHeader
         label="Because you liked"

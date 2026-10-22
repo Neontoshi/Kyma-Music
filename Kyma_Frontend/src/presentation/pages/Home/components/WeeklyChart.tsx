@@ -18,7 +18,7 @@ const WeeklyChart: React.FC<WeeklyChartProps> = ({
   return (
     <div
       className="hp-section"
-      style={{ marginBottom: "2rem", animationDelay: "0.12s" }}
+      style={{ marginBottom: 0, animationDelay: "0.12s" }}
     >
       <SectionHeader label="📊 Your Weekly Chart" sub="Last.fm" />
       <div

@@ -17,19 +17,15 @@ import { makeSong } from "../../../lib/song";
 
 // Section components
 import HeroSection from "./components/HeroSection";
-import HomeSpotlight from "./components/HomeSpotlight";
-import TrendingSection from "./components/TrendingSection";
+import TrendingCarousel from "./components/TrendingCarousel";
 import SimilarArtists from "./components/SimilarArtists";
-import ListeningPattern from "./components/ListeningPattern";
 import WeeklyChart from "./components/WeeklyChart";
 import QuickPicks from "./components/QuickPicks";
 import MoodPicks from "./components/MoodPicks";
 import RecentlyViewed from "./components/RecentlyViewed";
 import MostPlayed from "./components/MostPlayed";
-import NewForYou from "./components/NewForYou";
 import BecauseYouLiked from "./components/BecauseYouLiked";
 import TopArtists from "./components/TopArtists";
-import LikedSongs from "./components/LikedSongs";
 
 // Helpers
 import shuffle from "./helpers/shuffle";
@@ -67,9 +63,7 @@ const HomePage: React.FC = () => {
     weeklyChart,
     similarArtists,
     weeklyStats,
-    heatmap,
     loadAll,
-    allTimeStats,
   } = useHomeDataStore();
   const { updateAvailable, updateVersion, downloadAndInstall } = useUpdater();
 
@@ -132,33 +126,15 @@ const HomePage: React.FC = () => {
     [songs],
   );
   const quickPicks = useMemo(() => shuffle(songs).slice(0, 8), [songs]);
-  const likedSongsPreview = useMemo(
-    () => songs.filter((s) => s.liked).slice(0, 8),
-    [songs],
-  );
 
   const [topArtists, setTopArtists] = useState<
     { name: string; plays: number }[]
   >([]);
   const [recentlyViewedAlbums, setRecentlyViewedAlbums] = useState<any[]>([]);
-  const [newReleases, setNewReleases] = useState<Song[]>([]);
-  const [shuffledNewReleases, setShuffledNewReleases] = useState<Song[]>([]);
   const [lastfmKey, setLastfmKey] = useState("");
   const [lastfmUser, setLastfmUser] = useState("");
 
   const topLocalArtist = useMemo(() => topArtist(songs), [songs]);
-
-  useEffect(() => {
-    if (newReleases.length > 0)
-      setShuffledNewReleases(shuffle([...newReleases]));
-  }, [newReleases]);
-  useEffect(() => {
-    if (newReleases.length === 0) return;
-    const interval = setInterval(() => {
-      setShuffledNewReleases(shuffle([...newReleases]));
-    }, 240000);
-    return () => clearInterval(interval);
-  }, [newReleases]);
 
   useEffect(() => {
     tauriCommands.getSetting("listenbrainz_user").then((user) => {
@@ -192,36 +168,6 @@ const HomePage: React.FC = () => {
   }, [lastfmKey, lastfmUser, topLocalArtist]);
   useEffect(() => {
     setRecentlyViewedAlbums(loadRecentlyViewedAlbums());
-  }, [songs]);
-
-  useEffect(() => {
-    tauriCommands.getSavedArtists().then((artists) => {
-      if (!artists?.length) return;
-      const allCachedSongs: Song[] = [];
-      for (const artist of artists) {
-        const cacheKey = `kyma_artist_songs_${artist.name}`;
-        const cached = localStorage.getItem(cacheKey);
-        if (cached) {
-          try {
-            const data = JSON.parse(cached);
-            if (data.songs?.length) allCachedSongs.push(...data.songs);
-          } catch {}
-        }
-      }
-      const localMatches = songs.filter((s) =>
-        artists.some((a: any) =>
-          s.artist?.toLowerCase().includes(a.name.toLowerCase()),
-        ),
-      );
-      const combined = [...localMatches, ...allCachedSongs];
-      const seen = new Set<string>();
-      const unique = combined.filter((s) => {
-        if (seen.has(s.id)) return false;
-        seen.add(s.id);
-        return true;
-      });
-      setNewReleases(shuffle(unique).slice(0, 8));
-    });
   }, [songs]);
 
   const stats = useMemo(() => {
@@ -307,49 +253,6 @@ const HomePage: React.FC = () => {
     chill: { label: "Late Night Vibes", color: "var(--accent2)", icon: "🌙" },
     focus: { label: "Deep Focus", color: "var(--accent3)", icon: "🎯" },
   };
-  const spotlightMixes = useMemo(() => {
-    const config = moodConfig[mood];
-    return [
-      {
-        label: config.label,
-        subtitle: `${moodPicks.length} tracks · picked for this ${mood}`,
-        gradient:
-          "linear-gradient(135deg, color-mix(in srgb, var(--accent) 24%, #080808) 0%, #080808 100%)",
-        songs: moodPicks,
-      },
-      {
-        label: "Daily Mix 1",
-        subtitle: `${quickPicks.length} tracks · based on your listening`,
-        gradient: "linear-gradient(135deg, color-mix(in srgb, var(--accent2) 20%, #080808) 0%, #080808 100%)",
-        songs: quickPicks,
-      },
-      {
-        label: "Liked Songs",
-        subtitle: `${likedSongsPreview.length} tracks you love`,
-        gradient: "linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, #080808) 0%, #080808 100%)",
-        songs: likedSongsPreview,
-      },
-      {
-        label: "On Repeat",
-        subtitle: `${topPlayed.length} tracks played most`,
-        gradient: "linear-gradient(135deg, #2b2b2b 0%, #0b0b0b 100%)",
-        songs: topPlayed,
-      },
-    ].filter((mix) => mix.songs.length > 0);
-  }, [mood, moodPicks, quickPicks, likedSongsPreview, topPlayed]);
-
-  const spotlightAlbums = useMemo(
-    () =>
-      recentlyViewedAlbums.map((album: any) => ({
-        id: String(album.id),
-        title: album.title,
-        artist: album.artist,
-        art: album.cover_url,
-        album,
-      })),
-    [recentlyViewedAlbums],
-  );
-
   const becauseYouLiked = useMemo(() => {
     const liked = songs.filter((s) => s.liked);
     if (!liked.length) return null;
@@ -515,22 +418,19 @@ const HomePage: React.FC = () => {
   }
 
   return (
-    <div className="song-list-pane" style={{ height: "100%" }}>
+    <div className="home-page">
+      <div className="home-atmosphere" aria-hidden="true" />
       <style>{`
-        @keyframes barBounce { 0%,100%{transform:scaleY(0.15)} 50%{transform:scaleY(1)} }
-        @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-        .hp-section { animation: fadeUp 0.4s ease both; }
         .card-overlay:hover { background: rgba(0,0,0,0.45) !important; }
         .card-overlay:hover .card-play-btn { opacity: 1 !important; transform: scale(1) !important; }
       `}</style>
 
-      <div style={{ width: "100%" }}>
+      <div className="home-inner">
         <HeroSection
           displayName={displayName}
           greeting={greeting}
           stats={stats}
           weeklyStats={weeklyStats}
-          allTimeStats={allTimeStats}
           updateAvailable={updateAvailable}
           updateVersion={updateVersion}
           onUpdateClick={downloadAndInstall}
@@ -539,35 +439,10 @@ const HomePage: React.FC = () => {
           onUpdateYtdlp={updateYtdlp}
         />
 
-        <HomeSpotlight
-          recentlyPlayed={recentlyPlayedAsSongs}
-          mixes={spotlightMixes}
-          albums={spotlightAlbums}
-          currentSong={currentSong}
-          isPlaying={isPlaying}
-          onPlaySong={playSong}
-          onSetQueue={handleSetQueue}
-          onAlbumClick={handleAlbumClick}
-          onNavigate={handleNavigate}
-        />
-
-        <TrendingSection
+        <TrendingCarousel
           trendingChart={trendingChart}
           currentSong={currentSong}
           isPlaying={isPlaying}
-          onPlayTrending={playTrendingTrack}
-        />
-
-        <SimilarArtists
-          similarArtists={similarArtists}
-          topLocalArtist={topLocalArtist}
-          onArtistClick={handleArtistClick}
-        />
-
-        <ListeningPattern heatmap={heatmap} />
-
-        <WeeklyChart
-          weeklyChart={weeklyChart}
           onPlayTrending={playTrendingTrack}
         />
 
@@ -576,7 +451,6 @@ const HomePage: React.FC = () => {
           recentlyPlayed={recentlyPlayed}
           recentlyPlayedLoading={recentlyPlayedLoading}
           recentlyPlayedAsSongs={recentlyPlayedAsSongs}
-          likedSongsPreview={likedSongsPreview}
           currentSong={currentSong}
           isPlaying={isPlaying}
           onPlaySong={playSong}
@@ -608,12 +482,9 @@ const HomePage: React.FC = () => {
           onSetQueue={handleSetQueue}
         />
 
-        <NewForYou
-          shuffledNewReleases={shuffledNewReleases}
-          currentSong={currentSong}
-          isPlaying={isPlaying}
-          onPlaySong={playSong}
-          onSetQueue={handleSetQueue}
+        <WeeklyChart
+          weeklyChart={weeklyChart}
+          onPlayTrending={playTrendingTrack}
         />
 
         <BecauseYouLiked
@@ -624,19 +495,13 @@ const HomePage: React.FC = () => {
           onSetQueue={handleSetQueue}
         />
 
-        <TopArtists topArtists={topArtists} onArtistClick={handleArtistClick} />
-
-        <LikedSongs
-          recentlyPlayed={recentlyPlayed}
-          likedSongsPreview={likedSongsPreview}
-          currentSong={currentSong}
-          isPlaying={isPlaying}
-          onPlaySong={playSong}
-          onSetQueue={handleSetQueue}
-          onNavigate={handleNavigate}
+        <SimilarArtists
+          similarArtists={similarArtists}
+          topLocalArtist={topLocalArtist}
+          onArtistClick={handleArtistClick}
         />
 
-        <div style={{ height: "32px" }} />
+        <TopArtists topArtists={topArtists} onArtistClick={handleArtistClick} />
       </div>
     </div>
   );

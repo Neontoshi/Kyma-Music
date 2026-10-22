@@ -20,7 +20,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({
   return (
     <div
       className="hp-section"
-      style={{ marginBottom: "2rem", animationDelay: "0.25s" }}
+      style={{ marginBottom: 0, animationDelay: "0.25s" }}
     >
       <SectionHeader
         label="Recently Viewed"

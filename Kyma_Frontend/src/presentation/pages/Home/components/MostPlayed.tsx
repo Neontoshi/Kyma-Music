@@ -24,7 +24,7 @@ const MostPlayed: React.FC<MostPlayedProps> = ({
   return (
     <div
       className="hp-section"
-      style={{ marginBottom: "2rem", animationDelay: "0.3s" }}
+      style={{ marginBottom: 0, animationDelay: "0.3s" }}
     >
       <SectionHeader label="Most Played" sub="all-time" />
       <div

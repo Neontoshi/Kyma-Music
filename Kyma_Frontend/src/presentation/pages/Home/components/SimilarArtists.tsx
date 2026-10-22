@@ -18,7 +18,7 @@ const SimilarArtists: React.FC<SimilarArtistsProps> = ({
   return (
     <div
       className="hp-section"
-      style={{ marginBottom: "2rem", animationDelay: "0.1s" }}
+      style={{ marginBottom: 0, animationDelay: "0.1s" }}
     >
       <SectionHeader
         label="🔗 Fans also like"

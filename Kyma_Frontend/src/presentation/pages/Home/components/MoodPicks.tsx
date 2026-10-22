@@ -31,7 +31,7 @@ const MoodPicks: React.FC<MoodPicksProps> = ({
   return (
     <div
       className="hp-section"
-      style={{ marginBottom: "2rem", animationDelay: "0.2s" }}
+      style={{ marginBottom: 0, animationDelay: "0.2s" }}
     >
       <SectionHeader
         label={`${moodConfig[mood].icon} ${moodConfig[mood].label}`}
