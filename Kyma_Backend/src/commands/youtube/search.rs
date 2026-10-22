@@ -2,7 +2,7 @@ use super::query::parse_query;
 use super::scoring::{artist_from_entry, dedup_results, score_song, ScoreContext};
 use super::types::YtDlpEntry;
 use crate::commands::media::{secs_to_duration_str, ytdlp_command, YtError, YtSong};
-use crate::{user_action, user_error};
+use crate::user_error;
 
 //  Main command
 
@@ -13,7 +13,6 @@ pub async fn youtube_search(
     offset: Option<u32>,
 ) -> Result<Vec<YtSong>, YtError> {
     let query_trimmed = query.trim();
-    user_action!("YOUTUBE", "Searching: \"{}\"", query_trimmed);
 
     if query_trimmed.is_empty() {
         return Ok(Vec::new());
@@ -155,11 +154,5 @@ pub async fn youtube_search(
     candidates.sort_by_key(|c| std::cmp::Reverse(c.1));
     let results: Vec<YtSong> = dedup_results(candidates).into_iter().skip(offset).collect();
 
-    user_action!(
-        "YOUTUBE",
-        "Found {} results for \"{}\"",
-        results.len(),
-        query_trimmed
-    );
     Ok(results)
 }

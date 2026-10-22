@@ -115,7 +115,6 @@ pub async fn play_track(
         // Local file - use path directly
         song.path.clone()
     } else if let Some(cached_url) = check_prefetch_cache(app, &song) {
-        user_action!("PLAYBACK", "Using prefetched URL for: {}", title_log);
         cached_url
     } else if let Some(video_id) = &song.video_id {
         // Not prefetched - resolve now
@@ -174,8 +173,6 @@ pub async fn play_track(
         app.audio_engine.play(&play_url, false)
     };
 
-    user_action!("PLAYBACK", "Started with track_id: {}", track_id);
-
     tokio::time::sleep(Duration::from_millis(50)).await;
     {
         let mut current_track = app.current_track.lock();
@@ -194,7 +191,6 @@ pub async fn play_track(
 
 #[tauri::command]
 pub async fn pause_playback(state: tauri::State<'_, AppState>) -> Result<(), KymaError> {
-    user_action!("PLAYBACK", "Paused");
     state.audio_engine.pause();
     *state.is_playing.lock() = false;
     Ok(())
@@ -202,7 +198,6 @@ pub async fn pause_playback(state: tauri::State<'_, AppState>) -> Result<(), Kym
 
 #[tauri::command]
 pub async fn resume_playback(state: tauri::State<'_, AppState>) -> Result<(), KymaError> {
-    user_action!("PLAYBACK", "Resumed");
     state.audio_engine.resume();
     *state.is_playing.lock() = true;
     Ok(())
@@ -210,7 +205,6 @@ pub async fn resume_playback(state: tauri::State<'_, AppState>) -> Result<(), Ky
 
 #[tauri::command]
 pub async fn stop_playback(state: tauri::State<'_, AppState>) -> Result<(), KymaError> {
-    user_action!("PLAYBACK", "Stopped");
     state.audio_engine.stop();
     *state.is_playing.lock() = false;
     let mut current = state.current_track.lock();
@@ -220,7 +214,6 @@ pub async fn stop_playback(state: tauri::State<'_, AppState>) -> Result<(), Kyma
 
 #[tauri::command]
 pub async fn seek_to(position: f64, state: tauri::State<'_, AppState>) -> Result<(), KymaError> {
-    user_action!("SEEK", "To {:.2}s", position);
     state.audio_engine.seek(position);
     Ok(())
 }
@@ -228,9 +221,6 @@ pub async fn seek_to(position: f64, state: tauri::State<'_, AppState>) -> Result
 #[tauri::command]
 pub async fn set_volume(level: f32, state: tauri::State<'_, AppState>) -> Result<(), KymaError> {
     let clamped = level.clamp(0.0, 1.0);
-    let percent = (clamped * 100.0) as i32;
-
-    user_action!("VOLUME", "Set to {}%", percent);
     state.audio_engine.set_volume(clamped);
     *state.volume.lock() = clamped;
     Ok(())

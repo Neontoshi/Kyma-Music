@@ -85,6 +85,11 @@ const LibraryView: React.FC = () => {
     setProgress(0);
   };
 
+  const handlePlaySong = React.useCallback(
+    (song: Song) => playFrom(song, displaySongs),
+    [displaySongs, isFiltering, searchQuery, setQueue, setCurrentSong, setProgress],
+  );
+
   const handlePlayAll = () => {
     if (displaySongs.length > 0) playFrom(displaySongs[0], displaySongs);
   };
@@ -448,7 +453,7 @@ const LibraryView: React.FC = () => {
                   song={song}
                   index={idx}
                   isCurrent={currentSong?.id === song.id}
-                  onPlay={() => playFrom(song, displaySongs)}
+                  onPlay={handlePlaySong}
                 />
               ))}
             </div>

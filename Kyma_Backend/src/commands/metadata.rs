@@ -1,28 +1,10 @@
 use crate::models::song::Song;
-use crate::user_action;
 use crate::user_error;
 use crate::KymaError;
 use lofty::picture::PictureType;
 use lofty::prelude::*;
 
-// Helper function for safe string truncation (handles Unicode correctly)
-fn safe_truncate(s: &str, max_chars: usize) -> String {
-    if s.chars().count() > max_chars {
-        s.chars().take(max_chars).collect::<String>() + "..."
-    } else {
-        s.to_string()
-    }
-}
-
 pub fn extract_metadata(file_path: &str) -> Result<Song, KymaError> {
-    // Extract just the filename for logging (avoid long paths)
-    let _file_name = std::path::Path::new(file_path)
-        .file_name()
-        .and_then(|n| n.to_str())
-        .unwrap_or(file_path);
-
-    let start_time = std::time::Instant::now();
-
     let mut song = Song::new(file_path.to_string());
 
     if let Ok(tagged_file) = lofty::read_from_path(file_path) {
@@ -76,7 +58,6 @@ pub fn extract_metadata(file_path: &str) -> Result<Song, KymaError> {
     }
 
     // Final filename fallback if everything else failed
-    let used_filename_fallback = song.title == "Unknown";
     if song.title == "Unknown" {
         let file_stem = std::path::Path::new(file_path)
             .file_stem()
@@ -89,28 +70,6 @@ pub fn extract_metadata(file_path: &str) -> Result<Song, KymaError> {
         } else {
             song.title = file_stem;
         }
-    }
-
-    let elapsed = start_time.elapsed();
-    // FIX: Use safe_truncate instead of byte slicing
-    let title_log = safe_truncate(&song.title, 50);
-
-    if used_filename_fallback {
-        user_action!(
-            "METADATA",
-            "Extracted (filename fallback): {} - {} in {:.2}ms",
-            title_log,
-            song.artist,
-            elapsed.as_secs_f64() * 1000.0
-        );
-    } else {
-        user_action!(
-            "METADATA",
-            "Extracted: {} - {} in {:.2}ms",
-            title_log,
-            song.artist,
-            elapsed.as_secs_f64() * 1000.0
-        );
     }
 
     Ok(song)
@@ -229,19 +188,6 @@ fn extract_metadata_symphonia(file_path: &str) -> Option<(String, String, String
             .and_then(|s| s.to_str())
             .unwrap_or("Unknown")
             .to_string();
-    }
-
-    // Only log if we actually found something
-    if !title.is_empty() && title != "Unknown" {
-        // FIX: Use safe_truncate instead of byte slicing
-        let title_log = safe_truncate(&title, 40);
-        user_action!(
-            "METADATA",
-            "Symphonia fallback found: {} - {} (duration: {:.2}s)",
-            title_log,
-            artist,
-            duration
-        );
     }
 
     Some((title, artist, album, duration))

@@ -53,8 +53,6 @@ pub async fn get_setting(
     } else {
         &key
     };
-    user_action!("SETTINGS", "Getting setting: {}", log_key);
-
     let row: Option<(String,)> = sqlx::query_as("SELECT value FROM settings WHERE key = ?")
         .bind(&key)
         .fetch_optional(&state.db)
@@ -62,10 +60,7 @@ pub async fn get_setting(
 
     match row {
         Some((value,)) if is_sensitive(&key) => match deobfuscate(&value) {
-            Ok(decrypted) => {
-                user_action!("SETTINGS", "Retrieved setting: {} (obfuscated)", log_key);
-                Ok(Some(decrypted))
-            }
+            Ok(decrypted) => Ok(Some(decrypted)),
             Err(e) => {
                 user_error!(
                     "SETTINGS",
@@ -77,23 +72,8 @@ pub async fn get_setting(
                 Ok(None)
             }
         },
-        Some((value,)) => {
-            user_action!(
-                "SETTINGS",
-                "Retrieved setting: {} = {}",
-                log_key,
-                if value.len() > 50 {
-                    &value[..47]
-                } else {
-                    &value
-                }
-            );
-            Ok(Some(value))
-        }
-        None => {
-            user_action!("SETTINGS", "Setting not found: {}", log_key);
-            Ok(None)
-        }
+        Some((value,)) => Ok(Some(value)),
+        None => Ok(None),
     }
 }
 
@@ -121,8 +101,6 @@ pub async fn set_setting(
         value.clone()
     };
 
-    user_action!("SETTINGS", "Setting: {} = {}", log_key, log_value);
-
     let stored_value = if is_sensitive(&key) {
         obfuscate(&value)
     } else {
@@ -136,7 +114,7 @@ pub async fn set_setting(
         .await
     {
         Ok(_) => {
-            user_action!("SETTINGS", "Saved setting: {}", log_key);
+            user_action!("SETTINGS", "Set {} = {}", log_key, log_value);
             Ok(())
         }
         Err(e) => {

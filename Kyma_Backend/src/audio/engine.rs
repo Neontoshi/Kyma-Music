@@ -19,13 +19,16 @@ pub fn run(rx: Receiver<Command>, _tx: Sender<Command>, app_handle: tauri::AppHa
     let output = AudioOutput::new(
         shared.ring.clone(),
         shared.paused.clone(),
+        shared.is_playing.clone(),
         output_volume.clone(),
     );
     let device_sample_rate = output.sample_rate;
+    let device_channels = output.channels;
 
     let mut track_id: u64 = 0;
     let mut last_emit = Instant::now();
     let mut last_buffering_state = false;
+    let mut last_logged_volume = output_volume.load(Ordering::Relaxed);
 
     // Store the current YouTube video ID so we can re-resolve on stream expiry
     let mut current_video_id: Option<String> = None;
@@ -34,19 +37,17 @@ pub fn run(rx: Receiver<Command>, _tx: Sender<Command>, app_handle: tauri::AppHa
         match rx.recv_timeout(Duration::from_millis(50)) {
             Ok(cmd) => match cmd {
                 Command::PlayFile(path, reply) => {
-                    user_action!("PLAYBACK", "Playing file: {}", path);
                     track_id += 1;
                     let _ = reply.send(track_id);
                     current_video_id = None;
-                    start_track(&shared, path, device_sample_rate);
+                    start_track(&shared, path, device_sample_rate, device_channels);
                 }
 
                 Command::PlayYoutube(url, video_id, reply) => {
-                    user_action!("PLAYBACK", "Playing YouTube video ID: {}", video_id);
                     track_id += 1;
                     let _ = reply.send(track_id);
                     current_video_id = Some(video_id);
-                    start_track(&shared, url, device_sample_rate);
+                    start_track(&shared, url, device_sample_rate, device_channels);
                 }
 
                 Command::PlayNext(_path_or_id, _is_youtube) => {}
@@ -65,12 +66,15 @@ pub fn run(rx: Receiver<Command>, _tx: Sender<Command>, app_handle: tauri::AppHa
 
                 Command::Stop => {
                     user_action!("PLAYBACK", "Stopped");
+                    shared.paused.store(true, Ordering::SeqCst);
+                    shared.is_playing.store(false, Ordering::SeqCst);
                     shared.track_generation.fetch_add(1, Ordering::SeqCst);
                     shared.stop.store(true, Ordering::SeqCst);
                     shared.ring.lock().unwrap().clear();
                     std::thread::sleep(Duration::from_millis(20));
                     shared.reset_timing();
-                    shared.paused.store(false, Ordering::SeqCst);
+                    shared.paused.store(true, Ordering::SeqCst);
+                    shared.is_playing.store(false, Ordering::SeqCst);
                     shared.stop.store(false, Ordering::SeqCst);
                     shared.stop_buffering();
                     current_video_id = None;
@@ -84,11 +88,14 @@ pub fn run(rx: Receiver<Command>, _tx: Sender<Command>, app_handle: tauri::AppHa
                 }
 
                 Command::SetVolume(v) => {
-                    let percent = (v * 100.0) as i32;
-                    user_action!("VOLUME", "Set to {}%", percent);
                     let clamped = v.clamp(0.0, 1.0);
+                    let percent = (clamped * 100.0) as u32;
+                    if percent != last_logged_volume {
+                        user_action!("VOLUME", "Set to {}%", percent);
+                        last_logged_volume = percent;
+                    }
                     *shared.volume.lock().unwrap() = clamped;
-                    output_volume.store((clamped * 100.0) as u32, Ordering::Relaxed);
+                    output_volume.store(percent, Ordering::Relaxed);
                 }
 
                 Command::GetState(reply) => {
@@ -134,6 +141,7 @@ pub fn run(rx: Receiver<Command>, _tx: Sender<Command>, app_handle: tauri::AppHa
                 let vid = vid.clone();
                 let sh = Arc::clone(&shared);
                 let sr = device_sample_rate;
+                let dc = device_channels;
                 user_action!(
                     "STREAM",
                     "Expired at {:.2}s, re-resolving: {}",
@@ -170,7 +178,7 @@ pub fn run(rx: Receiver<Command>, _tx: Sender<Command>, app_handle: tauri::AppHa
                             sh.stop.store(false, Ordering::SeqCst);
                             sh.is_playing.store(true, Ordering::SeqCst);
                             std::thread::spawn(move || {
-                                decode_and_push(new_url, sh, sr, gen);
+                                decode_and_push(new_url, sh, sr, dc, gen);
                             });
                         }
                         Err(e) => {
@@ -238,15 +246,9 @@ pub fn run(rx: Receiver<Command>, _tx: Sender<Command>, app_handle: tauri::AppHa
     }
 }
 
-fn start_track(shared: &Arc<DecoderShared>, url: String, sample_rate: u32) {
-    // Simplified URL for logging (truncate long URLs)
-    let log_url = if url.len() > 80 {
-        format!("{}...", &url[..77])
-    } else {
-        url.clone()
-    };
-    user_action!("DECODE", "Starting decoder for: {}", log_url);
-
+fn start_track(shared: &Arc<DecoderShared>, url: String, sample_rate: u32, device_channels: usize) {
+    shared.paused.store(true, Ordering::SeqCst);
+    shared.is_playing.store(false, Ordering::SeqCst);
     shared.stop.store(true, Ordering::SeqCst);
     shared.ring.lock().unwrap().clear();
     let gen = shared.track_generation.fetch_add(1, Ordering::SeqCst) + 1;
@@ -261,7 +263,7 @@ fn start_track(shared: &Arc<DecoderShared>, url: String, sample_rate: u32) {
 
     let sh = Arc::clone(shared);
     std::thread::spawn(move || {
-        decode_and_push(url, sh, sample_rate, gen);
+        decode_and_push(url, sh, sample_rate, device_channels, gen);
     });
 }
 

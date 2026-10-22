@@ -179,7 +179,6 @@ fn spawn_download(
     };
 
     if byte_offset == 0 {
-        user_action!("HTTP", "Starting download: {}", log_url);
     } else {
         user_action!(
             "HTTP",
@@ -226,8 +225,6 @@ fn spawn_download(
                 .and_then(|v: &reqwest::header::HeaderValue| v.to_str().ok())
                 .and_then(|s: &str| s.parse::<u64>().ok())
             {
-                let size_mb = len as f64 / 1024.0 / 1024.0;
-                user_action!("HTTP", "Content length: {:.2} MB", size_mb);
                 buf.set_total_len(len);
                 buf_total.store(len, Ordering::Relaxed);
             }
@@ -239,8 +236,6 @@ fn spawn_download(
                 .and_then(|s: &str| s.split('/').last())
                 .and_then(|s: &str| s.parse::<u64>().ok())
             {
-                let size_mb = total as f64 / 1024.0 / 1024.0;
-                user_action!("HTTP", "Total size from range: {:.2} MB", size_mb);
                 buf.set_total_len(total);
                 buf_total.store(total, Ordering::Relaxed);
             }
@@ -293,13 +288,6 @@ impl HttpReader {
         buf_downloaded: Arc<AtomicU64>,
         buf_total: Arc<AtomicU64>,
     ) -> Result<(Self, Arc<AtomicBool>), String> {
-        let log_url = if url.len() > 80 {
-            format!("{}...", &url[..77])
-        } else {
-            url.to_string()
-        };
-        user_action!("HTTP", "Creating HTTP reader for: {}", log_url);
-
         let buf = SharedBuf::new(0);
         spawn_download(
             url.to_string(),
@@ -390,8 +378,6 @@ impl Seek for HttpReader {
             new_pos >= self.buf.base_offset() && new_pos < self.buf.total_downloaded();
 
         if !already_buffered {
-            let new_pos_mb = new_pos as f64 / 1024.0 / 1024.0;
-            user_action!("HTTP", "Seek to new position: {:.2} MB", new_pos_mb);
             self.restart_from(new_pos);
         } else {
             // REMOVED: Seek within buffer - no log needed

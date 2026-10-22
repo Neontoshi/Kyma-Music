@@ -149,7 +149,12 @@ pub struct AudioOutput {
 }
 
 impl AudioOutput {
-    pub fn new(ring: Arc<Mutex<Ring>>, paused: Arc<AtomicBool>, volume: Arc<AtomicU32>) -> Self {
+    pub fn new(
+        ring: Arc<Mutex<Ring>>,
+        paused: Arc<AtomicBool>,
+        playing: Arc<AtomicBool>,
+        volume: Arc<AtomicU32>,
+    ) -> Self {
         let host = cpal::default_host();
 
         let device = host
@@ -179,6 +184,7 @@ impl AudioOutput {
             cpal::SampleFormat::F32 => {
                 let r = ring.clone();
                 let p = paused.clone();
+                let pl = playing.clone();
                 let uc = underrun_count.clone();
                 let vol = volume.clone();
 
@@ -192,8 +198,9 @@ impl AudioOutput {
                             }
                             let mut ring = r.lock().unwrap();
                             let avail = ring.available();
+                            let is_playing = pl.load(Ordering::Relaxed);
 
-                            if avail < data.len() {
+                            if is_playing && avail < data.len() {
                                 let prev = uc.fetch_add(1, Ordering::Relaxed);
                                 if prev == 0 {
                                     user_error!(
@@ -232,6 +239,7 @@ impl AudioOutput {
             cpal::SampleFormat::I16 => {
                 let r = ring.clone();
                 let p = paused.clone();
+                let pl = playing.clone();
                 let uc = underrun_count.clone();
                 let vol = volume.clone();
 
@@ -248,8 +256,9 @@ impl AudioOutput {
                             {
                                 let mut ring = r.lock().unwrap();
                                 let avail = ring.available();
+                                let is_playing = pl.load(Ordering::Relaxed);
 
-                                if avail < data.len() {
+                                if is_playing && avail < data.len() {
                                     let prev = uc.fetch_add(1, Ordering::Relaxed);
                                     if prev == 0 {
                                         user_error!(
@@ -289,6 +298,7 @@ impl AudioOutput {
             cpal::SampleFormat::U16 => {
                 let r = ring.clone();
                 let p = paused.clone();
+                let pl = playing.clone();
                 let uc = underrun_count.clone();
                 let vol = volume.clone();
 
@@ -305,8 +315,9 @@ impl AudioOutput {
                             {
                                 let mut ring = r.lock().unwrap();
                                 let avail = ring.available();
+                                let is_playing = pl.load(Ordering::Relaxed);
 
-                                if avail < data.len() {
+                                if is_playing && avail < data.len() {
                                     let prev = uc.fetch_add(1, Ordering::Relaxed);
                                     if prev == 0 {
                                         user_error!(

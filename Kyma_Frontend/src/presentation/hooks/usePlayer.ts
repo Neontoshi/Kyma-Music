@@ -35,6 +35,7 @@ export const usePlayer = () => {
     toggleMute: toggleMuteStore,
     toggleShuffle: toggleShuffleStore,
     toggleRepeat: toggleRepeatStore,
+    playRequestId,
   } = usePlayerStore();
 
   const { getNextSong, getPrevSong } = useQueueStore();
@@ -294,8 +295,9 @@ export const usePlayer = () => {
 
   useEffect(() => {
     if (!currentSong) return;
+    lastPlayedId.current = null;
     playSong(currentSong);
-  }, [currentSong?.id]);
+  }, [playRequestId]);
 
   const handleNext = useCallback(() => {
     const state = usePlayerStore.getState();

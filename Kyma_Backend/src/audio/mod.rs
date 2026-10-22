@@ -53,20 +53,12 @@ impl EngineHandle {
     }
 
     pub fn play_file(&self, path: &str) -> u64 {
-        // Truncate path for logging if too long
-        let log_path = if path.len() > 80 {
-            format!("{}...", &path[..77])
-        } else {
-            path.to_string()
-        };
-        user_action!("PLAYBACK", "Playing file: {}", log_path);
         let (tx, rx) = std::sync::mpsc::channel();
         let _ = self.sender.send(Command::PlayFile(path.to_string(), tx));
         rx.recv().unwrap_or(0)
     }
 
     pub fn play_youtube(&self, url: &str, video_id: &str) -> u64 {
-        user_action!("PLAYBACK", "Playing YouTube video ID: {}", video_id);
         let (tx, rx) = std::sync::mpsc::channel();
         let _ = self.sender.send(Command::PlayYoutube(
             url.to_string(),
@@ -78,14 +70,6 @@ impl EngineHandle {
 
     pub fn play(&self, path_or_url: &str, is_youtube: bool) -> u64 {
         if is_youtube {
-            // For YouTube, we need to extract video ID from URL or it's passed as video_id
-            // This is a simplified log
-            user_action!(
-                "PLAYBACK",
-                "Playing (is_youtube={}): {}",
-                is_youtube,
-                path_or_url
-            );
             self.play_youtube(path_or_url, "")
         } else {
             self.play_file(path_or_url)
@@ -93,40 +77,28 @@ impl EngineHandle {
     }
 
     pub fn play_next(&self, path_or_url: &str, is_youtube: bool) {
-        user_action!(
-            "PLAYBACK",
-            "Play next: {} (is_youtube={})",
-            path_or_url,
-            is_youtube
-        );
         let _ = self
             .sender
             .send(Command::PlayNext(path_or_url.to_string(), is_youtube));
     }
 
     pub fn pause(&self) {
-        user_action!("PLAYBACK", "Pause requested");
         let _ = self.sender.send(Command::Pause);
     }
 
     pub fn resume(&self) {
-        user_action!("PLAYBACK", "Resume requested");
         let _ = self.sender.send(Command::Resume);
     }
 
     pub fn stop(&self) {
-        user_action!("PLAYBACK", "Stop requested");
         let _ = self.sender.send(Command::Stop);
     }
 
     pub fn seek(&self, pos: f64) {
-        user_action!("SEEK", "Seek to {:.2}s", pos);
         let _ = self.sender.send(Command::Seek(pos));
     }
 
     pub fn set_volume(&self, v: f32) {
-        let percent = (v * 100.0) as i32;
-        user_action!("VOLUME", "Set to {}%", percent);
         let _ = self.sender.send(Command::SetVolume(v));
     }
 

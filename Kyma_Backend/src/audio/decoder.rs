@@ -18,8 +18,6 @@ use symphonia::core::meta::MetadataOptions;
 use symphonia::core::probe::Hint;
 use symphonia::core::units::Time;
 
-// ── Shared state (engine ↔ decoder ↔ output) ─────────────────────────────────
-
 pub struct DecoderShared {
     pub ring: Arc<Mutex<Ring>>,
     pub paused: Arc<AtomicBool>,
@@ -30,7 +28,7 @@ pub struct DecoderShared {
     pub duration_secs: Mutex<f64>,
     pub seek_to: Mutex<Option<f64>>,
     pub track_generation: AtomicU64,
-    pub is_playing: AtomicBool,
+    pub is_playing: Arc<AtomicBool>,
 
     // Network buffering state
     pub is_buffering: AtomicBool,
@@ -60,7 +58,7 @@ impl DecoderShared {
             duration_secs: Mutex::new(0.0),
             seek_to: Mutex::new(None),
             track_generation: AtomicU64::new(0),
-            is_playing: AtomicBool::new(false),
+            is_playing: Arc::new(AtomicBool::new(false)),
             is_buffering: AtomicBool::new(false),
             last_position_before_buffer: Mutex::new(0.0),
             playback_start_time: Mutex::new(None),
@@ -73,7 +71,6 @@ impl DecoderShared {
     }
 
     pub fn get_position(&self) -> f64 {
-        // REMOVED: No log - called too frequently (every 100ms)
         if self.is_buffering.load(Ordering::Relaxed) {
             if let Some(start) = *self.playback_start_time.lock().unwrap() {
                 let elapsed = start.elapsed().as_secs_f64();
@@ -94,7 +91,6 @@ impl DecoderShared {
     pub fn update_position(&self, _position_secs: f64) {}
 
     pub fn start_playback(&self) {
-        user_action!("PLAYBACK", "Started");
         let mut start_time = self.playback_start_time.lock().unwrap();
         if start_time.is_none() {
             *start_time = Some(Instant::now());
@@ -103,7 +99,6 @@ impl DecoderShared {
     }
 
     pub fn pause_playback(&self) {
-        user_action!("PLAYBACK", "Paused");
         let pos = self.get_position();
         *self.base_position.lock().unwrap() = pos;
         self.paused.store(true, Ordering::SeqCst);
@@ -112,7 +107,6 @@ impl DecoderShared {
     }
 
     pub fn resume_playback(&self) {
-        user_action!("PLAYBACK", "Resumed");
         let base = *self.base_position.lock().unwrap();
         *self.playback_start_time.lock().unwrap() = Some(Instant::now());
         self.paused.store(false, Ordering::SeqCst);
@@ -120,7 +114,6 @@ impl DecoderShared {
     }
 
     pub fn start_buffering(&self, current_pos: f64) {
-        user_action!("BUFFER", "Started at {:.2}s", current_pos);
         self.is_buffering.store(true, Ordering::SeqCst);
         *self.last_position_before_buffer.lock().unwrap() = current_pos;
         tracing::info!(
@@ -130,18 +123,15 @@ impl DecoderShared {
     }
 
     pub fn stop_buffering(&self) {
-        user_action!("BUFFER", "Stopped");
         self.is_buffering.store(false, Ordering::SeqCst);
         tracing::info!("[DECODER] Buffering ended");
     }
 
     pub fn is_buffering_now(&self) -> bool {
-        // REMOVED: No log - called too frequently
         self.is_buffering.load(Ordering::Relaxed)
     }
 
     pub fn reset_for_new_track(&self) {
-        user_action!("TRACK", "Reset for new track");
         self.paused.store(false, Ordering::SeqCst);
         self.is_buffering.store(false, Ordering::SeqCst);
         *self.base_position.lock().unwrap() = 0.0;
@@ -165,19 +155,17 @@ impl DecoderShared {
     }
 }
 
-// ── Decode entry point ────────────────────────────────────────────────────────
-
 pub fn decode_and_push(
     url: String,
     shared: Arc<DecoderShared>,
     device_sample_rate: u32,
+    device_channels: usize,
     my_gen: u64,
 ) {
-    user_action!("DECODE", "Started: {}", url);
     shared.reset_for_new_track();
     shared.ring.lock().unwrap().clear();
 
-    let result = decode_inner(&url, &shared, device_sample_rate, my_gen);
+    let result = decode_inner(&url, &shared, device_sample_rate, device_channels, my_gen);
 
     shared.stop_buffering();
 
@@ -192,7 +180,6 @@ pub fn decode_and_push(
         {
             if url.contains("googlevideo.com") {
                 let pos = shared.get_position();
-                user_action!("STREAM", "Expired/Invalid at {:.2}s for {}", pos, url);
                 tracing::warn!(
                     "[DECODER] Stream expired/invalid at {:.2}s, signalling engine",
                     pos
@@ -214,10 +201,9 @@ pub fn decode_and_push(
 
         // A seek arrived after decoding finished — restart decode_inner from that position
         if shared.seek_to.lock().unwrap().is_some() {
-            user_action!("DECODE", "Restarting decoder after seek");
             tracing::info!("[DECODER] Seek received after track end, restarting decoder");
             shared.is_playing.store(true, Ordering::SeqCst);
-            let result = decode_inner(&url, &shared, device_sample_rate, my_gen);
+            let result = decode_inner(&url, &shared, device_sample_rate, device_channels, my_gen);
             shared.stop_buffering();
             if let Err(e) = result {
                 user_error!("DECODE", "Re-decode error: {}", e);
@@ -239,7 +225,6 @@ pub fn decode_and_push(
         shared.is_playing.store(false, Ordering::SeqCst);
         shared.reset_timing();
     }
-    user_action!("DECODE", "Finished: {}", url);
     tracing::info!("[DECODER] Track finished: {url}");
 }
 
@@ -247,6 +232,7 @@ fn decode_inner(
     url: &str,
     shared: &Arc<DecoderShared>,
     device_sample_rate: u32,
+    device_channels: usize,
     my_gen: u64,
 ) -> Result<(), String> {
     let t0 = std::time::Instant::now();
@@ -347,6 +333,7 @@ fn decode_inner(
     };
 
     let mut sample_buf: Option<SampleBuffer<f32>> = None;
+    let mut resample_pending: Vec<f32> = Vec::new();
     let mut consecutive_errors = 0;
     let mut was_buffering = false;
     let mut first_sample_processed = false;
@@ -359,31 +346,47 @@ fn decode_inner(
             return Ok(());
         }
 
-        // Handle seek
-        {
-            let mut seek_lock = shared.seek_to.lock().unwrap();
-            if let Some(target) = seek_lock.take() {
-                user_action!("SEEK", "Seeking to {:.2}s", target);
-                *shared.base_position.lock().unwrap() = target;
-                *shared.playback_start_time.lock().unwrap() = None;
-                shared.ring.lock().unwrap().clear();
+        // Handle seek. Release the seek mutex before touching the demuxer so
+        // the audio engine never blocks waiting to submit another seek.
+        let seek_target = shared.seek_to.lock().unwrap().take();
+        if let Some(target) = seek_target {
+            user_action!("SEEK", "Seeking to {:.2}s", target);
+            *shared.base_position.lock().unwrap() = target;
+            *shared.playback_start_time.lock().unwrap() = None;
+            shared.ring.lock().unwrap().clear();
 
-                let _ = probed.format.seek(
-                    SeekMode::Accurate,
+            let mut seek_result = probed.format.seek(
+                SeekMode::Accurate,
+                SeekTo::Time {
+                    time: Time::from(target),
+                    track_id: Some(track_id),
+                },
+            );
+            if seek_result.is_err() {
+                seek_result = probed.format.seek(
+                    SeekMode::Coarse,
                     SeekTo::Time {
                         time: Time::from(target),
                         track_id: Some(track_id),
                     },
                 );
-
-                decoder.reset();
-                shared.stop_buffering();
-                consecutive_errors = 0;
-                was_buffering = false;
-                first_sample_processed = false;
-
-                tracing::info!("[DECODER] Seeked to {:.2}s", target);
             }
+            if let Err(e) = seek_result {
+                user_error!("SEEK", "Seek to {:.2}s failed: {}", target, e);
+                tracing::warn!("[DECODER] Seek to {target:.2}s failed: {e}");
+            }
+
+            decoder.reset();
+            if let Some(ref mut rs) = resampler {
+                rs.reset();
+            }
+            resample_pending.clear();
+            shared.stop_buffering();
+            consecutive_errors = 0;
+            was_buffering = false;
+            first_sample_processed = false;
+
+            tracing::info!("[DECODER] Seeked to {:.2}s", target);
         }
 
         // Pause handling
@@ -482,34 +485,31 @@ fn decode_inner(
         let mut owned: Vec<f32> = sb.samples().to_vec();
 
         if let Some(ref mut rs) = resampler {
-            let mut planes: Vec<Vec<f32>> = (0..channels).map(|_| Vec::new()).collect();
-            for (i, &s) in owned.iter().enumerate() {
-                planes[i % channels].push(s);
-            }
-            let plane_refs: Vec<&[f32]> = planes.iter().map(|p| p.as_slice()).collect();
-            match rs.process(&plane_refs, None) {
-                Ok(out_planes) => {
-                    let frame_count = out_planes[0].len();
-                    owned = Vec::with_capacity(frame_count * channels);
-                    for f in 0..frame_count {
-                        for c in 0..channels {
-                            owned.push(out_planes[c][f]);
-                        }
+            resample_pending.extend_from_slice(&owned);
+            let chunk_samples = rs.input_frames_next() * channels;
+            owned.clear();
+
+            // SincFixedIn consumes exactly one chunk at a time. Keep the
+            // remainder so packets that are not an exact multiple of the
+            // chunk size are not dropped.
+            while resample_pending.len() >= chunk_samples {
+                let chunk: Vec<f32> = resample_pending.drain(..chunk_samples).collect();
+                let planes = deinterleave(&chunk, channels);
+                let plane_refs: Vec<&[f32]> = planes.iter().map(|p| p.as_slice()).collect();
+                match rs.process(&plane_refs, None) {
+                    Ok(out_planes) => owned.extend(interleave(&out_planes)),
+                    Err(e) => {
+                        log_resample_error(&e);
+                        owned.extend_from_slice(&chunk);
                     }
-                }
-                Err(e) => {
-                    // Only log on first occurrence
-                    static mut RESAMPLE_ERROR_LOGGED: bool = false;
-                    unsafe {
-                        if !RESAMPLE_ERROR_LOGGED {
-                            user_error!("DECODE", "Resample error: {}", e);
-                            RESAMPLE_ERROR_LOGGED = true;
-                        }
-                    }
-                    tracing::warn!("[DECODER] Resample error: {e}");
                 }
             }
         }
+
+        // Device output is interleaved using the output device's channel
+        // count. Map mono/stereo/multichannel sources to it so a mono track
+        // is not consumed as if it were stereo (which doubles playback speed).
+        let mapped = remap_channels(&owned, channels, device_channels);
 
         // Start clock on first decoded packet
         if !first_sample_processed && !shared.paused.load(Ordering::SeqCst) {
@@ -517,11 +517,83 @@ fn decode_inner(
             first_sample_processed = true;
         }
 
-        shared.ring.lock().unwrap().push_slice(&owned);
+        shared.ring.lock().unwrap().push_slice(&mapped);
         std::thread::sleep(Duration::from_micros(100));
     }
 
+    // Flush the final partial resampler chunk.
+    if let Some(ref mut rs) = resampler {
+        let pending_frames = resample_pending.len() / channels;
+        if pending_frames > 0 {
+            let planes = deinterleave(&resample_pending, channels);
+            if let Ok(out_planes) = rs.process_partial(Some(&planes), None) {
+                let mapped = remap_channels(&interleave(&out_planes), channels, device_channels);
+                shared.ring.lock().unwrap().push_slice(&mapped);
+            }
+        }
+    }
+
     Ok(())
+}
+
+fn deinterleave(samples: &[f32], channels: usize) -> Vec<Vec<f32>> {
+    let mut planes: Vec<Vec<f32>> = (0..channels).map(|_| Vec::new()).collect();
+    if channels == 0 {
+        return planes;
+    }
+    for frame in samples.chunks_exact(channels) {
+        for (channel, sample) in frame.iter().enumerate() {
+            planes[channel].push(*sample);
+        }
+    }
+    planes
+}
+
+fn interleave(planes: &[Vec<f32>]) -> Vec<f32> {
+    let channels = planes.len();
+    let frame_count = planes.first().map(|p| p.len()).unwrap_or(0);
+    let mut out = Vec::with_capacity(frame_count * channels);
+    for frame in 0..frame_count {
+        for plane in planes {
+            out.push(plane[frame]);
+        }
+    }
+    out
+}
+
+fn remap_channels(samples: &[f32], source: usize, target: usize) -> Vec<f32> {
+    if source == 0 || target == 0 || source == target {
+        return samples.to_vec();
+    }
+
+    let frame_count = samples.len() / source;
+    let mut out = Vec::with_capacity(frame_count * target);
+    for frame in samples.chunks_exact(source) {
+        if source == 1 {
+            // Mono -> stereo/multichannel: duplicate the sample.
+            for _ in 0..target {
+                out.push(frame[0]);
+            }
+        } else if target == 1 {
+            out.push(frame.iter().sum::<f32>() / source as f32);
+        } else if target < source {
+            out.extend_from_slice(&frame[..target]);
+        } else {
+            for channel in 0..target {
+                out.push(frame[channel.min(source - 1)]);
+            }
+        }
+    }
+    out
+}
+
+fn log_resample_error(error: &rubato::ResampleError) {
+    use std::sync::Once;
+    static LOGGED: Once = Once::new();
+    LOGGED.call_once(|| {
+        user_error!("DECODE", "Resample error: {}", error);
+        tracing::warn!("[DECODER] Resample error: {error}");
+    });
 }
 
 fn build_mss(

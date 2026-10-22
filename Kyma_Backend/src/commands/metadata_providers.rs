@@ -531,7 +531,6 @@ pub async fn search_musicbrainz(query: String) -> Result<Vec<MetadataTrack>, Str
 
 #[tauri::command]
 pub async fn search_metadata(query: String) -> Result<Vec<MetadataTrack>, String> {
-    user_action!("METADATA", "Combined search: {}", query);
     if let Ok(tracks) = search_deezer(query.clone()).await {
         if !tracks.is_empty() {
             return Ok(tracks);
@@ -544,7 +543,6 @@ pub async fn search_metadata(query: String) -> Result<Vec<MetadataTrack>, String
 
 #[tauri::command]
 pub async fn clean_track_metadata(title: String, artist: String) -> Result<CleanMetadata, String> {
-    user_action!("METADATA", "Cleaning metadata: {} - {}", title, artist);
     let query = format!("{} {}", artist, title);
     let url = format!(
         "https://api.deezer.com/search/track?q={}&limit=3",
@@ -561,7 +559,6 @@ pub async fn clean_track_metadata(title: String, artist: String) -> Result<Clean
             let dz_artist = track["artist"]["name"].as_str().unwrap_or("");
 
             if title_match(&title, dz_title) || artist_match(&artist, dz_artist) {
-                user_action!("METADATA", "Found match: {} - {}", dz_title, dz_artist);
                 return Ok(CleanMetadata {
                     title: dz_title.to_string(),
                     artist: dz_artist.to_string(),
@@ -577,7 +574,6 @@ pub async fn clean_track_metadata(title: String, artist: String) -> Result<Clean
         }
     }
 
-    user_action!("METADATA", "No match found for: {} - {}", title, artist);
     Ok(CleanMetadata {
         title,
         artist,

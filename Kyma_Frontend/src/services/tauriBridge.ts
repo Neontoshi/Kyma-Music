@@ -14,6 +14,28 @@ export class TauriError extends Error {
   }
 }
 
+const summarizeArgValue = (value: unknown): unknown => {
+  if (typeof value === "string") {
+    return value.length > 120 ? `${value.slice(0, 117)}...` : value;
+  }
+  if (Array.isArray(value)) {
+    return `[${value.length} items]`;
+  }
+  if (value && typeof value === "object") {
+    return "[object]";
+  }
+  return value;
+};
+
+const summarizeArgs = (args?: any): Record<string, unknown> | undefined => {
+  if (!args || typeof args !== "object") return undefined;
+  return Object.fromEntries(
+    Object.entries(args).map(([key, value]) => [key, summarizeArgValue(value)]),
+  );
+};
+
+const settingCache = new Map<string, Promise<string | null>>();
+
 const handleInvoke = async <T>(command: string, args?: any): Promise<T> => {
   const startTime = performance.now();
   try {
@@ -24,7 +46,7 @@ const handleInvoke = async <T>(command: string, args?: any): Promise<T> => {
     if (duration > 1000) {
       logger.logWarn(`Slow command: ${command} took ${duration.toFixed(0)}ms`, {
         command,
-        args,
+        args: summarizeArgs(args),
       });
     }
 
@@ -209,11 +231,20 @@ export const tauriCommands = {
     handleInvoke("get_deezer_playlist_tracks", { query }),
 
   // Settings
-  getSetting: (key: string): Promise<string | null> =>
-    handleInvoke("get_setting", { key }),
+  getSetting: (key: string): Promise<string | null> => {
+    const cached = settingCache.get(key);
+    if (cached) return cached;
 
-  setSetting: (key: string, value: string): Promise<void> =>
-    handleInvoke("set_setting", { key, value }),
+    const request = handleInvoke<string | null>("get_setting", { key });
+    settingCache.set(key, request);
+    request.catch(() => settingCache.delete(key));
+    return request;
+  },
+
+  setSetting: async (key: string, value: string): Promise<void> => {
+    await handleInvoke("set_setting", { key, value });
+    settingCache.delete(key);
+  },
 
   fetchListenbrainzStats: (user: string): Promise<string> =>
     handleInvoke("fetch_listenbrainz_stats", { user }),

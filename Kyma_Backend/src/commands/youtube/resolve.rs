@@ -1,7 +1,7 @@
 use super::validation::validate_video_id;
 use crate::commands::media::{ytdlp_command, YtError};
 use crate::commands::stream_cache::{get_cached_stream_url, set_cached_stream_url};
-use crate::{user_action, user_error};
+use crate::user_error;
 use std::collections::HashMap;
 use std::time::Duration;
 use tokio::sync::Mutex as TokioMutex;
@@ -13,19 +13,10 @@ static RESOLVE_LOCKS: TokioMutex<Option<HashMap<String, bool>>> = TokioMutex::co
 
 #[tauri::command]
 pub async fn resolve_youtube_url(video_id: String) -> Result<String, YtError> {
-    // Truncate ID for logging
-    let id_log = if video_id.len() > 20 {
-        format!("{}...", &video_id[..17])
-    } else {
-        video_id.clone()
-    };
-    user_action!("YOUTUBE", "Resolving URL for: {}", id_log);
-
     validate_video_id(&video_id)?;
 
     // Check cache first
     if let Some(cached_url) = get_cached_stream_url(&video_id) {
-        user_action!("YOUTUBE", "Cache hit for: {}", id_log);
         return Ok(cached_url);
     }
 
@@ -77,42 +68,90 @@ async fn resolve_youtube_url_inner(video_id: &str) -> Result<String, YtError> {
     };
 
     let url = format!("https://www.youtube.com/watch?v={video_id}");
+    // YouTube intermittently rate-limits individual requests. Retry the
+    // client that works reliably here with a short exponential backoff.
+    const MAX_ATTEMPTS: usize = 3;
+    let mut failures = Vec::new();
 
-    let output = tokio::time::timeout(
-        std::time::Duration::from_secs(30),
-        ytdlp_command()
-            .args([
-                &url,
-                "-f",
-                "140",
-                "--get-url",
-                "--no-playlist",
-                "--no-warnings",
-                "--quiet",
-                "--extractor-args",
-                "youtube:player_client=tv_embedded",
-            ])
-            .output(),
-    )
-    .await
-    .map_err(|_| {
-        user_error!("YOUTUBE", "Resolution timeout for: {}", id_log);
-        YtError::DownloadTimeout
-    })?
-    .map_err(|e| {
-        user_error!("YOUTUBE", "yt-dlp spawn failed: {}", e);
-        YtError::NotInstalled
-    })?;
+    for attempt in 0..MAX_ATTEMPTS {
+        if attempt > 0 {
+            let backoff_ms = 600 * 2u64.pow(attempt as u32 - 1);
+            tokio::time::sleep(Duration::from_millis(backoff_ms)).await;
+        }
 
-    if output.status.success() {
-        let resolved_url = String::from_utf8_lossy(&output.stdout).trim().to_string();
-        if !resolved_url.is_empty() {
-            user_action!("YOUTUBE", "Resolved URL successfully for: {}", id_log);
-            set_cached_stream_url(video_id.to_string(), resolved_url.clone());
-            return Ok(resolved_url);
+        let output = tokio::time::timeout(
+            Duration::from_secs(20),
+            ytdlp_command()
+                .args([
+                    &url,
+                    "-f",
+                    "140",
+                    "--get-url",
+                    "--no-playlist",
+                    "--no-warnings",
+                    "--quiet",
+                    "--extractor-args",
+                    "youtube:player_client=tv_embedded",
+                ])
+                .output(),
+        )
+        .await;
+
+        match output {
+            Err(_) => {
+                failures.push(format!("attempt {}: timeout", attempt + 1));
+                tracing::warn!(
+                    "[YOUTUBE] Resolve timeout for {id_log} (attempt {})",
+                    attempt + 1
+                );
+            }
+            Ok(Err(e)) => {
+                user_error!("YOUTUBE", "yt-dlp spawn failed: {}", e);
+                return Err(YtError::NotInstalled);
+            }
+            Ok(Ok(output)) => {
+                let resolved_url = String::from_utf8_lossy(&output.stdout).trim().to_string();
+                if output.status.success() && !resolved_url.is_empty() {
+                    set_cached_stream_url(video_id.to_string(), resolved_url.clone());
+                    return Ok(resolved_url);
+                }
+
+                let stderr = String::from_utf8_lossy(&output.stderr);
+                let reason = stderr
+                    .lines()
+                    .rev()
+                    .find(|line| !line.trim().is_empty())
+                    .map(str::trim)
+                    .unwrap_or_else(|| {
+                        if output.status.success() {
+                            "empty response"
+                        } else {
+                            "yt-dlp returned an error"
+                        }
+                    });
+                failures.push(format!("attempt {}: {reason}", attempt + 1));
+                tracing::warn!(
+                    "[YOUTUBE] Resolve failed for {id_log} (attempt {}): {reason}",
+                    attempt + 1
+                );
+            }
         }
     }
 
-    user_error!("YOUTUBE", "Failed to resolve URL for: {}", id_log);
+    let reason = truncate_chars(&failures.join(" | "), 500);
+    user_error!(
+        "YOUTUBE",
+        "Failed to resolve URL for {}: {}",
+        id_log,
+        reason
+    );
     Err(YtError::SearchFailed)
+}
+
+fn truncate_chars(value: &str, max: usize) -> String {
+    if value.chars().count() <= max {
+        value.to_string()
+    } else {
+        value.chars().take(max).collect::<String>() + "..."
+    }
 }

@@ -78,7 +78,6 @@ async fn stream_handler(
     let (start, end) = match range_header {
         Some(val) => {
             let range_str = val.to_str().unwrap_or("");
-            user_action!("STREAM", "Range request for {}: {}", video_id, range_str);
             parse_range(range_str, file_len)
         }
         None => (0, file_len.saturating_sub(1)),

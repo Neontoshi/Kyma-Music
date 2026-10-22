@@ -5,7 +5,8 @@ import { usePlayerStore } from "../../stores/playerStore";
 import { logger } from "../../../services/logger";
 
 const ProgressSlider: React.FC = () => {
-  const { setProgress } = usePlayer();
+  const { setProgress: seekTo } = usePlayer();
+  const setProgress = usePlayerStore((s) => s.setProgress);
   const currentProgress = usePlayerStore((s) => s.currentProgress);
   const duration = usePlayerStore((s) => s.duration);
   const buffered = usePlayerStore((s) => s.buffered);
@@ -92,6 +93,8 @@ const ProgressSlider: React.FC = () => {
 
         isDragging.current = false;
         dragPercent.current = null;
+        setProgress(finalPosition);
+        void seekTo(finalPosition);
         forceUpdate((n) => n + 1);
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
@@ -100,7 +103,14 @@ const ProgressSlider: React.FC = () => {
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
     },
-    [getPercentFromEvent, duration, setProgress, currentProgress, currentSong],
+    [
+      getPercentFromEvent,
+      duration,
+      setProgress,
+      seekTo,
+      currentProgress,
+      currentSong,
+    ],
   );
 
   if (isRadio) {

@@ -25,7 +25,7 @@ class FrontendLogger {
 
   logUI(component: string, action: string, details?: any) {
     if (!this.uiLoggingEnabled) return;
-    this.logInfo(`UI: ${component} - ${action}`, details);
+    this.logDebug(`UI: ${component} - ${action}`, details);
   }
 
   private setupGlobalHandlers() {

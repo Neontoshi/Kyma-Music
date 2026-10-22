@@ -4,10 +4,12 @@ use crate::models::song::Song;
 use crate::user_action;
 use crate::user_error;
 use parking_lot::Mutex;
+use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions, SqliteSynchronous};
 use sqlx::SqlitePool;
 use std::collections::{HashMap, HashSet};
+use std::str::FromStr;
 use std::sync::Arc;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 use tauri::AppHandle;
 
 pub struct AppState {
@@ -75,10 +77,16 @@ impl AppState {
         let db_url = format!("sqlite://{}?mode=rwc", db_path.to_string_lossy());
         user_action!("APP", "Connecting to database at: {}", db_path.display());
 
-        let pool = SqlitePool::connect(&db_url).await?;
+        let options = SqliteConnectOptions::from_str(&db_url)?
+            .create_if_missing(true)
+            .journal_mode(SqliteJournalMode::Wal)
+            .synchronous(SqliteSynchronous::Normal)
+            .busy_timeout(Duration::from_secs(5))
+            .foreign_keys(true);
 
-        sqlx::query("PRAGMA busy_timeout = 5000")
-            .execute(&pool)
+        let pool = SqlitePoolOptions::new()
+            .max_connections(5)
+            .connect_with(options)
             .await?;
 
         sqlx::query(

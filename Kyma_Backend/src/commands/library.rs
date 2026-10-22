@@ -44,52 +44,63 @@ pub async fn scan_folder(
         .canonicalize()
         .map_err(|e| KymaError::InvalidPath(format!("failed to resolve scan path: {}", e)))?;
 
-    let mut songs = Vec::new();
-    let extensions = ["mp3", "flac", "wav", "ogg", "m4a", "aac"];
-    let mut total_files = 0;
-    let mut audio_files = 0;
-    let mut metadata_errors = 0;
+    let (songs, total_files, audio_files, metadata_errors) =
+        tauri::async_runtime::spawn_blocking(move || {
+            let mut songs = Vec::new();
+            let extensions = ["mp3", "flac", "wav", "ogg", "m4a", "aac"];
+            let mut total_files = 0;
+            let mut audio_files = 0;
+            let mut metadata_errors = 0;
 
-    for entry in WalkDir::new(&canonical_base)
-        .follow_links(false)
-        .into_iter()
-        .filter_map(|e| e.ok())
-    {
-        total_files += 1;
-        let file_path = entry.path();
+            for entry in WalkDir::new(&canonical_base)
+                .follow_links(false)
+                .into_iter()
+                .filter_map(|e| e.ok())
+            {
+                total_files += 1;
+                let file_path = entry.path();
 
-        if let Ok(canonical) = file_path.canonicalize() {
-            if !canonical.starts_with(&canonical_base) {
-                tracing::warn!("Symlink traversal blocked: {}", file_path.display());
-                continue;
-            }
-        }
+                if let Ok(canonical) = file_path.canonicalize() {
+                    if !canonical.starts_with(&canonical_base) {
+                        tracing::warn!("Symlink traversal blocked: {}", file_path.display());
+                        continue;
+                    }
+                }
 
-        if file_path.is_file() {
-            if let Some(ext) = file_path.extension() {
-                let ext_str = ext.to_string_lossy().to_lowercase();
-                if extensions.contains(&ext_str.as_str()) {
-                    audio_files += 1;
-                    let path_str = file_path.to_string_lossy().to_string();
-                    match extract_metadata(&path_str) {
-                        Ok(song) => {
-                            songs.push(song);
-                        }
-                        Err(e) => {
-                            metadata_errors += 1;
-                            user_error!(
-                                "LIBRARY",
-                                "Failed to read metadata for {}: {}",
-                                file_path.file_name().unwrap_or_default().to_string_lossy(),
-                                e
-                            );
-                            tracing::warn!("Failed to read metadata for {}: {}", path_str, e);
+                if file_path.is_file() {
+                    if let Some(ext) = file_path.extension() {
+                        let ext_str = ext.to_string_lossy().to_lowercase();
+                        if extensions.contains(&ext_str.as_str()) {
+                            audio_files += 1;
+                            let path_str = file_path.to_string_lossy().to_string();
+                            match extract_metadata(&path_str) {
+                                Ok(song) => {
+                                    songs.push(song);
+                                }
+                                Err(e) => {
+                                    metadata_errors += 1;
+                                    user_error!(
+                                        "LIBRARY",
+                                        "Failed to read metadata for {}: {}",
+                                        file_path.file_name().unwrap_or_default().to_string_lossy(),
+                                        e
+                                    );
+                                    tracing::warn!(
+                                        "Failed to read metadata for {}: {}",
+                                        path_str,
+                                        e
+                                    );
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
-    }
+
+            (songs, total_files, audio_files, metadata_errors)
+        })
+        .await
+        .map_err(|e| KymaError::ScanError(format!("scan task failed: {e}")))?;
 
     *app.library.lock() = songs.clone();
 
@@ -113,8 +124,6 @@ pub async fn scan_folder(
 #[tauri::command]
 pub async fn get_songs(state: tauri::State<'_, AppState>) -> Result<Vec<Song>, KymaError> {
     let app = &*state;
-    let count = app.library.lock().len();
-    user_action!("LIBRARY", "Retrieved {} songs", count);
     Ok(app.library.lock().clone())
 }
 
@@ -123,7 +132,6 @@ pub async fn search_songs(
     query: String,
     state: tauri::State<'_, AppState>,
 ) -> Result<Vec<Song>, KymaError> {
-    user_action!("LIBRARY", "Searching: \"{}\"", query);
     let app = &*state;
     let query_lower = query.to_lowercase();
     let songs = app.library.lock();
@@ -137,13 +145,6 @@ pub async fn search_songs(
         .cloned()
         .collect();
 
-    let result_count = results.len();
-    user_action!(
-        "LIBRARY",
-        "Search found {} results for \"{}\"",
-        result_count,
-        query
-    );
     Ok(results)
 }
 

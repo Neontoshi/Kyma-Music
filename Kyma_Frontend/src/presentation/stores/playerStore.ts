@@ -22,6 +22,7 @@ interface PlayerStore extends PlaybackState {
   setMessage: (message: string | null) => void;
   buffered: number;
   setBuffered: (v: number) => void;
+  playRequestId: number;
 }
 export const usePlayerStore = create<PlayerStore>((set) => ({
   currentSong: null,
@@ -36,6 +37,7 @@ export const usePlayerStore = create<PlayerStore>((set) => ({
   error: null,
   message: null,
   buffered: 0,
+  playRequestId: 0,
 
   setIsLoading: (loading) => {
     console.log("STORE isLoading:", loading);
@@ -49,12 +51,13 @@ export const usePlayerStore = create<PlayerStore>((set) => ({
   setBuffered: (v: number) => set({ buffered: v }),
 
   setCurrentSong: (song) =>
-    set({
+    set((state) => ({
       currentSong: song,
       isPlaying: true,
       currentProgress: 0,
       buffered: 0,
-    }),
+      playRequestId: state.playRequestId + 1,
+    })),
 
   setPlaying: (playing) => set({ isPlaying: playing }),
 

@@ -16,7 +16,7 @@ interface SongRowProps {
   song: Song;
   index: number;
   isCurrent: boolean;
-  onPlay: () => void;
+  onPlay: (song: Song) => void;
 }
 
 const SongRow: React.FC<SongRowProps> = ({
@@ -27,13 +27,11 @@ const SongRow: React.FC<SongRowProps> = ({
 }) => {
   const toggleLike = useLibraryStore((s) => s.toggleLike);
   const setTriggerReload = useLibraryStore((s) => s.setTriggerReload);
-  const likedIds = useLibraryStore(
-    (s) => new Set(s.songs.filter((x) => x.liked).map((x) => x.id)),
+  const isLiked = useLibraryStore(
+    (s) => s.songs.find((x) => x.id === song.id)?.liked ?? song.liked,
   );
-  const isLiked = likedIds.has(song.id) || song.liked;
   const isPlaying = usePlayerStore((s) => s.isPlaying);
   const isLoading = usePlayerStore((s) => s.isLoading);
-  const currentProgress = usePlayerStore((s) => s.currentProgress);
   const currentSongId = usePlayerStore((s) => s.currentSong?.id);
   const setMessage = usePlayerStore((s) => s.setMessage);
   const setError = usePlayerStore((s) => s.setError);
@@ -345,7 +343,7 @@ const SongRow: React.FC<SongRowProps> = ({
   return (
     <div
       className={`song-row ${isCurrent ? "playing" : ""}`}
-      onClick={onPlay}
+      onClick={() => onPlay(song)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -368,7 +366,7 @@ const SongRow: React.FC<SongRowProps> = ({
               strokeDashoffset="21"
             />
           </svg>
-        ) : isCurrent && isPlaying && currentProgress > 0 ? (
+        ) : isCurrent && isPlaying ? (
           <PlayingBars />
         ) : isHovered ? (
           <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
