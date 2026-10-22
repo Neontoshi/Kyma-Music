@@ -1,1 +1,0 @@
-import{i as r}from"./main-06ciBZDq.js";import"./client-BECxR3b0.js";import"./butterchunk-CMvS5UXf.js";var p;(function(i){i.Nsis="nsis",i.Msi="msi",i.Deb="deb",i.Rpm="rpm",i.AppImage="appimage",i.App="app"})(p||(p={}));async function a(){return r("plugin:app|version")}export{p as BundleType,a as getVersion};
