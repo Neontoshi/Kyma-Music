@@ -37,8 +37,8 @@ function loadLyricsCache(): Map<string, LrcLine[] | null> {
   try {
     const raw = localStorage.getItem(LYRICS_CACHE_KEY);
     if (!raw) return new Map();
-    const parsed = JSON.parse(raw);
-    return new Map(parsed);
+    const parsed: [string, LrcLine[] | null][] = JSON.parse(raw);
+    return new Map(parsed.filter(([, lyrics]) => lyrics !== null));
   } catch {
     return new Map();
   }
@@ -62,7 +62,8 @@ async function fetchLyrics(
   signal?: AbortSignal,
 ): Promise<LrcLine[] | null> {
   const cacheKey = `${title}::${artist}`;
-  if (lyricsCache.has(cacheKey)) return lyricsCache.get(cacheKey)!;
+  const cached = lyricsCache.get(cacheKey);
+  if (cached) return cached;
   try {
     // Try direct lookup first — much faster than search
     const params = new URLSearchParams({
@@ -99,18 +100,10 @@ async function fetchLyrics(
       `https://lrclib.net/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist)}`,
       { signal },
     );
-    if (!search.ok) {
-      lyricsCache.set(cacheKey, null);
-      saveLyricsCache(lyricsCache);
-      return null;
-    }
+    if (!search.ok) return null;
     const results = await search.json();
     const hit = results.find((d: any) => d.syncedLyrics) ?? results[0];
-    if (!hit) {
-      lyricsCache.set(cacheKey, null);
-      saveLyricsCache(lyricsCache);
-      return null;
-    }
+    if (!hit) return null;
     if (hit.syncedLyrics) {
       const result = parseLRC(hit.syncedLyrics);
       lyricsCache.set(cacheKey, result);
@@ -126,8 +119,6 @@ async function fetchLyrics(
       saveLyricsCache(lyricsCache);
       return result;
     }
-    lyricsCache.set(cacheKey, null);
-    saveLyricsCache(lyricsCache);
     return null;
   } catch {
     return null;
@@ -252,7 +243,9 @@ const NowPlayingPanel: React.FC<NowPlayingPanelProps> = ({
       artist: currentSong.artist,
       source: currentSong.source,
     });
-    toggleLike(currentSong.id, currentSong);
+    void toggleLike(currentSong.id, currentSong).catch((err) => {
+      console.error("Failed to toggle like:", err);
+    });
   };
 
   const handleClearQueue = (queueSongsLength: number) => {

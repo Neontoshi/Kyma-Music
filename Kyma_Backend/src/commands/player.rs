@@ -65,6 +65,8 @@ pub async fn get_resume_state() -> Result<ResumeState, KymaError> {
             && !s.path.starts_with("http")
     });
 
+    let is_playing = data["is_playing"].as_bool().unwrap_or(false);
+
     if song.is_none() {
         let _ = std::fs::remove_file(&path);
     }
@@ -73,7 +75,7 @@ pub async fn get_resume_state() -> Result<ResumeState, KymaError> {
     Ok(ResumeState {
         song,
         position: data["position"].as_f64().unwrap_or(0.0),
-        is_playing: false,
+        is_playing,
     })
 }
 

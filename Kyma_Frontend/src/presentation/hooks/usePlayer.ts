@@ -6,7 +6,10 @@ import { tauriCommands } from "../../services/tauriBridge";
 import { useLibraryStore } from "../stores/libraryStore";
 import { logger } from "../../services/logger";
 import { usePrefetchQueue } from "../hooks/usePrefetchQueue";
-import { resolveAndPlaySong } from "../hooks/useResolveAndPlay";
+import {
+  cancelPendingResolve,
+  resolveAndPlaySong,
+} from "../hooks/useResolveAndPlay";
 import { formatDuration } from "../../lib/formatTime";
 
 const pendingPlayId = { current: null as string | null };
@@ -80,10 +83,16 @@ export const usePlayer = () => {
     if (!song) return;
     if (song.path === "__resolving__") return; // ← sentinel, skip until URL is ready
 
+    cancelPendingResolve();
+
     if (!song.videoId && !song.path) {
       resolveAndPlaySong(song);
       return;
     }
+
+    // Ignore duplicate requests without invalidating an in-flight load for this song.
+    if (song.id === lastPlayedId.current) return;
+    if (song.id === pendingPlayId.current) return;
 
     // Claim this generation — any older in-flight load will see a mismatch and bail
     const generation = ++generationRef.current;
@@ -91,8 +100,9 @@ export const usePlayer = () => {
     // Force-release the lock so the new song isn't blocked by the previous load
     playLockRef.current = false;
 
-    if (song.id === lastPlayedId.current) return;
-    if (song.id === pendingPlayId.current) return;
+    const resumePosition = usePlayerStore.getState().resumePosition;
+    const resumeShouldPlay = usePlayerStore.getState().resumeShouldPlay;
+    usePlayerStore.getState().setResumeState(0, true);
 
     playStartTime.current = Date.now();
     logger.logUI("Player", "play_start", {
@@ -111,7 +121,7 @@ export const usePlayer = () => {
       playerRepo.current.reset();
       usePlayerStore.getState().setError(null);
       scrobbledRef.current = false;
-      wasPaused = !usePlayerStore.getState().isPlaying;
+      wasPaused = !resumeShouldPlay || !usePlayerStore.getState().isPlaying;
 
       pendingPlayId.current = song.id;
       lastPlayedId.current = song.id;
@@ -168,6 +178,13 @@ export const usePlayer = () => {
 
         currentTrackIdRef.current = trackId;
       }
+      if (resumePosition > 1) {
+        ignorePositionUntil.current = Date.now() + 500;
+        await playerRepo.current.seek(resumePosition);
+        if (generationRef.current !== generation) return;
+        setProgress(resumePosition);
+      }
+
       if (wasPaused) await playerRepo.current.pause();
 
       const loadTime = Date.now() - playStartTime.current;
@@ -445,7 +462,7 @@ export const usePlayer = () => {
           if (
             !scrobbledRef.current &&
             duration > 0 &&
-            position >= Math.min(store.duration / 2, 240)
+            position >= Math.min(duration / 2, 240)
           ) {
             scrobbledRef.current = true;
             const song = usePlayerStore.getState().currentSong;
@@ -511,18 +528,23 @@ export const usePlayer = () => {
   }, [volume, isMuted]);
 
   useEffect(() => {
-    let unlisten1: (() => void) | null = null;
-    let unlisten2: (() => void) | null = null;
+    const cleanupFns: (() => void)[] = [];
+    let disposed = false;
 
-    import("@tauri-apps/api/event").then(({ listen }) => {
-      listen("tray-next", () => {
+    import("@tauri-apps/api/event").then(async ({ listen }) => {
+      const unlisten1 = await listen("tray-next", () => {
         logger.logUI("Player", "tray_next", {});
         lastPlayedId.current = null;
         handleNext();
-      }).then((fn) => (unlisten1 = fn));
+      });
+      if (disposed) {
+        unlisten1();
+        return;
+      }
+      cleanupFns.push(unlisten1);
 
-      listen("tray-prev", () => {
-        const prev = getPrevSong();
+      const unlisten2 = await listen("tray-prev", () => {
+        const prev = getPrevSong(usePlayerStore.getState().repeatMode);
         if (prev) {
           logger.logUI("Player", "tray_prev", {
             songId: prev.id,
@@ -539,12 +561,17 @@ export const usePlayer = () => {
             playerRepo.current.stop();
           } catch {}
         }
-      }).then((fn) => (unlisten2 = fn));
+      });
+      if (disposed) {
+        unlisten2();
+        return;
+      }
+      cleanupFns.push(unlisten2);
     });
 
     return () => {
-      unlisten1?.();
-      unlisten2?.();
+      disposed = true;
+      for (const cleanup of cleanupFns) cleanup();
     };
   }, []);
 
@@ -588,10 +615,7 @@ export const usePlayer = () => {
     }
     setTimeout(() => {
       isSeekingRef.current = false;
-      const { currentProgress, duration } = usePlayerStore.getState();
-      if (duration <= 2 || currentProgress < duration - 2) {
-        songEndHandled.current = false;
-      }
+      songEndHandled.current = false;
     }, 300);
   };
 
@@ -604,7 +628,7 @@ export const usePlayer = () => {
   };
 
   const prevSong = () => {
-    const prev = getPrevSong();
+    const prev = getPrevSong(usePlayerStore.getState().repeatMode);
     if (prev) {
       logger.logUI("Player", "prev_triggered", {
         songId: prev.id,

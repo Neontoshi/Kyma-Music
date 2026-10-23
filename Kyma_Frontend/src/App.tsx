@@ -17,6 +17,14 @@ function App() {
       const state = await tauriCommands.getResumeState();
 
       if (state.song && state.song.duration > 0) {
+        const canResume =
+          state.position > 1 && state.position < state.song.duration - 2;
+        usePlayerStore
+          .getState()
+          .setResumeState(
+            canResume ? state.position : 0,
+            state.is_playing,
+          );
         usePlayerStore.getState().setCurrentSong(state.song);
       }
     } catch {}

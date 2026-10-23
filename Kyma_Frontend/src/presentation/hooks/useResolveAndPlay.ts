@@ -5,7 +5,14 @@ import { tauriCommands } from "../../services/tauriBridge";
 import { Song } from "../../core/entities/Song";
 import { formatDuration } from "../../lib/formatTime";
 
+let resolveGeneration = 0;
+
+export const cancelPendingResolve = () => {
+  resolveGeneration += 1;
+};
+
 export const resolveAndPlaySong = async (song: Song) => {
+  const generation = ++resolveGeneration;
   const { setCurrentSong, setProgress } = usePlayerStore.getState();
 
   // Already resolved — play directly
@@ -36,6 +43,8 @@ export const resolveAndPlaySong = async (song: Song) => {
       `${song.artist} - ${song.title}`,
       5,
     );
+    if (generation !== resolveGeneration) return;
+
     if (results?.length) {
       song.videoId = results[0].id;
       if (results[0].duration_secs) {
@@ -50,13 +59,17 @@ export const resolveAndPlaySong = async (song: Song) => {
       );
       queueState.setQueue(updatedQueue, song, "library");
 
+      if (generation !== resolveGeneration) return;
+
       setCurrentSong(song);
       setProgress(0);
-    } else {
+    } else if (generation === resolveGeneration) {
       usePlayerStore.setState({ isLoading: false, currentSong: null });
     }
   } catch (err) {
     console.error("Failed to resolve track:", err);
-    usePlayerStore.setState({ isLoading: false, currentSong: null });
+    if (generation === resolveGeneration) {
+      usePlayerStore.setState({ isLoading: false, currentSong: null });
+    }
   }
 };

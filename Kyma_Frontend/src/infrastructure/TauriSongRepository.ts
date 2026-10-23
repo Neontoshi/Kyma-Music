@@ -8,6 +8,19 @@ export class TauriSongRepository implements ISongRepository {
   private lastScanTime = 0;
   private readonly SCAN_COOLDOWN = 300000;
 
+  private revokeCachedArtwork() {
+    for (const song of this.cachedSongs) {
+      if (song.artwork?.startsWith("blob:")) {
+        URL.revokeObjectURL(song.artwork);
+      }
+    }
+  }
+
+  private replaceCachedSongs(raw: any[]) {
+    this.revokeCachedArtwork();
+    this.cachedSongs = raw.map(this.mapSong);
+  }
+
   private async getScanFolders(): Promise<string[]> {
     try {
       const raw = await tauriCommands.getSetting("scan_folders");
@@ -49,7 +62,7 @@ export class TauriSongRepository implements ISongRepository {
       raw = await this.scanAllFolders();
       this.lastScanTime = Date.now();
     }
-    this.cachedSongs = raw.map(this.mapSong);
+    this.replaceCachedSongs(raw);
     return this.cachedSongs;
   }
 
@@ -58,12 +71,12 @@ export class TauriSongRepository implements ISongRepository {
     if (now - this.lastScanTime < this.SCAN_COOLDOWN) {
       const raw = (await tauriCommands.getSongs()) as any[];
       if (raw.length > 0) {
-        this.cachedSongs = raw.map(this.mapSong);
+        this.replaceCachedSongs(raw);
         return this.cachedSongs;
       }
     }
     const raw = await this.scanAllFolders();
-    this.cachedSongs = raw.map(this.mapSong);
+    this.replaceCachedSongs(raw);
     this.lastScanTime = Date.now();
     return this.cachedSongs;
   }

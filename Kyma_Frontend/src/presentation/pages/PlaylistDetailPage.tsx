@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { usePlayerStore } from "../stores/playerStore";
 import { useQueueStore } from "../stores/queueStore";
+import { useLibraryStore } from "../stores/libraryStore";
 import { tauriCommands } from "../../services/tauriBridge";
 import { Song } from "../../core/entities/Song";
 import { formatDuration, formatTotalDuration } from "../../lib/formatTime";
@@ -14,7 +15,12 @@ const PlaylistDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const [songs, setSongs] = useState<any[]>([]);
   const [playlist, setPlaylist] = useState<any>(null);
-  const [likedSongs, setLikedSongs] = useState<Set<string>>(new Set());
+  const librarySongs = useLibraryStore((s) => s.songs);
+  const toggleLikeSong = useLibraryStore((s) => s.toggleLike);
+  const likedSongs = useMemo(
+    () => new Set(librarySongs.filter((s) => s.liked).map((s) => s.id)),
+    [librarySongs],
+  );
   const { currentSong, setCurrentSong, setProgress, isPlaying } =
     usePlayerStore();
   const { setQueue } = useQueueStore();
@@ -81,10 +87,27 @@ const PlaylistDetailPage: React.FC = () => {
 
   const toggleLike = (e: React.MouseEvent, songId: string) => {
     e.stopPropagation();
-    setLikedSongs((prev) => {
-      const next = new Set(prev);
-      next.has(songId) ? next.delete(songId) : next.add(songId);
-      return next;
+    const raw = songs.find((s) => s.song_id === songId);
+    const songData = raw
+      ? makeSong({
+          id: raw.song_id,
+          path: raw.path,
+          title: raw.title,
+          artist: raw.artist,
+          album: raw.album,
+          duration: raw.duration_secs,
+          artwork: raw.thumbnail,
+          source: raw.source,
+          videoId: raw.video_id || undefined,
+          dur: formatDuration(raw.duration_secs),
+          grad: randomGradient(),
+          liked: likedSongs.has(raw.song_id),
+        })
+      : undefined;
+    const isLiked = likedSongs.has(songId);
+
+    void toggleLikeSong(songId, isLiked ? undefined : songData).catch((err) => {
+      console.error("Failed to toggle like:", err);
     });
   };
 

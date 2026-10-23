@@ -70,6 +70,7 @@ export const useYouTubeStore = create<YouTubeStore>((set, get) => ({
     set({
       requestId,
       isSearching: true,
+      isLoadingMore: false,
       error: null,
     });
 
@@ -92,27 +93,41 @@ export const useYouTubeStore = create<YouTubeStore>((set, get) => ({
         set({
           error: String(e),
           isSearching: false,
+          lastQuery: trimmed,
         });
       }
     }
   },
   loadMore: async () => {
-    const { lastQuery, offset, results } = get();
-    if (!lastQuery) return;
+    const { lastQuery, offset, requestId } = get();
+    if (!lastQuery || get().isLoadingMore) return;
+    const query = lastQuery;
+    const requestedOffset = offset;
     set({ isLoadingMore: true });
     try {
       const raw: YouTubeSearchResult[] = await tauriCommands.searchYoutube(
-        lastQuery,
+        query,
         undefined,
-        offset,
+        requestedOffset,
       );
-      set({
-        results: [...results, ...raw.map(toSong)],
+
+      if (
+        get().requestId !== requestId ||
+        get().lastQuery !== query ||
+        get().offset !== requestedOffset
+      ) {
+        return;
+      }
+
+      set((state) => ({
+        results: [...state.results, ...raw.map(toSong)],
         isLoadingMore: false,
-        offset: offset + 15,
-      });
+        offset: requestedOffset + 15,
+      }));
     } catch (e) {
-      set({ error: String(e), isLoadingMore: false });
+      if (get().requestId === requestId && get().lastQuery === query) {
+        set({ error: String(e), isLoadingMore: false });
+      }
     }
   },
 

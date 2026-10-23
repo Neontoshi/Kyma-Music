@@ -10,6 +10,8 @@ interface HomeDataState {
   heatmap: any[];
   loading: boolean;
   loaded: boolean;
+  lastfmLoadedSignature: string;
+  lastfmLoadingSignature: string | null;
   loadAll: (
     lastfmKey: string,
     lastfmUser: string,
@@ -19,6 +21,7 @@ interface HomeDataState {
 
 const MAX_RETRIES = 4;
 const RETRY_DELAY_MS = 3000;
+let localLoadPromise: Promise<void> | null = null;
 
 async function resolveTrendingTracks(tracks: any[]): Promise<any[]> {
   return Promise.all(
@@ -50,36 +53,84 @@ export const useHomeDataStore = create<HomeDataState>((set, get) => ({
   heatmap: [],
   loading: false,
   loaded: false,
+  lastfmLoadedSignature: "",
+  lastfmLoadingSignature: null,
 
   loadAll: async (lastfmKey, lastfmUser, topLocalArtist) => {
-    if (get().loaded || get().loading) return;
+    const signature = `${lastfmKey}\u0000${lastfmUser}\u0000${topLocalArtist}`;
+    const state = get();
+
+    if (state.loaded && state.lastfmLoadedSignature === signature) return;
+    if (state.lastfmLoadingSignature === signature) return;
+
     set({ loading: true });
 
-    // Deezer chart — retry until all tracks have videoId
-    try {
-      const data = (await tauriCommands.getDeezerChart()) as any;
-      const tracks = (data || []).slice(0, 10);
+    const runLocalLoad = async () => {
+      if (get().loaded) return;
+      if (!localLoadPromise) {
+        localLoadPromise = (async () => {
+          // Deezer chart — retry until all tracks have videoId
+          try {
+            const data = (await tauriCommands.getDeezerChart()) as any;
+            const tracks = (data || []).slice(0, 10);
 
-      let resolved = await resolveTrendingTracks(tracks);
-      let attempt = 0;
+            let resolved = await resolveTrendingTracks(tracks);
+            let attempt = 0;
 
-      while (attempt < MAX_RETRIES) {
-        const missing = resolved.filter((t) => !t.videoId);
-        if (missing.length === 0) break;
+            while (attempt < MAX_RETRIES) {
+              const missing = resolved.filter((t) => !t.videoId);
+              if (missing.length === 0) break;
 
-        await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+              await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
 
-        const retried = await resolveTrendingTracks(missing);
-        const retriedMap = new Map(retried.map((t) => [t.id, t]));
-        resolved = resolved.map((t) =>
-          !t.videoId && retriedMap.has(t.id) ? retriedMap.get(t.id) : t,
-        );
-        attempt++;
+              const retried = await resolveTrendingTracks(missing);
+              const retriedMap = new Map(retried.map((t) => [t.id, t]));
+              resolved = resolved.map((t) =>
+                !t.videoId && retriedMap.has(t.id) ? retriedMap.get(t.id) : t,
+              );
+              attempt++;
+            }
+
+            set({ trendingChart: resolved.filter((t) => !!t.videoId) });
+          } catch {}
+
+          // Local weekly stats
+          try {
+            const stats = (await tauriCommands.getWeeklyStats()) as any;
+            set({ weeklyStats: stats });
+          } catch {}
+
+          // Local all-time stats
+          try {
+            const allTime = (await tauriCommands.getAllTimeStats()) as any;
+            set({ allTimeStats: allTime });
+          } catch {}
+
+          // Local heatmap
+          try {
+            const data = (await tauriCommands.getHeatmap()) as any;
+            set({ heatmap: data || [] });
+          } catch {}
+
+          set({ loaded: true });
+        })();
       }
 
-      // Only show tracks that fully resolved
-      set({ trendingChart: resolved.filter((t) => !!t.videoId) });
-    } catch {}
+      try {
+        await localLoadPromise;
+      } finally {
+        localLoadPromise = null;
+      }
+    };
+
+    await runLocalLoad();
+
+    if (get().lastfmLoadedSignature === signature) {
+      set({ loading: false });
+      return;
+    }
+
+    set({ lastfmLoadingSignature: signature });
 
     // Last.fm weekly chart
     if (lastfmKey && lastfmUser) {
@@ -122,22 +173,10 @@ export const useHomeDataStore = create<HomeDataState>((set, get) => ({
       } catch {}
     }
 
-    // Local weekly stats
-    const stats = (await tauriCommands.getWeeklyStats()) as any;
-    set({ weeklyStats: stats });
-
-    // Local all-time stats
-    try {
-      const allTime = (await tauriCommands.getAllTimeStats()) as any;
-      set({ allTimeStats: allTime });
-    } catch {}
-
-    // Local heatmap
-    try {
-      const data = (await tauriCommands.getHeatmap()) as any;
-      set({ heatmap: data || [] });
-    } catch {}
-
-    set({ loading: false, loaded: true });
+    set({
+      lastfmLoadedSignature: signature,
+      lastfmLoadingSignature: null,
+      loading: false,
+    });
   },
 }));

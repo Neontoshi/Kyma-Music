@@ -76,7 +76,7 @@ const slideStyle = (collapsed: boolean): React.CSSProperties => ({
     : "max-width 0.28s cubic-bezier(0, 0, 0.2, 1) 0.05s, opacity 0.2s ease 0.1s",
 });
 
-const Sidebar: React.FC<SidebarProps> = ({ className, onOpen, onClose }) => {
+const Sidebar: React.FC<SidebarProps> = ({ className, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { sidebarCollapsed, toggleSidebar } = useUIStore();
@@ -163,17 +163,15 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onOpen, onClose }) => {
       label,
     });
     navigate(path);
+    if (onClose) {
+      onClose();
+    }
   };
 
   const handleToggleSidebar = () => {
-    const newState = !sidebarCollapsed;
-    logger.logUI("Sidebar", newState ? "expand" : "collapse", {});
+    const willCollapse = !sidebarCollapsed;
+    logger.logUI("Sidebar", willCollapse ? "collapse" : "expand", {});
     toggleSidebar();
-    if (newState && onOpen) {
-      onOpen();
-    } else if (!newState && onClose) {
-      onClose();
-    }
   };
 
   const handleOpenCreateModal = () => {
@@ -200,10 +198,11 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onOpen, onClose }) => {
     >
       <div className="sidebar-top">
         <button
+          type="button"
           className="sidebar-menu-btn"
           onClick={handleToggleSidebar}
-          title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          aria-label="Toggle sidebar"
+          data-tooltip={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
             <circle cx="12" cy="5" r="1.8" />
@@ -235,7 +234,8 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onOpen, onClose }) => {
                   padding: sidebarCollapsed ? "12px 8px" : undefined,
                   gap: sidebarCollapsed ? 0 : undefined,
                 }}
-                title={sidebarCollapsed ? item.label : undefined}
+                data-tooltip={sidebarCollapsed ? item.label : undefined}
+                aria-label={item.label}
               >
                 <Icon />
                 <span style={slideStyle(sidebarCollapsed)}>{item.label}</span>
@@ -261,6 +261,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onOpen, onClose }) => {
               </div>
               <div
                 onClick={handleOpenCreateModal}
+                className="sidebar-new-playlist-icon"
                 style={{
                   width: "24px",
                   height: "24px",
@@ -281,7 +282,8 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onOpen, onClose }) => {
                   e.currentTarget.style.color = "var(--text3)";
                   e.currentTarget.style.background = "transparent";
                 }}
-                title="New Playlist"
+                data-tooltip="New Playlist"
+                aria-label="New Playlist"
               >
                 <svg
                   viewBox="0 0 24 24"

@@ -50,6 +50,8 @@ const navItems: { id: NavSection; icon: string; label: string; sub: string }[] =
 const SettingsPage: React.FC = () => {
   const [activeSection, setActiveSection] = useState<NavSection>("playback");
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [settingsError, setSettingsError] = useState<string | null>(null);
   const [localIP, setLocalIP] = useState("");
   const [qrDataUrl, setQrDataUrl] = useState("");
   const [copyLabel, setCopyLabel] = useState("Copy");
@@ -113,50 +115,78 @@ const SettingsPage: React.FC = () => {
   }, []);
 
   const loadSettings = async () => {
-    const token = await tauriCommands.getSetting("listenbrainz_token");
-    if (token) setListenbrainzToken(token);
-    const user = await tauriCommands.getSetting("listenbrainz_user");
-    if (user) setListenbrainzUser(user);
-    const lfmKey = await tauriCommands.getSetting("lastfm_api_key");
-    if (lfmKey) setLastfmKey(lfmKey);
-    const lfmUser = await tauriCommands.getSetting("lastfm_user");
-    if (lfmUser) setLastfmUser(lfmUser);
-    const vol = await tauriCommands.getSetting("default_volume");
-    const volNum = vol ? parseInt(vol) : 70;
-    setDefaultVolume(volNum);
-    setPlayerVolume(volNum);
-    const cf = await tauriCommands.getSetting("crossfade");
-    if (cf) setCrossfade(parseInt(cf));
-    const gp = await tauriCommands.getSetting("gapless");
-    setGapless(gp !== "false");
-    const aq = await tauriCommands.getSetting("audio_quality");
-    if (aq) setAudioQuality(aq);
-    const sf = await tauriCommands.getSetting("scan_folders");
-    if (sf) {
-      try {
-        setScanFolders(JSON.parse(sf));
-      } catch {
-        setScanFolders([]);
+    try {
+      const [
+        token,
+        user,
+        lfmKey,
+        lfmUser,
+        vol,
+        cf,
+        gp,
+        aq,
+        sf,
+        asc,
+        asi,
+        df,
+        dq,
+        de,
+        ac,
+        cd,
+        t,
+        logPath,
+      ] = await Promise.all([
+        tauriCommands.getSetting("listenbrainz_token"),
+        tauriCommands.getSetting("listenbrainz_user"),
+        tauriCommands.getSetting("lastfm_api_key"),
+        tauriCommands.getSetting("lastfm_user"),
+        tauriCommands.getSetting("default_volume"),
+        tauriCommands.getSetting("crossfade"),
+        tauriCommands.getSetting("gapless"),
+        tauriCommands.getSetting("audio_quality"),
+        tauriCommands.getSetting("scan_folders"),
+        tauriCommands.getSetting("auto_scan"),
+        tauriCommands.getSetting("auto_scan_interval"),
+        tauriCommands.getSetting("download_folder"),
+        tauriCommands.getSetting("download_quality"),
+        tauriCommands.getSetting("enable_downloads"),
+        tauriCommands.getSetting("auto_cleanup"),
+        tauriCommands.getSetting("cleanup_days"),
+        tauriCommands.getSetting("theme"),
+        tauriCommands.getLogFilePath(),
+      ]);
+
+      if (token) setListenbrainzToken(token);
+      if (user) setListenbrainzUser(user);
+      if (lfmKey) setLastfmKey(lfmKey);
+      if (lfmUser) setLastfmUser(lfmUser);
+      const volNum = vol ? parseInt(vol) : 70;
+      setDefaultVolume(volNum);
+      setPlayerVolume(volNum);
+      if (cf) setCrossfade(parseInt(cf));
+      setGapless(gp !== "false");
+      if (aq) setAudioQuality(aq);
+      if (sf) {
+        try {
+          setScanFolders(JSON.parse(sf));
+        } catch {
+          setScanFolders([]);
+        }
       }
+      setAutoScan(asc === "true");
+      if (asi) setAutoScanInterval(parseInt(asi));
+      if (df) setDownloadFolder(df);
+      if (dq) setDownloadQuality(dq);
+      setDownloadsEnabled(de === "true");
+      setAutoCleanup(ac === "true");
+      if (cd) setCleanupDays(parseInt(cd));
+      if (t) setLocalTheme(t);
+      setLogFilePath(logPath);
+      setSettingsError(null);
+    } catch (error) {
+      logger.logError("SettingsPage settings_load_failed", { error });
+      setSettingsError("Could not load all settings. Values shown may be stale.");
     }
-    const asc = await tauriCommands.getSetting("auto_scan");
-    setAutoScan(asc === "true");
-    const asi = await tauriCommands.getSetting("auto_scan_interval");
-    if (asi) setAutoScanInterval(parseInt(asi));
-    const df = await tauriCommands.getSetting("download_folder");
-    if (df) setDownloadFolder(df);
-    const dq = await tauriCommands.getSetting("download_quality");
-    if (dq) setDownloadQuality(dq);
-    const de = await tauriCommands.getSetting("enable_downloads");
-    setDownloadsEnabled(de === "true");
-    const ac = await tauriCommands.getSetting("auto_cleanup");
-    setAutoCleanup(ac === "true");
-    const cd = await tauriCommands.getSetting("cleanup_days");
-    if (cd) setCleanupDays(parseInt(cd));
-    const t = await tauriCommands.getSetting("theme");
-    if (t) setLocalTheme(t);
-    const logPath = await tauriCommands.getLogFilePath();
-    setLogFilePath(logPath);
   };
 
   const detectLocalIP = async () => {
@@ -182,34 +212,48 @@ const SettingsPage: React.FC = () => {
       selectedFont,
     });
 
-    await tauriCommands.setSetting("default_volume", defaultVolume.toString());
-    await tauriCommands.setSetting("listenbrainz_token", listenbrainzToken);
-    await tauriCommands.setSetting("listenbrainz_user", listenbrainzUser);
-    await tauriCommands.setSetting("lastfm_api_key", lastfmKey);
-    await tauriCommands.setSetting("lastfm_user", lastfmUser);
-    await tauriCommands.setSetting("crossfade", crossfade.toString());
-    await tauriCommands.setSetting("gapless", gapless.toString());
-    await tauriCommands.setSetting("audio_quality", audioQuality);
-    await tauriCommands.setSetting("scan_folders", JSON.stringify(scanFolders));
-    await tauriCommands.setSetting("auto_scan", autoScan.toString());
-    await tauriCommands.setSetting(
-      "auto_scan_interval",
-      autoScanInterval.toString(),
-    );
-    await tauriCommands.setSetting("download_folder", downloadFolder);
-    await tauriCommands.setSetting("download_quality", downloadQuality);
-    await tauriCommands.setSetting(
-      "enable_downloads",
-      downloadsEnabled.toString(),
-    );
-    await tauriCommands.setSetting("auto_cleanup", autoCleanup.toString());
-    await tauriCommands.setSetting("cleanup_days", cleanupDays.toString());
-    await tauriCommands.setSetting("theme", localTheme);
-    setThemeStore(localTheme);
-    await saveToBackend();
+    setSaving(true);
+    try {
+      await Promise.all([
+        tauriCommands.setSetting("default_volume", defaultVolume.toString()),
+        tauriCommands.setSetting("listenbrainz_token", listenbrainzToken),
+        tauriCommands.setSetting("listenbrainz_user", listenbrainzUser),
+        tauriCommands.setSetting("lastfm_api_key", lastfmKey),
+        tauriCommands.setSetting("lastfm_user", lastfmUser),
+        tauriCommands.setSetting("crossfade", crossfade.toString()),
+        tauriCommands.setSetting("gapless", gapless.toString()),
+        tauriCommands.setSetting("audio_quality", audioQuality),
+        tauriCommands.setSetting("scan_folders", JSON.stringify(scanFolders)),
+        tauriCommands.setSetting("auto_scan", autoScan.toString()),
+        tauriCommands.setSetting(
+          "auto_scan_interval",
+          autoScanInterval.toString(),
+        ),
+        tauriCommands.setSetting("download_folder", downloadFolder),
+        tauriCommands.setSetting("download_quality", downloadQuality),
+        tauriCommands.setSetting(
+          "enable_downloads",
+          downloadsEnabled.toString(),
+        ),
+        tauriCommands.setSetting("auto_cleanup", autoCleanup.toString()),
+        tauriCommands.setSetting("cleanup_days", cleanupDays.toString()),
+        tauriCommands.setSetting("theme", localTheme),
+      ]);
+      setThemeStore(localTheme);
+      await saveToBackend();
 
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+      setSettingsError(null);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch (error) {
+      logger.logError("SettingsPage save_settings_failed", { error });
+      setSettingsError(
+        "Some settings could not be saved. Please try again.",
+      );
+      setSaved(false);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleSectionChange = (section: NavSection) => {
@@ -403,6 +447,22 @@ const SettingsPage: React.FC = () => {
                 />
               )}
 
+              {settingsError && (
+                <div
+                  role="alert"
+                  style={{
+                    margin: "16px 0 0",
+                    padding: "10px 14px",
+                    borderRadius: "var(--radius-sm)",
+                    background: "var(--error-bg, rgba(255, 77, 77, 0.12))",
+                    color: "var(--error, #ff4d4d)",
+                    fontSize: "12px",
+                  }}
+                >
+                  {settingsError}
+                </div>
+              )}
+
               {activeSection !== "logs" && activeSection !== "updates" && (
                 <div className="settings-savebar">
                   <div className="settings-save-copy">
@@ -416,8 +476,9 @@ const SettingsPage: React.FC = () => {
                   <button
                     className={`settings-save-btn ${saved ? "saved" : ""}`}
                     onClick={handleSave}
+                    disabled={saving}
                   >
-                    {saved ? "✓ Saved" : "Save changes"}
+                    {saving ? "Saving…" : saved ? "✓ Saved" : "Save changes"}
                   </button>
                 </div>
               )}

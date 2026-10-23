@@ -1,5 +1,5 @@
 // Kyma_Frontend/src/presentation/pages/ExplorePage.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SongRow from "../components/Library/SongRow";
 import { usePlayerStore } from "../stores/playerStore";
 import { useQueueStore } from "../stores/queueStore";
@@ -49,6 +49,8 @@ const ExplorePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [resolvingId, setResolvingId] = useState<string | null>(null);
+  const likingRef = useRef<Set<string>>(new Set());
+  const categoryRequestRef = useRef(0);
 
   useExplorePrefetch(tracks);
 
@@ -62,6 +64,7 @@ const ExplorePage: React.FC = () => {
 
   const loadCategory = async (queryIndex: number) => {
     if (!ytdlpAvailable) return;
+    const requestId = ++categoryRequestRef.current;
     try {
       const category = EXPLORE_CATEGORIES[queryIndex];
       let deezerTracks: any[];
@@ -73,6 +76,8 @@ const ExplorePage: React.FC = () => {
           category.query!,
         );
       }
+
+      if (requestId !== categoryRequestRef.current) return;
 
       const likedIds = useLibraryStore
         .getState()
@@ -100,7 +105,9 @@ const ExplorePage: React.FC = () => {
     } catch (err) {
       console.error("Failed to load category:", err);
     } finally {
-      setLoading(false);
+      if (requestId === categoryRequestRef.current) {
+        setLoading(false);
+      }
     }
   };
 
@@ -128,11 +135,14 @@ const ExplorePage: React.FC = () => {
 
   const handleLike = async (e: React.MouseEvent, song: Song) => {
     e.stopPropagation();
-    try {
-      const newLiked = !song.liked;
-      toggleLike(song.id, song.liked ? undefined : song);
-      await tauriCommands.toggleLike({ trackId: song.id });
+    if (likingRef.current.has(song.id)) return;
+    likingRef.current.add(song.id);
 
+    try {
+      const newLiked = await toggleLike(
+        song.id,
+        song.liked ? undefined : song,
+      );
       setTracks((prevTracks) =>
         prevTracks.map((t) =>
           t.id === song.id ? { ...t, liked: newLiked } : t,
@@ -140,6 +150,8 @@ const ExplorePage: React.FC = () => {
       );
     } catch (err) {
       console.error("Failed to toggle like:", err);
+    } finally {
+      likingRef.current.delete(song.id);
     }
   };
 

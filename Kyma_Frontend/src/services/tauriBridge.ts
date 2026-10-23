@@ -235,7 +235,12 @@ export const tauriCommands = {
     const cached = settingCache.get(key);
     if (cached) return cached;
 
-    const request = handleInvoke<string | null>("get_setting", { key });
+    const request = handleInvoke<string | null>("get_setting", { key }).then(
+      (value) => {
+        if (value === null) settingCache.delete(key);
+        return value;
+      },
+    );
     settingCache.set(key, request);
     request.catch(() => settingCache.delete(key));
     return request;

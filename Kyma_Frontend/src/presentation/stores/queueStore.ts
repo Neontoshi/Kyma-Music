@@ -17,7 +17,7 @@ interface QueueStore {
     source: QueueSource,
   ) => Promise<void>;
   getNextSong: (isShuffle: boolean, repeatMode: number) => Song | null;
-  getPrevSong: () => Song | null;
+  getPrevSong: (repeatMode?: number) => Song | null;
   setIndex: (index: number) => void;
   clearQueue: () => Promise<void>;
   removeFromQueue: (songId: string) => Promise<void>;
@@ -60,15 +60,26 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
   },
 
   setQueue: async (songs, startSong, source) => {
+    const previous = {
+      queue: get().queue,
+      currentIndex: get().currentIndex,
+      source: get().source,
+    };
     const startIndex = songs.findIndex((s) => s.id === startSong.id);
-    const state = {
+    const next = {
       queue: songs,
       currentIndex: startIndex >= 0 ? startIndex : 0,
       source,
     };
-    set(state);
+    set(next);
 
-    await tauriCommands.setQueue(songs);
+    try {
+      await tauriCommands.setQueue(songs);
+    } catch (err) {
+      set(previous);
+      logger.logError("QueueStore set_queue_failed", { error: err });
+      console.error("Failed to set queue:", err);
+    }
   },
 
   getNextSong: (isShuffle, repeatMode) => {
@@ -110,11 +121,13 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
     return null;
   },
 
-  getPrevSong: () => {
+  getPrevSong: (repeatMode = 0) => {
     const { queue, currentIndex } = get();
     if (queue.length === 0) return null;
 
     const prevIndex = currentIndex - 1;
+    if (prevIndex < 0 && repeatMode !== 1) return null;
+
     const newIndex = prevIndex >= 0 ? prevIndex : queue.length - 1;
     set({ currentIndex: newIndex });
     return queue[newIndex];
@@ -125,26 +138,44 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
   },
 
   clearQueue: async () => {
-    await tauriCommands.clearQueue();
-    set({
-      queue: [],
-      currentIndex: -1,
-      source: "none",
-    });
+    const previous = {
+      queue: get().queue,
+      currentIndex: get().currentIndex,
+      source: get().source,
+    };
+    try {
+      await tauriCommands.clearQueue();
+      set({
+        queue: [],
+        currentIndex: -1,
+        source: "none",
+      });
+    } catch (err) {
+      set(previous);
+      logger.logError("QueueStore clear_queue_failed", { error: err });
+      console.error("Failed to clear queue:", err);
+    }
   },
 
   removeFromQueue: async (songId: string) => {
     const { currentIndex, queue } = get();
     const removedIdx = queue.findIndex((s) => s.id === songId);
+    const previous = { queue, currentIndex };
 
-    await tauriCommands.removeFromQueue(songId);
-    const newQueue = await tauriCommands.getQueue();
+    try {
+      await tauriCommands.removeFromQueue(songId);
+      const newQueue = await tauriCommands.getQueue();
 
-    const newIndex =
-      removedIdx !== -1 && removedIdx < currentIndex
-        ? currentIndex - 1
-        : currentIndex;
+      const newIndex =
+        removedIdx !== -1 && removedIdx < currentIndex
+          ? currentIndex - 1
+          : currentIndex;
 
-    set({ queue: newQueue || [], currentIndex: newIndex });
+      set({ queue: newQueue || [], currentIndex: newIndex });
+    } catch (err) {
+      set(previous);
+      logger.logError("QueueStore remove_queue_failed", { error: err });
+      console.error("Failed to remove from queue:", err);
+    }
   },
 }));

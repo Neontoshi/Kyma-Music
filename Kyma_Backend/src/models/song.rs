@@ -17,8 +17,17 @@ pub struct Song {
 
 impl Song {
     pub fn new(path: String) -> Self {
+        let canonical_path = std::fs::canonicalize(&path)
+            .map(|p| p.to_string_lossy().into_owned())
+            .unwrap_or_else(|_| path.clone());
+        let id = uuid::Uuid::new_v5(
+            &uuid::Uuid::NAMESPACE_URL,
+            canonical_path.as_bytes(),
+        )
+        .to_string();
+
         Self {
-            id: uuid::Uuid::new_v4().to_string(),
+            id,
             title: "Unknown".to_string(),
             artist: "Unknown".to_string(),
             album: "Unknown".to_string(),

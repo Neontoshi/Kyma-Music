@@ -49,6 +49,7 @@ const SearchPage: React.FC = () => {
   const [isScSearching, setIsScSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const searchStartTime = useRef<number>(0);
+  const scRequestRef = useRef(0);
 
   useEffect(() => {
     if (incomingQuery) setQuery(incomingQuery);
@@ -139,6 +140,7 @@ const SearchPage: React.FC = () => {
 
   //  SoundCloud search (debounced)
   useEffect(() => {
+    const requestId = ++scRequestRef.current;
     if (!query.trim()) {
       setScSongs([]);
       setIsScSearching(false);
@@ -152,6 +154,7 @@ const SearchPage: React.FC = () => {
       tauriCommands
         .searchSoundcloud(query)
         .then((results: any[]) => {
+          if (requestId !== scRequestRef.current) return;
           const searchTime = Date.now() - searchStartTime.current;
           logger.logUI("SearchPage", "soundcloud_search_complete", {
             query: query.slice(0, 50),
@@ -177,6 +180,7 @@ const SearchPage: React.FC = () => {
           setIsScSearching(false);
         })
         .catch((err) => {
+          if (requestId !== scRequestRef.current) return;
           logger.logError("SearchPage soundcloud_search_failed", {
             query: query.slice(0, 50),
             error: err,

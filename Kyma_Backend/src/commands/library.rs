@@ -7,6 +7,104 @@ use crate::KymaError;
 use std::path::Path;
 use walkdir::WalkDir;
 
+async fn reconcile_local_song_ids(
+    db: &sqlx::SqlitePool,
+    songs: &[Song],
+) -> Result<(), KymaError> {
+    let mut tx = db.begin().await?;
+
+    for song in songs {
+        let legacy_likes: Vec<(String,)> = sqlx::query_as(
+            "SELECT id FROM liked_songs
+             WHERE path = ? AND id != ?
+               AND COALESCE(source, 'local') NOT IN ('youtube', 'soundcloud')",
+        )
+        .bind(&song.path)
+        .bind(&song.id)
+        .fetch_all(&mut *tx)
+        .await?;
+
+        let stable_like_exists: Option<(String,)> =
+            sqlx::query_as("SELECT id FROM liked_songs WHERE id = ?")
+                .bind(&song.id)
+                .fetch_optional(&mut *tx)
+                .await?;
+        let stable_track_like_exists: Option<(String,)> =
+            sqlx::query_as("SELECT track_id FROM liked_tracks WHERE track_id = ?")
+                .bind(&song.id)
+                .fetch_optional(&mut *tx)
+                .await?;
+
+        if stable_like_exists.is_some() {
+            for (legacy_id,) in &legacy_likes {
+                sqlx::query("DELETE FROM liked_tracks WHERE track_id = ?")
+                    .bind(legacy_id)
+                    .execute(&mut *tx)
+                    .await?;
+                sqlx::query("DELETE FROM liked_songs WHERE id = ?")
+                    .bind(legacy_id)
+                    .execute(&mut *tx)
+                    .await?;
+            }
+        } else if let Some((legacy_id,)) = legacy_likes.first() {
+            sqlx::query("UPDATE liked_songs SET id = ? WHERE id = ?")
+                .bind(&song.id)
+                .bind(legacy_id)
+                .execute(&mut *tx)
+                .await?;
+
+            if stable_track_like_exists.is_some() {
+                sqlx::query("DELETE FROM liked_tracks WHERE track_id = ?")
+                    .bind(legacy_id)
+                    .execute(&mut *tx)
+                    .await?;
+            } else {
+                sqlx::query("UPDATE liked_tracks SET track_id = ? WHERE track_id = ?")
+                    .bind(&song.id)
+                    .bind(legacy_id)
+                    .execute(&mut *tx)
+                    .await?;
+            }
+
+            for (duplicate_id,) in legacy_likes.iter().skip(1) {
+                sqlx::query("DELETE FROM liked_tracks WHERE track_id = ?")
+                    .bind(duplicate_id)
+                    .execute(&mut *tx)
+                    .await?;
+                sqlx::query("DELETE FROM liked_songs WHERE id = ?")
+                    .bind(duplicate_id)
+                    .execute(&mut *tx)
+                    .await?;
+            }
+        }
+
+        sqlx::query(
+            "UPDATE play_history SET track_id = ?
+             WHERE path = ? AND track_id != ?
+               AND COALESCE(source, 'local') NOT IN ('youtube', 'soundcloud')",
+        )
+        .bind(&song.id)
+        .bind(&song.path)
+        .bind(&song.id)
+        .execute(&mut *tx)
+        .await?;
+
+        sqlx::query(
+            "UPDATE playlist_tracks SET track_id = ?
+             WHERE path = ? AND track_id != ?
+               AND COALESCE(source, 'local') NOT IN ('youtube', 'soundcloud')",
+        )
+        .bind(&song.id)
+        .bind(&song.path)
+        .bind(&song.id)
+        .execute(&mut *tx)
+        .await?;
+    }
+
+    tx.commit().await?;
+    Ok(())
+}
+
 #[tauri::command]
 pub async fn scan_folder(
     path: String,
@@ -103,6 +201,10 @@ pub async fn scan_folder(
         .map_err(|e| KymaError::ScanError(format!("scan task failed: {e}")))?;
 
     *app.library.lock() = songs.clone();
+
+    if let Err(e) = reconcile_local_song_ids(&app.db, &songs).await {
+        user_error!("LIBRARY", "Failed to reconcile local song IDs: {}", e);
+    }
 
     let elapsed = start_time.elapsed();
     user_action!(

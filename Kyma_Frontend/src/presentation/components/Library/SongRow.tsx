@@ -76,10 +76,37 @@ const SongRow: React.FC<SongRowProps> = ({
   }, []);
 
   React.useEffect(() => {
-    if (!song.videoId) return;
-    const cached = localStorage.getItem(`dl-${song.videoId}`);
-    if (cached === "true") setIsDownloaded(true);
-  }, [song.videoId]);
+    if (!song.videoId) {
+      setIsDownloaded(false);
+      return;
+    }
+
+    let cancelled = false;
+    const checkExists = isSoundCloud
+      ? tauriCommands.checkSoundcloudDownloadExists(song.videoId)
+      : tauriCommands.checkDownloadExists(song.videoId);
+
+    checkExists
+      .then((exists) => {
+        if (cancelled) return;
+        setIsDownloaded(exists);
+        if (exists) {
+          localStorage.setItem(`dl-${song.videoId}`, "true");
+        } else {
+          localStorage.removeItem(`dl-${song.videoId}`);
+        }
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setIsDownloaded(
+          localStorage.getItem(`dl-${song.videoId}`) === "true",
+        );
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [song.videoId, isSoundCloud]);
 
   React.useEffect(() => {
     if (!showPlaylistMenu) return;
@@ -119,7 +146,9 @@ const SongRow: React.FC<SongRowProps> = ({
       source: song.source,
     });
     try {
-      toggleLike(song.id, song);
+      await toggleLike(song.id, song);
+    } catch (err) {
+      console.error("Failed to toggle like:", err);
     } finally {
       isLikingRef.current = false;
     }
@@ -509,6 +538,7 @@ const SongRow: React.FC<SongRowProps> = ({
             logger.logUI("SongRow", "open_playlist_menu", { songId: song.id });
             setShowPlaylistMenu((prev) => !prev);
           }}
+          onClick={(e) => e.stopPropagation()}
           style={{ position: "relative" }}
         >
           <svg
@@ -523,6 +553,7 @@ const SongRow: React.FC<SongRowProps> = ({
           {showPlaylistMenu && (
             <div
               ref={playlistMenuRef}
+              onClick={(e) => e.stopPropagation()}
               style={{
                 position: "absolute",
                 top: "100%",

@@ -23,6 +23,9 @@ interface PlayerStore extends PlaybackState {
   buffered: number;
   setBuffered: (v: number) => void;
   playRequestId: number;
+  resumePosition: number;
+  resumeShouldPlay: boolean;
+  setResumeState: (position: number, shouldPlay: boolean) => void;
 }
 export const usePlayerStore = create<PlayerStore>((set) => ({
   currentSong: null,
@@ -38,6 +41,11 @@ export const usePlayerStore = create<PlayerStore>((set) => ({
   message: null,
   buffered: 0,
   playRequestId: 0,
+  resumePosition: 0,
+  resumeShouldPlay: true,
+
+  setResumeState: (resumePosition, resumeShouldPlay) =>
+    set({ resumePosition, resumeShouldPlay }),
 
   setIsLoading: (loading) => {
     console.log("STORE isLoading:", loading);

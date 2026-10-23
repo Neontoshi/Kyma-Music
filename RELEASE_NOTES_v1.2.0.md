@@ -1,9 +1,9 @@
 <div align="center">
 <img src="Kyma_Backend/icons/icon.png" width="100" alt="Kyma Logo" />
 
-# 🌊 Kyma v1.1.10
+# 🌊 Kyma v1.2.0
 ### The first wave.
-*June 2026 · Initial Release*
+*October 2026 · Initial Release*
 </div>
 
 ---
@@ -31,7 +31,7 @@ Kyma is officially out. This is the first public release, a privacy-first, cross
 
 ### 🪟 Windows
 
-Download **`Kyma_1.1.10_x64-setup.exe`** from the [releases page](https://github.com/Neontoshi/Kyma-Music/releases/tag/v1.1.10) and run the installer.
+Download **`Kyma_1.2.0_x64-setup.exe`** from the [releases page](https://github.com/Neontoshi/Kyma-Music/releases/tag/v1.2.0) and run the installer.
 
 For streaming support, install `yt-dlp`:
 
@@ -45,12 +45,12 @@ winget install yt-dlp.yt-dlp
 
 ### 🍎 macOS
 
-Download the appropriate `.dmg` for your machine from the [releases page](https://github.com/Neontoshi/Kyma-Music/releases/tag/v1.1.10):
+Download the appropriate `.dmg` for your machine from the [releases page](https://github.com/Neontoshi/Kyma-Music/releases/tag/v1.2.0):
 
 | Mac | File |
 |-----|------|
-| Apple Silicon (M1/M2/M3) | `Kyma_1.1.10_aarch64.dmg` |
-| Intel | `Kyma_1.1.10_x64.dmg` |
+| Apple Silicon (M1/M2/M3) | `Kyma_1.2.0_aarch64.dmg` |
+| Intel | `Kyma_1.2.0_x64.dmg` |
 
 Open the `.dmg`, drag Kyma to your Applications folder, and launch it.
 
@@ -66,10 +66,10 @@ brew install yt-dlp
 
 ### 🐧 Linux (`.deb`)
 
-Download **`Kyma_1.1.10_amd64.deb`** from the [releases page](https://github.com/Neontoshi/Kyma-Music/releases/tag/v1.1.10) or install directly:
+Download **`Kyma_1.2.0_amd64.deb`** from the [releases page](https://github.com/Neontoshi/Kyma-Music/releases/tag/v1.2.0) or install directly:
 
 ```bash
-sudo dpkg -i Kyma_1.1.10_amd64.deb
+sudo dpkg -i Kyma_1.2.0_amd64.deb
 ```
 
 For streaming support:
@@ -84,7 +84,7 @@ sudo apt install yt-dlp
 
 ## ⚠️ Known Limitations
 
-This is v1.1.10 — a solid foundation with a few rough edges still to smooth out:
+This is v1.2.0 — a solid foundation with a few rough edges still to smooth out:
 
 - Podcast sync is local only — no cross-device support yet
 - SoundCloud search may be slower depending on `yt-dlp` response times
@@ -107,9 +107,6 @@ Open an issue at [github.com/Neontoshi/Kyma-Music/issues](https://github.com/Neo
 
 ## 🗺️ What's Next
 
-- [ ] Lyrics display (lrclib integration)
-- [ ] Queue management improvements
-- [ ] Remote control via Kyma Cast
 - [ ] EQ and audio effects
 
 ---

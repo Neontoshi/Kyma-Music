@@ -18,7 +18,7 @@ interface LibraryStore {
   setSearchQuery: (query: string) => void;
   setActiveGenre: (genre: string) => void;
   setActiveSort: (sort: string) => void;
-  toggleLike: (songId: string, songData?: Song) => void;
+  toggleLike: (songId: string, songData?: Song) => Promise<boolean>;
   setTriggerReload: () => void;
   filterAndSort: () => void;
   updateSong: (updatedSong: Song) => void;
@@ -51,10 +51,10 @@ export const useLibraryStore = create<LibraryStore>((set, get) => ({
   setActiveSort: (activeSort) => set({ activeSort }),
   setTriggerReload: () => set((s) => ({ triggerReload: s.triggerReload + 1 })),
 
-  toggleLike: (songId, songData) => {
-    console.log("[LIKE] toggling:", songId);
-
+  toggleLike: async (songId, songData) => {
     const existingSong = get().songs.find((s) => s.id === songId);
+    const previousLiked = existingSong?.liked;
+    const wasPresent = Boolean(existingSong);
 
     set((state) => {
       const exists = state.songs.find((s) => s.id === songId);
@@ -85,10 +85,12 @@ export const useLibraryStore = create<LibraryStore>((set, get) => ({
       existingSong ??
       songData ??
       useYouTubeStore.getState().results.find((s: Song) => s.id === songId);
+    const resolvedLiked =
+      get().songs.find((s) => s.id === songId)?.liked ?? !existingSong?.liked;
 
-    if (song?.source === "soundcloud") {
-      tauriCommands
-        .toggleLikeSoundcloud({
+    try {
+      if (song?.source === "soundcloud") {
+        await tauriCommands.toggleLikeSoundcloud({
           trackId: songId,
           title: song.title,
           artist: song.artist,
@@ -97,19 +99,17 @@ export const useLibraryStore = create<LibraryStore>((set, get) => ({
           thumbnail: song.artwork || "",
           videoId: song.videoId || null,
           path: song.path || "",
-        })
-        .catch((err) => console.error("[LIKE] soundcloud error:", err));
-    } else {
-      const resolvedSource =
-        song?.source ||
-        (songId.startsWith("yt-")
-          ? "youtube"
-          : songId.startsWith("sc-")
-            ? "soundcloud"
-            : "local");
+        });
+      } else {
+        const resolvedSource =
+          song?.source ||
+          (songId.startsWith("yt-")
+            ? "youtube"
+            : songId.startsWith("sc-")
+              ? "soundcloud"
+              : "local");
 
-      const input =
-        resolvedSource === "youtube" && song
+        const input = song
           ? {
               trackId: songId,
               title: song.title,
@@ -118,16 +118,33 @@ export const useLibraryStore = create<LibraryStore>((set, get) => ({
               durationSecs: song.duration || 0,
               thumbnail: song.artwork || "",
               videoId: song.videoId || null,
-              source: "youtube",
+              source: resolvedSource,
               path: song.path || "",
             }
           : { trackId: songId };
 
-      tauriCommands
-        .toggleLike(input)
-        .catch((err) =>
-          console.error("[LIKE] toggle error:", JSON.stringify(err)),
-        );
+        await tauriCommands.toggleLike(input);
+      }
+
+      return resolvedLiked;
+    } catch (err) {
+      set((state) => {
+        if (wasPresent) {
+          return {
+            songs: state.songs.map((s) =>
+              s.id === songId ? { ...s, liked: previousLiked ?? false } : s,
+            ),
+          };
+        }
+
+        return {
+          songs: state.songs.filter(
+            (s) => !(s.id === songId && s.liked === resolvedLiked),
+          ),
+        };
+      });
+      get().filterAndSort();
+      throw err;
     }
   },
 
@@ -168,6 +185,9 @@ export const useLibraryStore = create<LibraryStore>((set, get) => ({
         break;
       case "duration":
         result.sort((a, b) => a.duration - b.duration);
+        break;
+      case "plays":
+        result.sort((a, b) => (b.plays ?? 0) - (a.plays ?? 0));
         break;
     }
 

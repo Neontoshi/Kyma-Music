@@ -404,7 +404,7 @@ const AlbumsPage: React.FC = () => {
     };
     grid.addEventListener("scroll", handleScroll, { passive: true });
     return () => grid.removeEventListener("scroll", handleScroll);
-  }, [hasMore, loadingMore, page]);
+  }, [hasMore, loadingMore, page, albums.length, loading]);
 
   const handleSuggestionKeyDown = (e: React.KeyboardEvent) => {
     if (!showSuggestions || suggestions.length === 0) return;
