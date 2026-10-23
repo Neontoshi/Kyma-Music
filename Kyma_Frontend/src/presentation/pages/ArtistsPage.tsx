@@ -50,8 +50,11 @@ const ArtistsPage: React.FC = () => {
   const isActive = location.pathname.startsWith("/artists");
   const selectedArtist = artistName ? decodeURIComponent(artistName) : null;
   const [searchQuery, setSearchQuery] = useState("");
-  const [ytArtistSongs, setYtArtistSongs] = useState<Song[]>([]);
-  const [loadingStreams, setLoadingStreams] = useState(false);
+  const [ytData, setYtData] = useState<{
+    artist: string | null;
+    songs: Song[];
+  }>({ artist: null, songs: [] });
+  const [loadedFor, setLoadedFor] = useState<string | null>(null);
   const [savedArtists, setSavedArtists] = useState<any[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [addSearchQuery, setAddSearchQuery] = useState("");
@@ -62,7 +65,14 @@ const ArtistsPage: React.FC = () => {
   const [artistTab, setArtistTab] = useState<"overview" | "about" | "concerts">(
     "overview",
   );
-  const [deezerArtistImage, setDeezerArtistImage] = useState("");
+  const [deezerImage, setDeezerImage] = useState<{
+    artist: string;
+    url: string;
+  } | null>(null);
+  const [pickSeed, setPickSeed] = useState<[number, number]>(() => [
+    Math.random(),
+    Math.random(),
+  ]);
 
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -77,6 +87,14 @@ const ArtistsPage: React.FC = () => {
 
   const { searchArtist, isSearching } = useArtistSearchStore();
 
+  const ytArtistSongs = useMemo(
+    () => (ytData.artist === selectedArtist ? ytData.songs : []),
+    [ytData, selectedArtist],
+  );
+  const loadingStreams = !!selectedArtist && loadedFor !== selectedArtist;
+  const deezerArtistImage =
+    deezerImage && deezerImage.artist === selectedArtist ? deezerImage.url : "";
+
   useEffect(() => {
     tauriCommands
       .getSavedArtists()
@@ -88,7 +106,10 @@ const ArtistsPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    setDeezerArtistImage("");
+    setPickSeed([Math.random(), Math.random()]);
+  }, [selectedArtist]);
+
+  useEffect(() => {
     if (!selectedArtist) return;
 
     const saved = savedArtists.find(
@@ -106,7 +127,8 @@ const ArtistsPage: React.FC = () => {
         ) || results?.[0];
         const image =
           match?.picture_xl || match?.picture_big || match?.picture_medium;
-        if (!cancelled && image) setDeezerArtistImage(image);
+        if (!cancelled && image)
+          setDeezerImage({ artist: selectedArtist, url: image });
       })
       .catch(() => {});
     return () => {
@@ -162,14 +184,12 @@ const ArtistsPage: React.FC = () => {
   useEffect(() => {
     if (!selectedArtist) return;
 
-    setYtArtistSongs([]);
-    setLoadingStreams(true);
     setRefreshing(false);
 
     const cached = loadCachedArtistSongs(selectedArtist);
     if (cached && cached.songs.length > 0) {
-      setYtArtistSongs(cached.songs);
-      setLoadingStreams(false);
+      setYtData({ artist: selectedArtist, songs: cached.songs });
+      setLoadedFor(selectedArtist);
       const age = Date.now() - cached.lastFetched;
       if (age > CACHE_TTL) {
         setRefreshing(true);
@@ -186,9 +206,9 @@ const ArtistsPage: React.FC = () => {
     if (!isSearching(selectedArtist)) {
       const cached = loadCachedArtistSongs(selectedArtist);
       if (cached && cached.songs.length > 0) {
-        setYtArtistSongs(cached.songs);
+        setYtData({ artist: selectedArtist, songs: cached.songs });
       }
-      setLoadingStreams(false);
+      setLoadedFor(selectedArtist);
       setRefreshing(false);
       return;
     }
@@ -197,9 +217,9 @@ const ArtistsPage: React.FC = () => {
       if (!isSearching(selectedArtist)) {
         const cached = loadCachedArtistSongs(selectedArtist);
         if (cached && cached.songs.length > 0) {
-          setYtArtistSongs(cached.songs);
+          setYtData({ artist: selectedArtist, songs: cached.songs });
         }
-        setLoadingStreams(false);
+        setLoadedFor(selectedArtist);
         setRefreshing(false);
         clearInterval(interval);
       }
@@ -373,9 +393,19 @@ const ArtistsPage: React.FC = () => {
   const isFollowing = savedArtists.some(
     (artist: any) => artist.artist_id === selectedArtistKey,
   );
-  const latestRelease = allArtistSongs[0];
-  const artistPick = allArtistSongs[1] || allArtistSongs[0];
-  const popularSongs = useMemo(
+  const [latestRelease, artistPick] = useMemo(() => {
+    if (loadingStreams || allArtistSongs.length === 0) {
+      return [undefined, undefined];
+    }
+    const total = allArtistSongs.length;
+    const first = Math.floor(pickSeed[0] * total);
+    if (total === 1) return [allArtistSongs[first], undefined];
+    // offset of at least 1 guarantees the second pick differs from the first
+    const offset = 1 + Math.floor(pickSeed[1] * (total - 1));
+    const second = (first + offset) % total;
+    return [allArtistSongs[first], allArtistSongs[second]];
+  }, [allArtistSongs, loadingStreams, pickSeed]);
+    const popularSongs = useMemo(
     () =>
       [...allArtistSongs]
         .sort((a, b) => (b.plays ?? 0) - (a.plays ?? 0))
@@ -545,7 +575,7 @@ const ArtistsPage: React.FC = () => {
                             className="artist-feature-card"
                             onClick={() => handlePlaySong(latestRelease)}
                           >
-                            <span className="artist-feature-label">Latest Release</span>
+                            <span className="artist-feature-label">Random Pick</span>
                             <div className="artist-feature-art">
                               {latestRelease.artwork || latestRelease.videoId ? (
                                 <img

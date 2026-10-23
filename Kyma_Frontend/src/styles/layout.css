@@ -197,13 +197,12 @@ body {
     border: 6px solid var(--accent);
     border-radius: 20px;
     overflow: hidden;
+    isolation: isolate;
     background: #000;
     box-shadow:
         0 0 0 1px rgba(var(--accent-rgb), 0.15),
         0 0 45px rgba(var(--accent-rgb), 0.12);
 }
-
-
 
 .app-body {
     display: flex;
@@ -326,11 +325,10 @@ body {
     border-radius: 999px;
     background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)),
-        rgba(10, 10, 10, 0.72);
+        rgba(10, 10, 10, 0.9);
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.05),
         0 12px 34px -22px rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(18px);
     transition:
         border-color 0.16s,
         box-shadow 0.16s,
@@ -426,9 +424,8 @@ body {
         linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015)),
         rgba(9, 10, 9, 0.97);
     box-shadow:
-        0 34px 90px -34px rgba(0, 0, 0, 0.98),
-        inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(24px);
+       0 34px 90px -34px rgba(0, 0, 0, 0.98),
+       inset 0 1px 0 rgba(255, 255, 255, 0.06);
     animation: topbarSearchIn 0.16s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
