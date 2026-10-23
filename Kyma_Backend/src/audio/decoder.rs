@@ -146,7 +146,6 @@ impl DecoderShared {
     }
 
     pub fn reset_timing(&self) {
-        // REMOVED: No log - internal function
         *self.playback_start_time.lock().unwrap() = None;
         *self.base_position.lock().unwrap() = 0.0;
         *self.paused_position.lock().unwrap() = 0.0;
@@ -199,7 +198,6 @@ pub fn decode_and_push(
             return;
         }
 
-        // A seek arrived after decoding finished — restart decode_inner from that position
         if shared.seek_to.lock().unwrap().is_some() {
             tracing::info!("[DECODER] Seek received after track end, restarting decoder");
             shared.is_playing.store(true, Ordering::SeqCst);
@@ -209,7 +207,6 @@ pub fn decode_and_push(
                 user_error!("DECODE", "Re-decode error: {}", e);
                 tracing::error!("[DECODER] Re-decode error: {e}");
             }
-            // After re-decode, go back to draining
             continue;
         }
 
@@ -488,10 +485,6 @@ fn decode_inner(
             resample_pending.extend_from_slice(&owned);
             let chunk_samples = rs.input_frames_next() * channels;
             owned.clear();
-
-            // SincFixedIn consumes exactly one chunk at a time. Keep the
-            // remainder so packets that are not an exact multiple of the
-            // chunk size are not dropped.
             while resample_pending.len() >= chunk_samples {
                 let chunk: Vec<f32> = resample_pending.drain(..chunk_samples).collect();
                 let planes = deinterleave(&chunk, channels);
@@ -506,9 +499,6 @@ fn decode_inner(
             }
         }
 
-        // Device output is interleaved using the output device's channel
-        // count. Map mono/stereo/multichannel sources to it so a mono track
-        // is not consumed as if it were stereo (which doubles playback speed).
         let mapped = remap_channels(&owned, channels, device_channels);
 
         // Start clock on first decoded packet

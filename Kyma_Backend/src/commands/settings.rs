@@ -4,9 +4,6 @@ use crate::user_action;
 use crate::user_error;
 use base64::{engine::general_purpose::STANDARD as BASE64, Engine};
 
-// Simple XOR-based obfuscation for locally stored tokens.
-// This is NOT cryptographically secure, but prevents plaintext exposure
-// from casual DB inspection. For a local music app, this is sufficient.
 const XOR_KEY: &[u8; 10] = b"Kyma2026!!";
 
 pub fn obfuscate(data: &str) -> String {

@@ -5,14 +5,12 @@ use std::sync::{Arc, Condvar, Mutex};
 use std::thread;
 use std::time::Duration;
 
-// ─────────────────────────────────────────────────────────────
 // Shared streaming buffer
-// ─────────────────────────────────────────────────────────────
 
 struct Inner {
     data: Vec<u8>,
     base_offset: usize,
-    total_len: Option<u64>, // filled from GET Content-Length header
+    total_len: Option<u64>,
     done: bool,
     error: Option<String>,
     abort: bool,
@@ -40,16 +38,12 @@ impl SharedBuf {
         }
     }
 
-    // ── producer ─────────────────────────────────────────────
-
     fn set_total_len(&self, len: u64) {
-        // REMOVED: Internal operation, not needed for user logs
         let (lock, _) = &*self.inner;
         lock.lock().unwrap().total_len = Some(len);
     }
 
     fn push(&self, chunk: &[u8]) -> bool {
-        // REMOVED: Too frequent - called for every network chunk
         let (lock, cvar) = &*self.inner;
         let mut inner = lock.lock().unwrap();
         if inner.abort {
@@ -80,7 +74,6 @@ impl SharedBuf {
     // ── consumer ─────────────────────────────────────────────
 
     fn abort(&self) {
-        // REMOVED: Internal operation
         let (lock, cvar) = &*self.inner;
         let mut inner = lock.lock().unwrap();
         inner.abort = true;
@@ -89,38 +82,32 @@ impl SharedBuf {
     }
 
     fn is_aborted(&self) -> bool {
-        // REMOVED: Called frequently
         let (lock, _) = &*self.inner;
         lock.lock().unwrap().abort
     }
 
     fn total_len(&self) -> Option<u64> {
-        // REMOVED: Called frequently
         let (lock, _) = &*self.inner;
         lock.lock().unwrap().total_len
     }
 
     fn base_offset(&self) -> usize {
-        // REMOVED: Called frequently
         let (lock, _) = &*self.inner;
         lock.lock().unwrap().base_offset
     }
 
     fn total_downloaded(&self) -> usize {
-        // REMOVED: Called frequently
         let (lock, _) = &*self.inner;
         let inner = lock.lock().unwrap();
         inner.base_offset + inner.data.len()
     }
 
     fn is_done(&self) -> bool {
-        // REMOVED: Called frequently
         let (lock, _) = &*self.inner;
         lock.lock().unwrap().done
     }
 
     fn read_at(&self, abs_pos: usize, buf: &mut [u8]) -> usize {
-        // REMOVED: Called for every read
         let (lock, _) = &*self.inner;
         let inner = lock.lock().unwrap();
         let base = inner.base_offset;
@@ -138,7 +125,6 @@ impl SharedBuf {
     }
 
     fn wait_for_data(&self, abs_pos: usize) -> io::Result<()> {
-        // REMOVED: Called frequently during reads
         let (lock, cvar) = &*self.inner;
         let mut inner = lock.lock().unwrap();
         loop {
@@ -159,10 +145,6 @@ impl SharedBuf {
         }
     }
 }
-
-// ─────────────────────────────────────────────────────────────
-// Download thread — no HEAD, reads Content-Length from GET
-// ─────────────────────────────────────────────────────────────
 
 fn spawn_download(
     url: String,
@@ -331,9 +313,7 @@ impl HttpReader {
     }
 }
 
-// ─────────────────────────────────────────────────────────────
 // Read
-// ─────────────────────────────────────────────────────────────
 
 impl Read for HttpReader {
     fn read(&mut self, out: &mut [u8]) -> io::Result<usize> {
@@ -355,9 +335,7 @@ impl Read for HttpReader {
     }
 }
 
-// ─────────────────────────────────────────────────────────────
 // Seek
-// ─────────────────────────────────────────────────────────────
 
 impl Seek for HttpReader {
     fn seek(&mut self, from: SeekFrom) -> io::Result<u64> {
@@ -380,7 +358,6 @@ impl Seek for HttpReader {
         if !already_buffered {
             self.restart_from(new_pos);
         } else {
-            // REMOVED: Seek within buffer - no log needed
             self.pos = new_pos;
         }
 
@@ -388,9 +365,7 @@ impl Seek for HttpReader {
     }
 }
 
-// ─────────────────────────────────────────────────────────────
 // Symphonia
-// ─────────────────────────────────────────────────────────────
 
 impl symphonia::core::io::MediaSource for HttpReader {
     fn is_seekable(&self) -> bool {

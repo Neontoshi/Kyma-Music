@@ -9,10 +9,7 @@ use std::sync::{
 
 const RING_CAP: usize = 192_000 * 8; // ~8 seconds @ 48kHz stereo
 
-// ─────────────────────────────────────────────
 // Lock-free SPSC ring buffer
-// ─────────────────────────────────────────────
-
 pub struct Ring {
     buf: Vec<f32>,
     write: AtomicUsize,
@@ -30,7 +27,6 @@ impl Ring {
 
     #[inline(always)]
     pub fn push_slice(&mut self, samples: &[f32]) {
-        // REMOVED: No log - called very frequently for every audio packet
         let mut w = self.write.load(Ordering::Relaxed);
         let mut r = self.read.load(Ordering::Acquire);
 
@@ -50,7 +46,6 @@ impl Ring {
     }
 
     pub fn last_samples(&self, count: usize) -> Vec<f32> {
-        // REMOVED: No log - called frequently for visualizer
         let w = self.write.load(Ordering::Acquire);
         if w < count {
             return vec![0.0; count];
@@ -61,7 +56,6 @@ impl Ring {
 
     #[inline(always)]
     pub fn pop_slice(&mut self, out: &mut [f32]) {
-        // REMOVED: No log - called every audio callback
         let mut r = self.read.load(Ordering::Acquire);
         let w = self.write.load(Ordering::Acquire);
 
@@ -78,7 +72,6 @@ impl Ring {
     }
 
     pub fn available(&self) -> usize {
-        // REMOVED: No log - called frequently
         let w = self.write.load(Ordering::Acquire);
         let r = self.read.load(Ordering::Acquire);
 
@@ -90,7 +83,6 @@ impl Ring {
     }
 
     pub fn clear(&mut self) {
-        // REMOVED: No log - internal operation
         self.write.store(0, Ordering::Release);
         self.read.store(0, Ordering::Release);
 
@@ -99,8 +91,6 @@ impl Ring {
         }
     }
 
-    /// Returns an iterator that yields samples from the ring in order (oldest to newest).
-    /// This is a snapshot — it won't consume from the ring.
     pub fn iter(&self) -> RingIter<'_> {
         let r = self.read.load(Ordering::Acquire);
         let w = self.write.load(Ordering::Acquire);
@@ -136,9 +126,7 @@ impl<'a> Iterator for RingIter<'a> {
     }
 }
 
-// ─────────────────────────────────────────────
 // Audio Output (CPAL)
-// ─────────────────────────────────────────────
 
 pub struct AudioOutput {
     pub stream: Stream,

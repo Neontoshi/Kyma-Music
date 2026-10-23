@@ -8,12 +8,10 @@ use crate::user_action;
 
 use std::sync::mpsc::Sender;
 
-// ── Commands ─────────────────────────────────────────────────────────────────
-
 #[derive(Debug)]
 pub enum Command {
     PlayFile(String, Sender<u64>),
-    PlayYoutube(String, String, Sender<u64>), // (cdn_url, video_id, reply)
+    PlayYoutube(String, String, Sender<u64>),
     PlayNext(String, bool),
     Pause,
     Resume,
@@ -24,8 +22,6 @@ pub enum Command {
     Shutdown,
 }
 
-// ── State ─────────────────────────────────────────────────────────────────────
-
 #[derive(Debug, Clone)]
 pub struct AudioState {
     pub is_playing: bool,
@@ -34,8 +30,6 @@ pub struct AudioState {
     pub volume: f32,
     pub is_buffering: bool,
 }
-
-// ── Handle ────────────────────────────────────────────────────────────────────
 
 pub struct EngineHandle {
     sender: Sender<Command>,
@@ -103,7 +97,6 @@ impl EngineHandle {
     }
 
     pub fn get_state(&self) -> AudioState {
-        // REMOVED: No log - called frequently for UI updates
         let (tx, rx) = std::sync::mpsc::channel();
         let _ = self.sender.send(Command::GetState(tx));
         rx.recv().unwrap_or(AudioState {

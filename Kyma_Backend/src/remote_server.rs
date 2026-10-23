@@ -18,7 +18,6 @@ struct AppState {
 }
 
 fn broadcast_state(app_handle: &tauri::AppHandle, tx: &broadcast::Sender<String>) {
-    // REMOVED: No log - called every 500ms
     let state = app_handle.state::<crate::state::app_state::AppState>();
     let current = state.current_track.lock();
     let audio = state.audio_engine.get_state();

@@ -13,7 +13,6 @@ pub fn init_notifications(app: &tauri::App) {
     let last_track_id = Cell::new(0u64);
 
     app.listen("playback-update", move |event: tauri::Event| {
-        // REMOVED: No log - called every 100ms
         let payload_str = event.payload().to_string();
         let payload: serde_json::Value = serde_json::from_str(&payload_str).unwrap_or_default();
 

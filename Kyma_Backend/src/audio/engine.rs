@@ -128,14 +128,9 @@ pub fn run(rx: Receiver<Command>, _tx: Sender<Command>, app_handle: tauri::AppHa
                 shared.shutdown.store(true, Ordering::SeqCst);
                 return;
             }
-            Err(std::sync::mpsc::RecvTimeoutError::Timeout) => {
-                // REMOVED: No log - normal operation, happens every 50ms
-            }
+            Err(std::sync::mpsc::RecvTimeoutError::Timeout) => {}
         }
 
-        // ── Check for stream expiry ───────────────────────────────────────────
-        // The decoder sets stream_expired_at when a YouTube CDN URL expires
-        // mid-playback. We re-resolve and restart from the saved position.
         if let Some(expired_pos) = shared.stream_expired_at.lock().unwrap().take() {
             if let Some(ref vid) = current_video_id.clone() {
                 let vid = vid.clone();
@@ -191,7 +186,6 @@ pub fn run(rx: Receiver<Command>, _tx: Sender<Command>, app_handle: tauri::AppHa
             }
         }
 
-        // ── Emit playback updates every 100ms ─────────────────────────────────
         let now = Instant::now();
         if last_emit.elapsed() >= Duration::from_millis(100) {
             last_emit = now;
@@ -199,8 +193,6 @@ pub fn run(rx: Receiver<Command>, _tx: Sender<Command>, app_handle: tauri::AppHa
             let duration = *shared.duration_secs.lock().unwrap();
             let is_playing =
                 !shared.paused.load(Ordering::Relaxed) && shared.is_playing.load(Ordering::Relaxed);
-
-            // REMOVED: playback_update log - too frequent (every 100ms)
 
             let is_buffering = shared.is_buffering_now();
 
@@ -237,7 +229,6 @@ pub fn run(rx: Receiver<Command>, _tx: Sender<Command>, app_handle: tauri::AppHa
                 }),
             );
 
-            // ── FFT visualizer data ───────────────────────────────────────────
             if is_playing {
                 let fft_bins = compute_fft_bins(&shared);
                 let _ = app_handle.emit("visualizer-data", serde_json::json!({ "bins": fft_bins }));
