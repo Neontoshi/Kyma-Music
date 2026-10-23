@@ -121,9 +121,10 @@
 }
 
 .artist-detail-inner {
-    max-width: 1000px;
+    max-width: none;
     margin: 0 auto;
-    padding: 0 2rem 8rem;
+    padding: 22px 28px 42px;
+
 }
 
 .artist-back-btn {
@@ -2144,7 +2145,7 @@
 .album-detail-inner {
     position: relative;
     z-index: 1;
-    max-width: 1120px;
+    max-width: none;
     margin: 0 auto;
     padding: 0 2rem 0.75rem;
 }
@@ -2456,7 +2457,7 @@
 .liked-inner {
     position: relative;
     z-index: 1;
-    max-width: 1120px;
+    max-width: none;
     margin: 0 auto;
     padding: 24px 2rem 0.75rem;
 }
@@ -3149,7 +3150,7 @@
 .playlist-detail-inner {
     position: relative;
     z-index: 1;
-    max-width: 1120px;
+    max-width: none;
     margin: 0 auto;
     padding: 0 2rem 0.75rem;
 }

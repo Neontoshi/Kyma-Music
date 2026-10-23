@@ -571,7 +571,7 @@
 
 .browse-header-inner {
     position: relative;
-    max-width: 1120px;
+    max-width: none;
     margin: 0 auto;
     padding: 18px 2rem 0;
 }
@@ -699,7 +699,7 @@
 }
 
 .browse-inner {
-    max-width: 1120px;
+    max-width: none;
     margin: 0 auto;
     padding: 18px 2rem 0.75rem;
 }

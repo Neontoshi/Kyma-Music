@@ -44,9 +44,10 @@
 .foryou-inner {
     position: relative;
     z-index: 1;
-    max-width: 1120px;
     margin: 0 auto;
-    padding: 22px 2rem 42px;
+    max-width: none;
+    padding: 22px 28px 42px;
+
 }
 
 .foryou-eyebrow {

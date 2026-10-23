@@ -77,14 +77,10 @@ const RadioPage: React.FC = () => {
   const searchTimeout = useRef<number | null>(null);
 
   useEffect(() => {
-    if (ytdlpAvailable) {
-      loadPopular();
-      loadSaved();
-      checkRecording();
-    } else {
-      setLoading(false);
-    }
-  }, [ytdlpAvailable]);
+    loadPopular();
+    loadSaved();
+    checkRecording();
+  }, []);
 
   const checkRecording = async () => {
     try {
@@ -105,7 +101,6 @@ const RadioPage: React.FC = () => {
   };
 
   const loadPopular = async () => {
-    if (!ytdlpAvailable) return;
     setLoading(true);
     try {
       setStations((await tauriCommands.getPopularStations()) || []);
@@ -137,8 +132,7 @@ const RadioPage: React.FC = () => {
   };
 
   const handleGenre = async (genre: string) => {
-    if (!ytdlpAvailable) return;
-    setSearchQuery("");
+      setSearchQuery("");
     setActiveGenre(genre);
     setLoading(true);
     try {
@@ -187,8 +181,7 @@ const RadioPage: React.FC = () => {
   };
 
   const handlePlayStation = (station: any) => {
-    if (!ytdlpAvailable) return;
-    const radioSong: Song = makeSong({
+      const radioSong: Song = makeSong({
       id: `radio-${station.id}`,
       path: station.url,
       title: station.name,
@@ -219,7 +212,7 @@ const RadioPage: React.FC = () => {
     return (
       <div
         key={station.id}
-        className={`radio-station-row${isActive ? " active" : ""}${ytdlpAvailable ? "" : " disabled"}`}
+        className={`radio-station-row${isActive ? " active" : ""}`}
         onClick={() => handlePlayStation(station)}
       >
         <div className="radio-station-indicator">
@@ -265,7 +258,7 @@ const RadioPage: React.FC = () => {
           className="radio-station-actions"
           onClick={(e) => e.stopPropagation()}
         >
-          {isActive && (
+          {isActive && ytdlpAvailable && (
             <button
               type="button"
               className={`radio-action${isThisRecording ? " recording" : ""}`}
@@ -356,12 +349,9 @@ const RadioPage: React.FC = () => {
                 </svg>
                 <input
                   type="text"
-                  placeholder={
-                    ytdlpAvailable ? "Search stations…" : "yt-dlp required…"
-                  }
+                  placeholder="Search stations…"
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
-                  disabled={!ytdlpAvailable}
                 />
               </div>
             </div>
@@ -379,10 +369,10 @@ const RadioPage: React.FC = () => {
               type="button"
               className={`radio-chip${!activeGenre && !searchQuery ? " active" : ""}`}
               onClick={() => {
-                if (!ytdlpAvailable) return;
+                setActiveGenre(null);
+                setSearchQuery("");
                 loadPopular();
               }}
-              disabled={!ytdlpAvailable}
             >
               Popular
             </button>
@@ -392,7 +382,6 @@ const RadioPage: React.FC = () => {
                 type="button"
                 className={`radio-chip${activeGenre === genre ? " active" : ""}`}
                 onClick={() => handleGenre(genre)}
-                disabled={!ytdlpAvailable}
               >
                 {genre}
               </button>
@@ -430,16 +419,8 @@ const RadioPage: React.FC = () => {
             ) : stations.length === 0 ? (
               <div className="radio-empty">
                 <div className="radio-empty-icon">📻</div>
-                <h3>
-                  {ytdlpAvailable
-                    ? "No stations found"
-                    : "Radio needs yt-dlp"}
-                </h3>
-                <p>
-                  {ytdlpAvailable
-                    ? "Try another genre or search for a different station."
-                    : "Install yt-dlp to browse and play internet radio."}
-                </p>
+                <h3>No stations found</h3>
+                <p>Try another genre or search for a different station.</p>
               </div>
             ) : (
               <div className="radio-station-list">

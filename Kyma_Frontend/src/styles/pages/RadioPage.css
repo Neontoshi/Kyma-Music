@@ -24,7 +24,7 @@
 
 .radio-header-inner {
     position: relative;
-    max-width: 1120px;
+    max-width: none;
     margin: 0 auto;
     padding: 22px 2rem 16px;
 }
@@ -157,7 +157,7 @@
     display: flex;
     flex-direction: column;
     gap: 18px;
-    max-width: 1120px;
+    max-width: none;
     margin: 0 auto;
     padding: 22px 2rem 0.75rem;
 }

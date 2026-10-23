@@ -44,7 +44,7 @@
 .search-page-inner {
     position: relative;
     z-index: 1;
-    max-width: 1120px;
+    max-width: none;
     margin: 0 auto;
     padding: 22px 2rem 28px;
 }

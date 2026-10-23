@@ -212,9 +212,10 @@
 
 .podcast-header-inner {
     position: relative;
-    max-width: 1120px;
+    max-width: none;
     margin: 0 auto;
-    padding: 18px 2rem 0;
+    padding: 22px 28px 42px;
+
 }
 
 .podcast-collection-header {
@@ -326,9 +327,10 @@
 }
 
 .podcast-inner {
-    max-width: 1120px;
+    max-width: none;
     margin: 0 auto;
-    padding: 18px 2rem 0.75rem;
+    padding: 22px 28px 42px;
+
 }
 
 .podcast-hero {

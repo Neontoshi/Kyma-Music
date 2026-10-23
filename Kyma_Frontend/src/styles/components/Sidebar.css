@@ -346,10 +346,20 @@
 
 /* ── Refreshed library sidebar ── */
 .sidebar {
+    background-color: #070707;
+    border-right: 1px solid rgba(var(--accent-rgb), 0.1);
+}
+
+.sidebar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    transform: translateZ(0);
     background:
         radial-gradient(120% 55% at 0% 0%, rgba(var(--accent-rgb), 0.11), transparent 60%),
         linear-gradient(180deg, color-mix(in srgb, var(--accent) 9%, #070707) 0%, color-mix(in srgb, var(--accent) 4%, #070707) 55%, #070707 100%);
-    border-right: 1px solid rgba(var(--accent-rgb), 0.1);
 }
 
 .sidebar-top {
@@ -388,7 +398,7 @@
 }
 
 .sidebar .nav-item {
-    gap: 0;
+    gap: 12px;
     padding: 9px 12px;
     border-radius: 8px;
     font-size: 13px;
@@ -399,6 +409,10 @@
 
 .sidebar .nav-item svg {
     display: none;
+}
+
+.sidebar.sidebar--collapsed .nav-item svg {
+    display: block;
 }
 
 .sidebar .nav-item:hover {
@@ -482,8 +496,7 @@
     position: fixed;
     inset: 0;
     z-index: 9998;
-    background: rgba(0, 0, 0, 0.72);
-    backdrop-filter: blur(14px);
+    background: rgba(0, 0, 0, 0.85);
     animation: playlistModalFade 0.2s ease both;
 }
 
@@ -656,7 +669,6 @@
     color: var(--text3);
     font-size: 10.5px;
     line-height: 1.4;
-    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
 }
 

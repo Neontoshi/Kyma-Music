@@ -32,13 +32,16 @@ const RADIO_API: &str = "https://de1.api.radio-browser.info/json";
 pub async fn search_radio_stations(query: String) -> Result<Vec<RadioStation>, String> {
     user_action!("RADIO", "Searching: {}", query);
 
-    let url = format!(
-        "{}/stations/search?name={}&limit=100&hidebroken=true&order=clickcount&reverse=true",
-        RADIO_API, query
-    );
     let client = reqwest::Client::new();
     let resp = client
-        .get(&url)
+        .get(format!("{}/stations/search", RADIO_API))
+        .query(&[
+            ("name", query.as_str()),
+            ("limit", "100"),
+            ("hidebroken", "true"),
+            ("order", "clickcount"),
+            ("reverse", "true"),
+        ])
         .header("User-Agent", "Kyma/1.0")
         .send()
         .await
@@ -187,13 +190,16 @@ pub async fn remove_radio_station(
 pub async fn get_stations_by_genre(genre: String) -> Result<Vec<RadioStation>, String> {
     user_action!("RADIO", "Fetching stations by genre: {}", genre);
 
-    let url = format!(
-        "{}/stations/search?tags={}&limit=100&hidebroken=true&order=clickcount&reverse=true",
-        RADIO_API, genre
-    );
     let client = reqwest::Client::new();
     let resp = client
-        .get(&url)
+        .get(format!("{}/stations/search", RADIO_API))
+        .query(&[
+            ("tags", genre.as_str()),
+            ("limit", "100"),
+            ("hidebroken", "true"),
+            ("order", "clickcount"),
+            ("reverse", "true"),
+        ])
         .header("User-Agent", "Kyma/1.0")
         .send()
         .await
@@ -217,7 +223,7 @@ pub async fn get_stations_by_genre(genre: String) -> Result<Vec<RadioStation>, S
             country: s["country"].as_str().unwrap_or("Unknown").to_string(),
             bitrate: s["bitrate"]
                 .as_u64()
-                .map(|b| format!("{} kbps", b / 1000))
+                .map(|b| format!("{} kbps", b))
                 .unwrap_or_default(),
             codec: s["codec"].as_str().unwrap_or("MP3").to_string(),
         })
