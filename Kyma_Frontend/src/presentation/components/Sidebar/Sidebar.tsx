@@ -66,14 +66,13 @@ const MOODS = [
 ];
 
 const slideStyle = (collapsed: boolean): React.CSSProperties => ({
-  maxWidth: collapsed ? 0 : "200px",
   opacity: collapsed ? 0 : 1,
-  overflow: "hidden",
+  visibility: collapsed ? "hidden" : "visible",
   whiteSpace: "nowrap",
   flexShrink: 0,
   transition: collapsed
-    ? "max-width 0.18s cubic-bezier(0.4, 0, 1, 1), opacity 0.12s ease"
-    : "max-width 0.28s cubic-bezier(0, 0, 0.2, 1) 0.05s, opacity 0.2s ease 0.1s",
+    ? "opacity 0.14s ease, visibility 0s linear 0.14s"
+    : "opacity 0.22s ease 0.1s, visibility 0s",
 });
 
 const Sidebar: React.FC<SidebarProps> = ({ className, onClose }) => {
@@ -229,11 +228,6 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onClose }) => {
                 key={item.path}
                 className={`nav-item ${location.pathname === item.path ? "active" : ""}`}
                 onClick={() => handleNavigate(item.path, item.label)}
-                style={{
-                  justifyContent: sidebarCollapsed ? "center" : undefined,
-                  padding: sidebarCollapsed ? "12px 8px" : undefined,
-                  gap: sidebarCollapsed ? 0 : undefined,
-                }}
                 data-tooltip={sidebarCollapsed ? item.label : undefined}
                 aria-label={item.label}
               >
@@ -244,8 +238,11 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onClose }) => {
           })}
         </div>
 
-        {!sidebarCollapsed && (
-          <div className="nav-section">
+          <div
+            className="nav-section"
+            style={slideStyle(sidebarCollapsed)}
+            aria-hidden={sidebarCollapsed}
+            >
             <div
               style={{
                 display: "flex",
@@ -310,7 +307,6 @@ const Sidebar: React.FC<SidebarProps> = ({ className, onClose }) => {
               ))}
             </div>
           </div>
-        )}
       </div>
 
       {showCreateModal && (

@@ -14,8 +14,8 @@
     position: relative;
     z-index: 20;
     transition:
-        width 0.28s cubic-bezier(0, 0, 0.2, 1),
-        min-width 0.28s cubic-bezier(0, 0, 0.2, 1);
+        width 0.32s cubic-bezier(0.32, 0.72, 0, 1),
+        min-width 0.32s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .logo {
@@ -50,7 +50,9 @@
     font-size: 14px;
     font-weight: 500;
     color: var(--text2);
-    transition: all var(--anim-normal) var(--anim-easing);
+    transition:
+        background-color var(--anim-normal) var(--anim-easing),
+        color var(--anim-normal) var(--anim-easing);
     user-select: none;
 }
 
@@ -68,9 +70,6 @@
     width: 18px;
     height: 18px;
     flex-shrink: 0;
-    transition:
-        width 0.25s ease,
-        height 0.25s ease;
 }
 
 .nav-badge {
@@ -313,20 +312,11 @@
 .sidebar.sidebar--collapsed {
     width: 72px;
     min-width: 72px;
-    transition:
-        width 0.22s cubic-bezier(0.4, 0, 1, 1),
-        min-width 0.22s cubic-bezier(0.4, 0, 1, 1);
 }
 
 .sidebar.sidebar--collapsed .logo {
     padding: var(--space-lg) 12px !important;
     justify-content: center !important;
-}
-
-.sidebar.sidebar--collapsed .nav-item {
-    justify-content: center !important;
-    padding: var(--space-sm) 8px !important;
-    gap: 0 !important;
 }
 
 .sidebar.sidebar--collapsed .user-profile {
@@ -348,6 +338,9 @@
 .sidebar {
     background-color: #070707;
     border-right: 1px solid rgba(var(--accent-rgb), 0.1);
+    border-top-left-radius: 17px;
+    border-bottom-left-radius: 17px;
+
 }
 
 .sidebar::before {
@@ -356,7 +349,8 @@
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    transform: translateZ(0);
+    border-top-left-radius: inherit;
+    border-bottom-left-radius: inherit;
     background:
         radial-gradient(120% 55% at 0% 0%, rgba(var(--accent-rgb), 0.11), transparent 60%),
         linear-gradient(180deg, color-mix(in srgb, var(--accent) 9%, #070707) 0%, color-mix(in srgb, var(--accent) 4%, #070707) 55%, #070707 100%);
@@ -405,10 +399,6 @@
     font-weight: 500;
     color: rgba(255,255,255, 0.68);
     letter-spacing: 0.01em;
-}
-
-.sidebar .nav-item svg {
-    display: none;
 }
 
 .sidebar.sidebar--collapsed .nav-item svg {
@@ -918,12 +908,12 @@
 }
 
 .sidebar .nav-section {
-    padding: 12px 18px 6px;
+    padding: 12px 14px 6px;
 }
 
 .sidebar .nav-item {
     margin-bottom: 5px;
-    padding: 9px 14px;
+    padding: 9px 13px;
     border-radius: 9px;
 }
 
@@ -942,20 +932,6 @@
 
 .sidebar .playlist-list {
     padding: 0 2px 8px;
-}
-
-.sidebar--collapsed .sidebar .nav-section,
-.sidebar.sidebar--collapsed .nav-section {
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-.sidebar.sidebar--collapsed .nav-item {
-    margin-bottom: 6px;
-}
-
-.sidebar.sidebar--collapsed .nav-item:last-child {
-    margin-bottom: 0;
 }
 
 @media (max-width: 768px) {
