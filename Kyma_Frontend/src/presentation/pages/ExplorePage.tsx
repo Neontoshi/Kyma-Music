@@ -1,5 +1,5 @@
 // Kyma_Frontend/src/presentation/pages/ExplorePage.tsx
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import SongRow from "../components/Library/SongRow";
 import { usePlayerStore } from "../stores/playerStore";
 import { useQueueStore } from "../stores/queueStore";
@@ -43,6 +43,11 @@ const ExplorePage: React.FC = () => {
   const { currentSong } = usePlayerStore();
   const { setQueue } = useQueueStore();
   const toggleLike = useLibraryStore((s) => s.toggleLike);
+  const librarySongs = useLibraryStore((s) => s.songs);
+  const likedSet = useMemo(
+    () => new Set(librarySongs.filter((s) => s.liked).map((s) => s.id)),
+    [librarySongs],
+  );
   const { ytdlpAvailable } = useSystemStore();
   const [tracks, setTracks] = useState<Song[]>([]);
   const [activeQuery, setActiveQuery] = useState(0);
@@ -139,15 +144,7 @@ const ExplorePage: React.FC = () => {
     likingRef.current.add(song.id);
 
     try {
-      const newLiked = await toggleLike(
-        song.id,
-        song.liked ? undefined : song,
-      );
-      setTracks((prevTracks) =>
-        prevTracks.map((t) =>
-          t.id === song.id ? { ...t, liked: newLiked } : t,
-        ),
-      );
+      await toggleLike(song.id, song);
     } catch (err) {
       console.error("Failed to toggle like:", err);
     } finally {
@@ -319,6 +316,7 @@ const ExplorePage: React.FC = () => {
                   {tracks.map((song, idx) => {
                     const isActive = currentSong?.id === song.id;
                     const isResolving = resolvingId === song.id;
+                    const isLiked = likedSet.has(song.id);
                     return (
                       <div
                         key={song.id}
@@ -333,7 +331,7 @@ const ExplorePage: React.FC = () => {
                         >
                           <svg
                             viewBox="0 0 24 24"
-                            fill={song.liked ? "currentColor" : "none"}
+                            fill={isLiked ? "currentColor" : "none"}
                             stroke="currentColor"
                             strokeWidth="2"
                             width="14"
