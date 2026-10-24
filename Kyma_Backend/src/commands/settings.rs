@@ -98,6 +98,12 @@ pub async fn set_setting(
         value.clone()
     };
 
+    let theme_value = if key == "theme" {
+        Some(value.clone())
+    } else {
+        None
+    };
+
     let stored_value = if is_sensitive(&key) {
         obfuscate(&value)
     } else {
@@ -111,6 +117,9 @@ pub async fn set_setting(
         .await
     {
         Ok(_) => {
+            if let Some(theme) = theme_value {
+                *state.theme.lock() = theme;
+            }
             user_action!("SETTINGS", "Set {} = {}", log_key, log_value);
             Ok(())
         }

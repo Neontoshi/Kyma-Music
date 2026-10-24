@@ -9,6 +9,7 @@ export interface PlayerState {
   position: number;
   duration: number;
   volume?: number;
+  theme?: string;
 }
 
 const initialState: PlayerState = {
@@ -43,6 +44,7 @@ export function useWebSocket() {
             position: data.position,
             duration: data.duration,
             volume: data.volume,
+            theme: data.theme,
           });
         }
       } catch {}

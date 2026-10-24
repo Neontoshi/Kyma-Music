@@ -17,6 +17,7 @@ pub struct AppState {
     pub current_track: Arc<Mutex<Option<FrontendSong>>>,
     pub volume: Arc<Mutex<f32>>,
     pub is_playing: Arc<Mutex<bool>>,
+    pub theme: Arc<Mutex<String>>,
     pub queue: Arc<Mutex<Vec<FrontendSong>>>,
     pub queue_index: parking_lot::Mutex<usize>,
     pub library: Arc<Mutex<Vec<Song>>>,
@@ -40,6 +41,13 @@ impl AppState {
             }
         };
 
+        let theme: String = sqlx::query_scalar("SELECT value FROM settings WHERE key = 'theme'")
+            .fetch_optional(&db)
+            .await
+            .ok()
+            .flatten()
+            .unwrap_or_else(|| "kyma-green".to_string());
+
         let engine = EngineHandle::new(app_handle);
         let state = engine.get_state();
         user_action!(
@@ -55,6 +63,7 @@ impl AppState {
             current_track: Arc::new(Mutex::new(None)),
             volume: Arc::new(Mutex::new(0.7)),
             is_playing: Arc::new(Mutex::new(false)),
+            theme: Arc::new(Mutex::new(theme)),
             queue: Arc::new(Mutex::new(Vec::new())),
             queue_index: parking_lot::Mutex::new(0),
             library: Arc::new(Mutex::new(Vec::new())),

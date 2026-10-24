@@ -362,7 +362,9 @@
 }
 
 .sidebar-menu-btn {
-    background: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
     border: none;
     color: var(--text3);
     padding: 6px;
@@ -371,12 +373,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
     transition: color 0.15s, background 0.15s;
 }
 
 .sidebar-menu-btn:hover {
     color: var(--accent);
     background: rgba(var(--accent-rgb), 0.08);
+}
+
+.sidebar-menu-btn:focus-visible {
+    outline: 2px solid rgba(var(--accent-rgb), 0.65);
+    outline-offset: 2px;
 }
 
 .sidebar .nav-section {

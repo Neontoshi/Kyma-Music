@@ -7,10 +7,7 @@ use crate::KymaError;
 use std::path::Path;
 use walkdir::WalkDir;
 
-async fn reconcile_local_song_ids(
-    db: &sqlx::SqlitePool,
-    songs: &[Song],
-) -> Result<(), KymaError> {
+async fn reconcile_local_song_ids(db: &sqlx::SqlitePool, songs: &[Song]) -> Result<(), KymaError> {
     let mut tx = db.begin().await?;
 
     for song in songs {

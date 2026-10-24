@@ -20,11 +20,8 @@ impl Song {
         let canonical_path = std::fs::canonicalize(&path)
             .map(|p| p.to_string_lossy().into_owned())
             .unwrap_or_else(|_| path.clone());
-        let id = uuid::Uuid::new_v5(
-            &uuid::Uuid::NAMESPACE_URL,
-            canonical_path.as_bytes(),
-        )
-        .to_string();
+        let id =
+            uuid::Uuid::new_v5(&uuid::Uuid::NAMESPACE_URL, canonical_path.as_bytes()).to_string();
 
         Self {
             id,

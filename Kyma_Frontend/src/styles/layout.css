@@ -665,7 +665,7 @@ body {
     }
 
     .topbar-search-wrap {
-        position: static;
+        position: relative;
         width: auto;
         max-width: 360px;
         flex: 1;

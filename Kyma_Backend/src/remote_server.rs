@@ -22,6 +22,7 @@ fn broadcast_state(app_handle: &tauri::AppHandle, tx: &broadcast::Sender<String>
     let current = state.current_track.lock();
     let audio = state.audio_engine.get_state();
     let volume = *state.volume.lock();
+    let theme = state.theme.lock().clone();
 
     let msg = serde_json::json!({
         "type": "state",
@@ -32,6 +33,7 @@ fn broadcast_state(app_handle: &tauri::AppHandle, tx: &broadcast::Sender<String>
         "position": audio.position,
         "duration": audio.duration,
         "volume": (volume * 100.0) as u32,
+        "theme": theme,
     });
 
     let _ = tx.send(msg.to_string());

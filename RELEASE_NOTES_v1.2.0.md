@@ -31,7 +31,7 @@ Kyma is officially out. This is the first public release, a privacy-first, cross
 
 ### 🪟 Windows
 
-Download **`Kyma_1.2.0_x64-setup.exe`** from the [releases page](https://github.com/Neontoshi/Kyma-Music/releases/tag/v1.2.0) and run the installer.
+Download **`Kyma_1.2.0_x64-setup.exe`** from the [releases page](https://github.com/Neontoshi/Kyma-Music/releases) and run the installer.
 
 For streaming support, install `yt-dlp`:
 
@@ -45,7 +45,7 @@ winget install yt-dlp.yt-dlp
 
 ### 🍎 macOS
 
-Download the appropriate `.dmg` for your machine from the [releases page](https://github.com/Neontoshi/Kyma-Music/releases/tag/v1.2.0):
+Download the appropriate `.dmg` for your machine from the [releases page](https://github.com/Neontoshi/Kyma-Music/releases):
 
 | Mac | File |
 |-----|------|
@@ -66,7 +66,7 @@ brew install yt-dlp
 
 ### 🐧 Linux (`.deb`)
 
-Download **`Kyma_1.2.0_amd64.deb`** from the [releases page](https://github.com/Neontoshi/Kyma-Music/releases/tag/v1.2.0) or install directly:
+Download **`Kyma_1.2.0_amd64.deb`** from the [releases page](https://github.com/Neontoshi/Kyma-Music/releases) or install directly:
 
 ```bash
 sudo dpkg -i Kyma_1.2.0_amd64.deb

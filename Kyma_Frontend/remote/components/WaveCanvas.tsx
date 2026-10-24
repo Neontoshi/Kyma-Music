@@ -1,55 +1,60 @@
 import React, { useRef, useEffect } from "react";
 
-const waves = [
-  {
-    y: 0.62,
-    amp: 38,
-    freq: 0.012,
-    speed: 0.012,
-    phase: 0.0,
-    color: "rgba(124,106,245,0.18)",
-  },
-  {
-    y: 0.7,
-    amp: 30,
-    freq: 0.015,
-    speed: 0.018,
-    phase: 1.5,
-    color: "rgba(192,132,252,0.13)",
-  },
-  {
-    y: 0.77,
-    amp: 22,
-    freq: 0.018,
-    speed: 0.01,
-    phase: 3.0,
-    color: "rgba(124,106,245,0.10)",
-  },
-  {
-    y: 0.83,
-    amp: 16,
-    freq: 0.022,
-    speed: 0.022,
-    phase: 0.8,
-    color: "rgba(192,132,252,0.08)",
-  },
-  {
-    y: 0.9,
-    amp: 10,
-    freq: 0.028,
-    speed: 0.014,
-    phase: 2.2,
-    color: "rgba(124,106,245,0.06)",
-  },
-];
+interface WaveCanvasProps {
+  accentRgb: string;
+  accent2Rgb: string;
+}
 
-const WaveCanvas: React.FC = () => {
+const WaveCanvas: React.FC<WaveCanvasProps> = ({ accentRgb, accent2Rgb }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d")!;
+
+    const waves = [
+      {
+        y: 0.72,
+        amp: 34,
+        freq: 0.011,
+        speed: 0.01,
+        phase: 0.0,
+        color: `rgba(${accentRgb},0.12)`,
+      },
+      {
+        y: 0.79,
+        amp: 26,
+        freq: 0.015,
+        speed: 0.016,
+        phase: 1.5,
+        color: `rgba(${accentRgb},0.09)`,
+      },
+      {
+        y: 0.86,
+        amp: 18,
+        freq: 0.019,
+        speed: 0.012,
+        phase: 3.0,
+        color: `rgba(${accent2Rgb},0.07)`,
+      },
+      {
+        y: 0.92,
+        amp: 12,
+        freq: 0.024,
+        speed: 0.019,
+        phase: 0.8,
+        color: `rgba(${accentRgb},0.05)`,
+      },
+      {
+        y: 0.97,
+        amp: 8,
+        freq: 0.03,
+        speed: 0.014,
+        phase: 2.2,
+        color: `rgba(${accent2Rgb},0.035)`,
+      },
+    ];
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -92,7 +97,7 @@ const WaveCanvas: React.FC = () => {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", resize);
     };
-  }, []);
+  }, [accentRgb, accent2Rgb]);
 
   return <canvas ref={canvasRef} className="wave-canvas" />;
 };

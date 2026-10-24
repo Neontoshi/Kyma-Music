@@ -202,6 +202,17 @@ const SettingsPage: React.FC = () => {
     }
   };
 
+  const handleThemeSelect = async (themeId: string) => {
+    setLocalTheme(themeId);
+    setThemeStore(themeId);
+    try {
+      await tauriCommands.setSetting("theme", themeId);
+    } catch (error) {
+      logger.logError("SettingsPage theme_sync_failed", { themeId, error });
+      setSettingsError("Theme applied locally but could not sync to Kyma Cast.");
+    }
+  };
+
   const handleSave = async () => {
     logger.logUI("SettingsPage", "save_settings", {
       defaultVolume,
@@ -405,7 +416,7 @@ const SettingsPage: React.FC = () => {
                   selectedFont={selectedFont}
                   onFontChange={handleFontChange}
                   localTheme={localTheme}
-                  setLocalTheme={setLocalTheme}
+                  setLocalTheme={handleThemeSelect}
                   fontSize={fontSize}
                   setFontSize={setFontSize}
                 />
